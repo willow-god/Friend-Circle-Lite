@@ -1,0 +1,5 @@
+datetime
+python-dateutil==2.9.0.post0
+requests
+feedparser==6.0.11
+PyYAML==6.0.1

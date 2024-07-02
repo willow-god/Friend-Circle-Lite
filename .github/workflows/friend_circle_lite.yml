@@ -1,0 +1,40 @@
+name: RSS Check
+
+on:
+  schedule:
+    - cron: "0 22 */2 * *"
+  workflow_dispatch:
+
+jobs:
+  check_rss:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Check RSS feeds
+      run: python run.py
+        
+    - name: git config
+      run: |
+        git config --global user.name 'GitHub Actions'
+        git config --global user.email 'actions@github.com'
+
+    - name: Commit changes
+      env:
+        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      run: |
+        git add .
+        git commit -m "⏱️GitHub Action定时更新"
+        git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git main
