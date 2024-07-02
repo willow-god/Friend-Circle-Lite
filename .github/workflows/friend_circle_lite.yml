@@ -2,18 +2,21 @@ name: RSS Check
 
 on:
   schedule:
-    - cron: "0 22 */2 * *"
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 
+env:
+  TZ: Asia/Shanghai
+
 jobs:
-  check_rss:
+  friend-circle_lite:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Pull Latest Repository
       uses: actions/checkout@v3
     
-    - name: Set up Python
+    - name: Install Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.x'
