@@ -1,6 +1,23 @@
 # 爬虫相关配置
 spider_settings:
-  enable: true                                    # 是否启用爬虫
-  json_url: "https://blog.qyliu.top/friend.json"  # 请填写对应格式json的地址，仅支持网络地址
-  article_count: 5                                # 请填写每个博客需要获取的最大文章数量
+  enable: true                                    	# 是否启用爬虫
+  json_url: "https://blog.qyliu.top/friend.json"  	# 请填写对应格式json的地址，仅支持网络地址
+  article_count: 5                                	# 请填写每个博客需要获取的最大文章数量
+
+# 邮箱推送功能配置
+email_push:
+  enabled: true										# 是否启用邮箱推送功能
+  to_email: recipient@example.com  					# 收件人邮箱地址
+  subject: "今天的 RSS 订阅更新"  					# 邮件主题
+  body_template: "rss_template.html"  				# 邮件正文的 HTML 模板文件
+
+# SMTP 配置
+smtp:
+  email: your_email@example.com  					# 发件人邮箱地址
+  server: smtp.example.com  						# SMTP 服务器地址
+  port: 587  										# SMTP 端口号
+  use_tls: true  									# 是否使用 TLS 加密
+  username: your_smtp_username  					# SMTP 用户名
+  password: your_smtp_password  					# SMTP 密码
+
 
