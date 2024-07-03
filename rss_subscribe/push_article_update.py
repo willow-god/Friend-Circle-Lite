@@ -94,3 +94,4 @@ def get_latest_articles_from_link(url, count=5, last_articles_path="./rss_subscr
     
     # 如果有更新的文章，返回这些文章，否则返回 None
     return updated_articles if updated_articles else None
+
