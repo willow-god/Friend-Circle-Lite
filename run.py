@@ -37,13 +37,6 @@ if config["rss_subscribe"]["enable"]:
     github_username = config["rss_subscribe"]["github_username"]
     github_repo = config["rss_subscribe"]["github_repo"]
     your_blog_url = config["rss_subscribe"]["your_blog_url"]
-    github_api_url = "https://api.github.com/repos/" + github_username + "/" + github_repo + "/issues" + "?state=closed"
-    print("正在从 {github_api_url} 中获取订阅信息".format(github_api_url=github_api_url))
-    email_list = extract_emails_from_issues(github_api_url)
-    if email_list == None:
-        print("无邮箱列表")
-        sys.exit()
-    print("获取到的邮箱列表为：", email_list)
     # 获取最近更新的文章
     latest_articles = get_latest_articles_from_link(
         url=your_blog_url,
@@ -54,10 +47,18 @@ if config["rss_subscribe"]["enable"]:
     if latest_articles == None:
         print("没有新文章")
     else:
+        github_api_url = "https://api.github.com/repos/" + github_username + "/" + github_repo + "/issues" + "?state=closed"
+        print("正在从 {github_api_url} 中获取订阅信息".format(github_api_url=github_api_url))
+        email_list = extract_emails_from_issues(github_api_url)
+        if email_list == None:
+            print("无邮箱列表")
+            sys.exit(0)
+        else:
+            print("获取到的邮箱列表为：", email_list)
         # 循环latest_articles，发送邮件
         for article in latest_articles:
             send_emails(
-                emails=email_list,
+                emails=email_list["emails"],
                 sender_email=email,
                 smtp_server=server,
                 port=port,

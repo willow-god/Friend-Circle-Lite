@@ -61,6 +61,8 @@ def send_emails(emails, sender_email, smtp_server, port, password, subject, body
     use_tls (bool): 是否使用 TLS 加密，默认为 True。
     """
     for email in emails:
+        print(f'正在发送邮件到 {email}')
+        print(f'---------------------------\n邮件主题: {subject}\n邮件内容: {body}\n发件人: {sender_email}\n---------------------------')
         email_sender(email, sender_email, smtp_server, port, password, subject, body, use_tls)
 
 
