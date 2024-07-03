@@ -1,26 +1,41 @@
 # 爬虫相关配置
+#   enable 是否启用爬虫
+#   json_url 请填写对应格式json的地址，仅支持网络地址
+#   article_count 请填写每个博客需要获取的最大文章数量
 spider_settings:
-  enable: false                                     # 是否启用爬虫
-  json_url: "https://blog.qyliu.top/friend.json"    # 请填写对应格式json的地址，仅支持网络地址
-  article_count: 5                                  # 请填写每个博客需要获取的最大文章数量
+  enable: false
+  json_url: "https://blog.qyliu.top/friend.json"
+  article_count: 5
 
 # 邮箱推送功能配置，还没实现
+#   enable 是否启用邮箱推送功能
+#   to_email 收件人邮箱地址
+#   subject 邮件主题
+#   body_template 邮件正文的 HTML 模板文件
 email_push:
-  enable: false                            # 是否启用邮箱推送功能
-  to_email: recipient@example.com           # 收件人邮箱地址
-  subject: "今天的 RSS 订阅更新"             # 邮件主题
-  body_template: "rss_template.html"        # 邮件正文的 HTML 模板文件
+  enable: false
+  to_email: recipient@example.com
+  subject: "今天的 RSS 订阅更新"
+  body_template: "rss_template.html"
 
 # 邮箱issue订阅功能配置
+#   enable 是否启用邮箱推送功能
+#   github_username GitHub 用户名
+#   github_repo GitHub 仓库名
+#   your_blog_url 你的博客地址
 rss_subscribe:
-  enable: true                             # 是否启用邮箱推送功能
-  github_username: willow-god               # GitHub 用户名
-  github_repo: Friend-Circle-Lite           # GitHub 仓库名
-  your_blog_url: https://blog.qyliu.top/    # 你的博客地址
+  enable: true
+  github_username: willow-god
+  github_repo: Friend-Circle-Lite
+  your_blog_url: https://blog.qyliu.top/
 
 # SMTP 配置
+#   email 发件人邮箱地址
+#   server SMTP 服务器地址
+#   port SMTP 端口号
+#   use_tls 是否使用 tls 加密
 smtp:
-  email: 3162475700@qq.com                  # 发件人邮箱地址
-  server: smtp.qq.com                       # SMTP 服务器地址
-  port: 587                                 # SMTP 端口号
-  use_tls: true                             # 是否使用 tls 加密
+  email: 3162475700@qq.com
+  server: smtp.qq.com
+  port: 587
+  use_tls: true
