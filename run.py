@@ -26,7 +26,7 @@ if config["email_push"]["enable"] or config["rss_subscribe"]["enable"]:
     server = email_settings["server"]
     port = email_settings["port"]
     use_tls = email_settings["use_tls"]
-    password = os.environ["SMTP_PWD"]
+    password = os.getenv["SMTP_PWD"]
 
 if config["email_push"]["enable"]:
     print("邮件推送已启用")
