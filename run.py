@@ -5,6 +5,7 @@ from rss_subscribe.push_article_update import get_latest_articles_from_link, ext
 from push_rss_update.send_email import send_emails
 
 import json
+import sys
 import os
 
 # 爬虫部分内容
@@ -40,8 +41,9 @@ if config["rss_subscribe"]["enable"]:
     print("正在从 {github_api_url} 中获取订阅信息".format(github_api_url=github_api_url))
     email_list = extract_emails_from_issues(github_api_url)
     if email_list == None:
-        email_list = {"email": []}
-    print("获取到的邮箱列表为：", email_list["email"])
+        print("无邮箱列表")
+        sys.exit()
+    print("获取到的邮箱列表为：", email_list)
     # 获取最近更新的文章
     latest_articles = get_latest_articles_from_link(
         url=your_blog_url,
