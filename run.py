@@ -54,15 +54,15 @@ if config["rss_subscribe"]["enable"]:
     if latest_articles == None:
         print("没有新文章")
     else:
-        send_emails(
-            emails=email_list["email"],
-            sender_email=email,
-            smtp_server=server,
-            port=port,
-            password=password,
-            subject="最新文章推送",
-            body="最新文章为：\n" + "\n".join([article["title"] + " " + article["link"] for article in latest_articles]),
-            use_tls=use_tls
-        )
-    
-    
+        # 循环latest_articles，发送邮件
+        for article in latest_articles:
+            send_emails(
+                emails=email_list,
+                sender_email=email,
+                smtp_server=server,
+                port=port,
+                password=password,
+                subject="清羽飞扬の最新文章：" + article["title"],
+                body="文章链接：" + article["link"] + "\n" + "文章内容：" + article["summary"] + "\n" + "发布时间：" + article["published"],
+                use_tls=use_tls
+            )
