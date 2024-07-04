@@ -7,40 +7,38 @@ on:
 jobs:
   handle_email_issues:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Add label
+    - name: Add subscribed label
       if: startsWith(github.event.issue.title, '[e-mail]')
-      uses: actions-ecosystem/action-add-labels@v1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        labels: 'subscribe'
+      run: |
+        gh issue edit $NUMBER --add-label subscribed
+      env:
+        GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        GH_REPO: ${{ github.repository }}
+        NUMBER: ${{ github.event.issue.number }}
 
     - name: Comment on issue
       if: startsWith(github.event.issue.title, '[e-mail]')
-      uses: actions/github-script@v6
-      with:
-        github-token: ${{ secrets.PAT_TOKEN }}
-        script: |
-          github.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: '您已订阅本站更新，若有新文章将通过邮箱推送给您，谢谢!'
-          })
+      run: |
+        gh issue comment $NUMBER --body "$BODY"
+      env:
+        GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        GH_REPO: ${{ github.repository }}
+        NUMBER: ${{ github.event.issue.number }}
+        BODY: >
+          您已订阅本站更新，若有新文章将通过邮箱推送给您，谢谢!
 
     - name: Close issue
       if: startsWith(github.event.issue.title, '[e-mail]')
-      uses: actions/github-script@v6
-      with:
-        github-token: ${{ secrets.PAT_TOKEN }}
-        script: |
-          github.issues.update({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            state: 'closed'
-          })
+      run: |
+        gh issue edit $NUMBER --state closed
+      env:
+        GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        GH_REPO: ${{ github.repository }}
+        NUMBER: ${{ github.event.issue.number }}
