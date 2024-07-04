@@ -48,7 +48,7 @@ if config["rss_subscribe"]["enable"]:
     if latest_articles == None:
         print("没有新文章")
     else:
-        github_api_url = "https://api.github.com/repos/" + github_username + "/" + github_repo + "/issues" + "?state=closed&label=subscribed"
+        github_api_url = "https://api.github.com/repos/" + github_username + "/" + github_repo + "/issues" + "?state=closed&label=subscribed&per_page=200"
         print("正在从 {github_api_url} 中获取订阅信息".format(github_api_url=github_api_url))
         email_list = extract_emails_from_issues(github_api_url)
         if email_list == None:
