@@ -32,7 +32,7 @@ def extract_emails_from_issues(api_url):
         print(f"无法获取该链接：{api_url}\n出现的问题为：{e}")
         return None
 
-    email_pattern = re.compile(r'^\[e-mail\](.+)$')
+    email_pattern = re.compile(r'^\[邮箱订阅\](.+)$')
     emails = []
 
     for issue in issues:
