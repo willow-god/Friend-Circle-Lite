@@ -1,4 +1,4 @@
-name: RSS Check
+name: Friend Circle Lite
 
 on:
   schedule:
@@ -9,7 +9,7 @@ env:
   TZ: Asia/Shanghai
 
 jobs:
-  friend-circle_lite:
+  friend-circle-lite:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,7 +27,10 @@ jobs:
         pip install -r requirements.txt
         
     - name: Check RSS feeds
-      run: python run.py
+      env:
+        SMTP_PWD: ${{ secrets.SMTP_PWD }}
+      run: |
+        python run.py
         
     - name: git config
       run: |
