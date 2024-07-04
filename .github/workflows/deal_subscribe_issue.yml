@@ -6,7 +6,7 @@ on:
 
 jobs:
   handle_email_issues:
-    if: startsWith(github.event.issue.title, '[e-mail]')
+    if: startsWith(github.event.issue.title, '[邮箱订阅]')
     runs-on: ubuntu-latest
 
     steps:
