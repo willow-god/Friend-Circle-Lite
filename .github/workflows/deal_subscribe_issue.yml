@@ -6,36 +6,29 @@ on:
 
 jobs:
   handle_email_issues:
+    if: startsWith(github.event.issue.title, '[e-mail]')
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
     - name: Add subscribed label
-      if: startsWith(github.event.issue.title, '[e-mail]')
-      run: |
-        gh issue edit $NUMBER --add-label subscribed
-      env:
-        GH_TOKEN: ${{ secrets.PAT_TOKEN }}
-        GH_REPO: ${{ github.repository }}
-        NUMBER: ${{ github.event.issue.number }}
+      uses: actions-cool/issues-helper@v3
+      with:
+        actions: 'add-labels'
+        token: ${{ secrets.PAT_TOKEN }}
+        issue-number: ${{ github.event.issue.number }}
+        labels: 'subscribed'
 
     - name: Comment on issue
-      if: startsWith(github.event.issue.title, '[e-mail]')
-      run: |
-        gh issue comment $NUMBER --body "$BODY"
-      env:
-        GH_TOKEN: ${{ secrets.PAT_TOKEN }}
-        GH_REPO: ${{ github.repository }}
-        NUMBER: ${{ github.event.issue.number }}
-        BODY: >
-          您已订阅本站更新，若有新文章将通过邮箱推送给您，谢谢!
+      uses: actions-cool/issues-helper@v3
+      with:
+        actions: 'create-comment'
+        token: ${{ secrets.PAT_TOKEN }}
+        issue-number: ${{ github.event.issue.number }}
+        body: |
+          🤩你好呀！ ${{ github.event.issue.user.login }}！你已经成功通过邮件订阅了清羽飞扬小站啦！若有新文章将通过邮箱推送给你！谢谢你的订阅！
+          😥如果您实在想要关闭订阅，在右下角直接删除这个issue就好！咕咕咕咕咕咕咕！
 
     - name: Close issue
-      if: startsWith(github.event.issue.title, '[e-mail]')
       uses: actions-cool/issues-helper@v3
       with:
         actions: 'close-issue'
