@@ -1,0 +1,46 @@
+name: Handle Email Issues
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  handle_email_issues:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Add label
+      if: startsWith(github.event.issue.title, '[e-mail]')
+      uses: actions-ecosystem/action-add-labels@v1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        labels: 'subscribe'
+
+    - name: Comment on issue
+      if: startsWith(github.event.issue.title, '[e-mail]')
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.PAT_TOKEN }}
+        script: |
+          github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '您已订阅本站更新，若有新文章将通过邮箱推送给您，谢谢!'
+          })
+
+    - name: Close issue
+      if: startsWith(github.event.issue.title, '[e-mail]')
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.PAT_TOKEN }}
+        script: |
+          github.issues.update({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            state: 'closed'
+          })
