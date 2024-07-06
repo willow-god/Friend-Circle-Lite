@@ -31,6 +31,7 @@ rss_subscribe:
   github_username: willow-god
   github_repo: Friend-Circle-Lite
   your_blog_url: https://blog.qyliu.top/
+  email_template: "./rss_subscribe/email_template.html"
 
 # SMTP 配置
 # 解释：使用其中的相关配置实现上面两种功能，若无推送要求可以不配置，请将以上两个配置置为false

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最新文章通知</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            margin: 50px auto;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+        }
+        .header {
+            margin-top: 30px;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .content {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .content p {
+            margin: 10px 0;
+        }
+        
+        .content .title {
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        .content p strong {
+            display: inline-block;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+        .content .summary {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            word-wrap: break-word;
+            word-break: break-all;
+        }
+        .content .published {
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+        .button {
+            display: block;
+            width: 200px;
+            max-width: 100%;
+            margin: 20px auto;
+            padding: 10px 20px;
+            text-align: center;
+            background-color: #007bff;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        @media (max-width: 300px) {
+            .button {
+                width: auto;
+            }
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #777777;
+        }
+        .unsubscribe {
+            text-align: center;
+            margin-top: 60px;
+            font-size: 12px;
+            color: #777777;
+        }
+        .unsubscribe a {
+            color: #777777;
+            text-decoration: none;
+        }
+        .unsubscribe a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>清羽飞扬の最新文章</h1>
+        </div>
+        <div class="content">
+            <p><strong>文章标题：</strong> <span class="title">{{ title }}</span></p>
+            <p><strong>文章内容：</strong> <span class="summary">{{ summary }}</span></p>
+            <p><strong>发布时间：</strong> <span class="published">{{ published }}</span></p>
+        </div>
+        <a href="{{ link }}" class="button">阅读更多</a>
+        <div class="footer">
+            <p>感谢您的订阅！</p>
+        </div>
+        <div class="unsubscribe">
+            <p><a href="https://github.com/willow-god/Friend-Circle-Lite/issues">取消订阅</a></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -38,6 +38,7 @@ if config["rss_subscribe"]["enable"]:
     github_username = config["rss_subscribe"]["github_username"]
     github_repo = config["rss_subscribe"]["github_repo"]
     your_blog_url = config["rss_subscribe"]["your_blog_url"]
+    email_template = config["rss_subscribe"]["email_template"]
     # 获取最近更新的文章
     latest_articles = get_latest_articles_from_link(
         url=your_blog_url,
@@ -58,6 +59,13 @@ if config["rss_subscribe"]["enable"]:
             print("获取到的邮箱列表为：", email_list)
         # 循环latest_articles，发送邮件
         for article in latest_articles:
+            template_data = {
+                "title": article["title"],
+                "summary": article["summary"],
+                "published": article["published"],
+                "link": article["link"]
+            }
+            
             send_emails(
                 emails=email_list["emails"],
                 sender_email=email,
@@ -66,5 +74,7 @@ if config["rss_subscribe"]["enable"]:
                 password=password,
                 subject="清羽飞扬の最新文章：" + article["title"],
                 body="文章链接：" + article["link"] + "\n" + "文章内容：" + article["summary"] + "\n" + "发布时间：" + article["published"],
+                template_path=email_template,
+                template_data=template_data,
                 use_tls=use_tls
             )
