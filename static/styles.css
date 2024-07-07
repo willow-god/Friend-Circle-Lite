@@ -1,0 +1,127 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.articles-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+#load-more-btn {
+    font-size: 15px;
+    background-color: white;
+    margin-top: 20px;
+    width: 50%;
+    border-radius: 20px;
+    padding: 3px;
+    border:#b5b5b5 solid 1px;
+    transition: all 0.3s;
+}
+
+#load-more-btn:hover {
+    background-color: #0088ff;
+    width: 52%;
+    color: white;
+
+}
+
+.card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 120px;
+}
+
+.card-title {
+    font-size: 17px;
+    margin-bottom: 10px;
+    line-height: 1.5;
+    max-height: 4.5em; /* 三行高度 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    transition: color 0.3s; /* 添加过渡效果 */
+}
+
+.card-title:hover {
+    /* 字体变成蓝色，下划线 */
+    color: #007bff;
+    text-decoration: underline;
+}
+
+.card-author,
+.card-date {
+    display: inline-block;
+    font-size: 12px;
+    color: #888;
+    background-color: white; /* 白色背景 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 阴影 */
+    border-radius: 15px; /* 圆角 */
+    padding: 5px; /* 内边距 */
+    transition: box-shadow 0.2s; /* 过渡效果 */
+}
+
+.card-author:hover,
+.card-date:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 鼠标悬停时加深阴影 */
+}
+
+.card-author {
+    display: flex;
+    padding-right: 10px;
+    width: fit-content;
+    align-items: center;
+}
+
+.card-author img {
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+}
+
+.card-date {
+    position: absolute;
+    z-index: 1;
+    bottom: 15px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.card-date img {
+    width: 15px;
+    height: 15px;
+    border-radius: 20%;
+    margin-right: 5px;
+}
+
+.card-bg {
+    z-index: 0;
+    border-radius: 50%;
+    position: absolute;
+    bottom: -30px;
+    right: -30px;
+    width: 150px;
+    height: 150px;
+    opacity: 0.1;
+}
