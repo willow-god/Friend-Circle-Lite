@@ -10,6 +10,72 @@ body {
     min-height: 100vh;
 }
 
+/* 模态框样式 */
+.modal {
+    display: none; /* 默认隐藏 */
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* 模糊背景 */
+    background-color: rgba(255, 255, 255, 0.5); /* 背景遮罩 */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 50% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 320px;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+@media screen and (max-width: 400px) {
+    .modal-content {
+        width: 80%;
+    }
+    
+}
+
+#modal-author-avatar {
+    display: block;
+    margin: 0 auto 10px; /* 垂直方向上自动居中，底部留出间距 */
+    border-radius: 50%; /* 圆形图标 */
+    width: 80px;
+    height: 80px;
+}
+
+#modal-author-name-link {
+    display: block;
+    text-align: center;
+    font-size: 15px;
+    margin: 20px 0;
+    color: #007BFF;
+    text-decoration: none;
+}
+
+#modal-author-name-link:hover {
+    text-decoration: underline;
+}
+
+.modal-content hr {
+    margin: 20px 0;
+}
+
+#modal-articles-container {
+    border-top:#007BFF solid 1px;
+    margin-top: 30px;
+    padding-top: 30px; 
+}
+
+/* 其他样式... */
+
 .articles-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -22,7 +88,7 @@ body {
     font-size: 15px;
     background-color: white;
     margin-top: 20px;
-    width: 50%;
+    width: 200px;
     border-radius: 20px;
     padding: 3px;
     border:#b5b5b5 solid 1px;
@@ -31,7 +97,7 @@ body {
 
 #load-more-btn:hover {
     background-color: #0088ff;
-    width: 52%;
+    width: 300px;
     color: white;
 
 }
@@ -40,7 +106,7 @@ body {
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 15px;
+    padding: 10px;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -51,6 +117,7 @@ body {
 
 .card-title {
     font-size: 17px;
+    cursor: pointer;
     margin-bottom: 10px;
     line-height: 1.5;
     max-height: 4.5em; /* 三行高度 */
@@ -72,20 +139,20 @@ body {
 .card-date {
     display: inline-block;
     font-size: 12px;
-    color: #888;
-    background-color: white; /* 白色背景 */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 阴影 */
-    border-radius: 15px; /* 圆角 */
+    color: #313131;
     padding: 5px; /* 内边距 */
     transition: box-shadow 0.2s; /* 过渡效果 */
 }
 
-.card-author:hover,
-.card-date:hover {
+.card-author:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 鼠标悬停时加深阴影 */
 }
 
 .card-author {
+    cursor: pointer;
+    background-color: white; /* 白色背景 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 阴影 */
+    border-radius: 15px; /* 圆角 */
     display: flex;
     padding-right: 10px;
     width: fit-content;
@@ -102,26 +169,20 @@ body {
 .card-date {
     position: absolute;
     z-index: 1;
-    bottom: 15px;
-    right: 15px;
+    bottom: 10px;
+    cursor: default;
+    right: 10px;
     display: flex;
     align-items: center;
-}
-
-.card-date img {
-    width: 15px;
-    height: 15px;
-    border-radius: 20%;
-    margin-right: 5px;
 }
 
 .card-bg {
     z-index: 0;
     border-radius: 50%;
     position: absolute;
-    bottom: -30px;
-    right: -30px;
-    width: 150px;
-    height: 150px;
+    bottom: -15px;
+    right: -14px;
+    width: 120px;
+    height: 120px;
     opacity: 0.1;
 }

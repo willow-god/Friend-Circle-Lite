@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch('./all.json')
             .then(response => response.json())
             .then(data => {
+                allArticles = data.article_data;
                 const articles = data.article_data.slice(start, start + batchSize);
                 articles.forEach(article => {
                     const card = document.createElement('div');
@@ -29,11 +30,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     author.appendChild(document.createTextNode(article.author));
                     card.appendChild(author);
 
+                    author.onclick = () => {
+                        showAuthorArticles(article.author, article.avatar, article.link);
+                    };
+
                     const date = document.createElement('div');
                     date.className = 'card-date';
-                    const dateImg = document.createElement('img');
-                    dateImg.src = './static/img/rili.png';  // 替换为实际的图标路径
-                    date.appendChild(dateImg);
                     date.appendChild(document.createTextNode(article.created.substring(0, 10)));
                     card.appendChild(date);
 
@@ -54,9 +56,52 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
+    // 显示作者文章的函数
+    function showAuthorArticles(author, avatar, link) {
+        const modal = document.getElementById('modal');
+        const modalArticlesContainer = document.getElementById('modal-articles-container');
+        const modalAuthorAvatar = document.getElementById('modal-author-avatar');
+        const modalAuthorNameLink = document.getElementById('modal-author-name-link');
+
+        modalArticlesContainer.innerHTML = ''; // 清空之前的内容
+        modalAuthorAvatar.src = avatar;
+        modalAuthorNameLink.innerText = author;
+        modalAuthorNameLink.href = new URL(link).origin;
+
+        const authorArticles = allArticles.filter(article => article.author === author);
+        authorArticles.forEach(article => {
+            const articleDiv = document.createElement('div');
+            articleDiv.className = 'modal-article';
+
+            const title = document.createElement('a');
+            title.className = 'modal-article-title';
+            title.innerText = article.title;
+            title.href = article.link;
+            title.target = '_blank';
+            articleDiv.appendChild(title);
+
+            const date = document.createElement('div');
+            date.className = 'modal-article-date';
+            date.innerText = article.created.substring(0, 10);
+            articleDiv.appendChild(date);
+
+            modalArticlesContainer.appendChild(articleDiv);
+        });
+
+        modal.style.display = 'block';
+    }
+    
     // 初始加载
     loadMoreArticles();
 
     // 加载更多按钮点击事件
     document.getElementById('load-more-btn').addEventListener('click', loadMoreArticles);
+
+    // 点击遮罩层关闭模态框
+    window.onclick = function(event) {
+        const modal = document.getElementById('modal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    };
 });
