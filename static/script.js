@@ -82,13 +82,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const date = document.createElement('div');
             date.className = 'modal-article-date';
-            date.innerText = article.created.substring(0, 10);
+            date.innerText = "--" + article.created.substring(0, 10);
             articleDiv.appendChild(date);
 
             modalArticlesContainer.appendChild(articleDiv);
         });
 
+        // 设置类名以触发显示动画
         modal.style.display = 'block';
+        setTimeout(() => {
+            modal.classList.add('modal-open');
+        }, 10); // 确保显示动画触发
+    }
+
+    // 隐藏模态框的函数
+    function hideModal() {
+        const modal = document.getElementById('modal');
+        modal.classList.remove('modal-open');
+        modal.addEventListener('transitionend', () => {
+            modal.style.display = 'none';
+        }, { once: true });
     }
     
     // 初始加载
@@ -101,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.onclick = function(event) {
         const modal = document.getElementById('modal');
         if (event.target === modal) {
-            modal.style.display = 'none';
+            hideModal();
         }
     };
 });
