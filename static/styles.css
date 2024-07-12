@@ -1,13 +1,128 @@
+/* 浅色模式颜色 */
+[data-theme=light] {
+    --card-title-color: #000000;
+    --body-background-color: #f4f4f9;
+    --random-container-title-color: #000000;
+    --random-article-bg-color: white;
+    --random-article-shadow-color: rgba(0, 0, 0, 0.1);
+    --random-container-hover-color: #3498db;
+    --random-author-color: gray;
+    --random-title-color: #000000;
+    --modal-bg-color: rgba(255, 255, 255, 0.5);
+    --modal-bg-blur: 25px;
+    --modal-content-bg-color: rgba(239, 250, 255, 0.7);
+    --modal-content-border-color: #ccc;
+    --modal-article-title-color: #000000;
+    --modal-article-date-color: #313131;
+    --load-more-btn-bg-color: white;
+    --load-more-btn-border-color: #b5b5b5;
+    --load-more-btn-hover-color: #0088ff;
+    --card-bg-color: white;
+    --card-border-color: #e3e8f7;
+    --card-title-hover-color: #007bff;
+    --card-author-color: #313131;
+    --card-author-bg-color: white;
+    --card-author-shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* 深色模式颜色 */
+[data-theme=dark] {
+    --card-title-color: #ffffff;
+    --body-background-color: #181818;
+    --random-container-title-color: #ffffff;
+    --random-article-bg-color: #2c2c2c;
+    --random-article-shadow-color: rgba(255, 255, 255, 0.1);
+    --random-container-hover-color: #3498db;
+    --random-author-color: #b3b3b3;
+    --random-title-color: #ffffff;
+    --modal-bg-color: rgba(0, 0, 0, 0.3);
+    --modal-bg-blur: 25px;
+    --modal-content-bg-color: rgba(20, 20, 20, 0.5);
+    --modal-content-border-color: #42444a;
+    --modal-article-title-color: #ffffff;
+    --modal-article-date-color: #b3b3b3;
+    --load-more-btn-bg-color: #2c2c2c;
+    --load-more-btn-border-color: #42444a;
+    --load-more-btn-hover-color: #0088ff;
+    --card-bg-color: #2c2c2c;
+    --card-border-color: #42444a;
+    --card-title-hover-color: #0088ff;
+    --card-author-color: #dddddd;
+    --card-author-bg-color: #2c2c2c;
+    --card-author-shadow-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 以下是原有样式，使用新定义的变量 */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    margin: 0;
+    background-color: var(--body-background-color);
+    margin: 0px;
     padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     min-height: 100vh;
+}
+
+/* 随机友链文章卡片 */
+#random-article {
+    display: flex;
+    position: relative;
+    width: 100%;
+    margin: 10px 20px;
+    background-color: var(--random-article-bg-color);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px var(--random-article-shadow-color);
+    height: 210px;
+}
+
+.random-container {
+    position: relative;
+    margin: 20px;
+    width: 100%;
+    height: 170px;
+}
+
+.random-container:hover .random-title {
+    font-size: 32px;
+}
+
+.random-author {
+    font-size: 14px;
+    color: var(--random-author-color);
+    margin-bottom: 10px;
+}
+
+.random-container-title {
+    color: var(--random-container-title-color);
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.random-link-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    background-color: var(--random-container-hover-color);
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.random-title {
+    margin-bottom: 10px;
+    font-size: 30px;
+    color: var(--random-title-color);
+    transition: font-size 0.3s ease-in-out;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* 模态框样式 */
@@ -17,18 +132,25 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(25px); /* 应用高斯模糊效果，可以根据需要调整模糊程度 */
-    -webkit-backdrop-filter: blur(25px); /* 兼容性前缀，适用于一些旧版本的浏览器 */
+    background-color: var(--modal-bg-color);
+    backdrop-filter: blur(var(--modal-bg-blur));
+    /* 应用高斯模糊效果，可以根据需要调整模糊程度 */
+    -webkit-backdrop-filter: blur(var(--modal-bg-blur));
+    /* 兼容性前缀，适用于一些旧版本的浏览器 */
     z-index: 999;
-    opacity: 0; /* 初始透明度 */
-    visibility: hidden; /* 初始不可见 */
-    transition: opacity 0.3s; /* 过渡效果，持续时间为 0.3 秒 */
+    opacity: 0;
+    /* 初始透明度 */
+    visibility: hidden;
+    /* 初始不可见 */
+    transition: opacity 0.3s;
+    /* 过渡效果，持续时间为 0.3 秒 */
 }
 
 .modal-open {
-    opacity: 1; /* 透明度变为完全不透明 */
-    visibility: visible; /* 可见 */
+    opacity: 1;
+    /* 透明度变为完全不透明 */
+    visibility: visible;
+    /* 可见 */
 }
 
 .modal-content {
@@ -38,27 +160,29 @@ body {
     transform: translate(-50%, -50%);
     width: 320px;
     /* transform: translate(-50%, -50%); */
-    background-color: rgba(239, 250, 255, 0.7);
+    background-color: var(--modal-content-bg-color);
     padding: 20px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--modal-content-border-color);
     z-index: 1000;
     max-height: 90%;
     overflow-y: auto;
     border-radius: 20px;
-    transition: opacity 0.3s; /* 过渡效果，持续时间为 0.3 秒 */
+    transition: opacity 0.3s;
+    /* 过渡效果，持续时间为 0.3 秒 */
 }
 
 @media screen and (max-width: 400px) {
     .modal-content {
         width: 80%;
     }
-    
 }
 
 #modal-author-avatar {
     display: block;
-    margin: 0 auto 10px; /* 垂直方向上自动居中，底部留出间距 */
-    border-radius: 50%; /* 圆形图标 */
+    margin: 0 auto 10px;
+    /* 垂直方向上自动居中，底部留出间距 */
+    border-radius: 50%;
+    /* 圆形图标 */
     width: 80px;
     height: 80px;
 }
@@ -68,18 +192,8 @@ body {
     text-align: center;
     font-size: 15px;
     margin: 25px 0;
-    color: #007BFF;
+    color: var(--random-container-hover-color);
     text-decoration: none;
-}
-
-.modal-article .modal-article-title {
-    font-size: 20px;
-    margin-bottom: 10px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 #modal-author-name-link:hover {
@@ -91,42 +205,50 @@ body {
 }
 
 #modal-articles-container {
-    border-top:#00244b double 2px;
+    border-top: var(--random-container-hover-color) double 2px;
     margin-top: 20px;
-    padding-top: 10px; 
+    padding-top: 10px;
 }
 
 .modal-article {
     display: flex;
-    flex-wrap: wrap; /* This property allows the elements to wrap onto multiple lines */
+    flex-wrap: wrap;
+    /* This property allows the elements to wrap onto multiple lines */
     margin-bottom: 10px;
     padding-bottom: 10px;
-    border-bottom: #007BFF dashed 1px;
+    border-bottom: var(--random-container-hover-color) dashed 1px;
 }
 
 .modal-article .modal-article-title {
-    color: #000000;
-    cursor: pointer;
-    text-decoration: none;
     font-size: 18px;
+    cursor: pointer;
+    color: var(--modal-article-title-color);
     height: 2.5em; /* 两行高度 */
     width: 100%;
     margin-bottom: 5px;
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .modal-article .modal-article-title:hover {
-    color: #007BFF;
+    color: var(--random-container-hover-color);
     text-decoration: underline;
 }
 
 .modal-article .modal-article-date {
     font-size: 12px;
     width: 100%;
-    color: #313131;
+    color: var(--modal-article-date-color);
     padding: 5px;
     cursor: default;
-    text-align: right; /* Add this line to align the text to the right */
+    text-align: right;
+    /* Add this line to align the text to the right */
 }
+
 /* 其他样式... */
 
 .articles-container {
@@ -134,32 +256,31 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 8px;
     width: 100%;
-    max-width: 1200px;
 }
 
 #load-more-btn {
     font-size: 15px;
-    background-color: white;
+    color: var(--modal-article-date-color);
+    background-color: var(--load-more-btn-bg-color);
     margin-top: 20px;
     width: 200px;
     border-radius: 20px;
     padding: 3px;
-    border:#b5b5b5 solid 1px;
+    border: var(--load-more-btn-border-color) solid 1px;
     transition: all 0.3s;
 }
 
 #load-more-btn:hover {
-    background-color: #0088ff;
+    background-color: var(--load-more-btn-hover-color);
     width: 300px;
     color: white;
-
 }
 
 .card {
-    background-color: white;
+    background-color: var(--card-bg-color);
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 10px;
+    border: 1px solid var(--card-border-color);
     position: relative;
     overflow: hidden;
     display: flex;
@@ -169,42 +290,52 @@ body {
 }
 
 .card-title {
+    color: var(--card-title-color);
+    z-index: 1;
     font-size: 17px;
     cursor: pointer;
     margin-bottom: 10px;
     line-height: 1.5;
-    max-height: 4.5em; /* 三行高度 */
+    max-height: 4.5em;
+    /* 三行高度 */
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
-    transition: color 0.3s; /* 添加过渡效果 */
+    transition: color 0.3s;
+    /* 添加过渡效果 */
 }
 
 .card-title:hover {
     /* 字体变成蓝色，下划线 */
-    color: #007bff;
+    color: var(--card-title-hover-color);
     text-decoration: underline;
 }
 
 .card-author,
 .card-date {
     font-size: 12px;
-    color: #313131;
-    padding: 5px; /* 内边距 */
-    transition: box-shadow 0.2s; /* 过渡效果 */
+    color: var(--card-author-color);
+    padding: 5px;
+    /* 内边距 */
+    transition: box-shadow 0.2s;
+    /* 过渡效果 */
 }
 
 .card-author:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 鼠标悬停时加深阴影 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* 鼠标悬停时加深阴影 */
 }
 
 .card-author {
     cursor: pointer;
-    background-color: white; /* 白色背景 */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 阴影 */
-    border-radius: 15px; /* 圆角 */
+    background-color: var(--card-author-bg-color);
+    /* 白色背景 */
+    box-shadow: 0 2px 4px var(--card-author-shadow-color);
+    /* 阴影 */
+    border-radius: 15px;
+    /* 圆角 */
     display: flex;
     padding-right: 10px;
     width: fit-content;
@@ -232,9 +363,9 @@ body {
     z-index: 0;
     border-radius: 50%;
     position: absolute;
-    bottom: -15px;
-    right: -14px;
-    width: 120px;
-    height: 120px;
-    opacity: 0.1;
+    bottom: -20px;
+    right: -15px;
+    width: 140px;
+    height: 140px;
+    opacity: 0.4;
 }

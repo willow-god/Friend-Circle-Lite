@@ -4,11 +4,23 @@ document.addEventListener("DOMContentLoaded", function () {
     const batchSize = 20; // 每次加载的卡片数量
 
     function loadMoreArticles() {
-        fetch('./all.json')
+        fetch('https://fc.liushen.fun/all.json')
             .then(response => response.json())
             .then(data => {
                 allArticles = data.article_data;
+                const randomArticle = allArticles[Math.floor(Math.random() * allArticles.length)];
                 const articles = data.article_data.slice(start, start + batchSize);
+                const randomArticleElement = document.getElementById('random-article');
+
+                randomArticleElement.innerHTML = `
+                <div class="random-container">
+                    <div class="random-container-title">随机钓鱼</div>
+                    <div class="random-title">${randomArticle.title}</div>
+                    <div class="random-author">作者: ${randomArticle.author}</div>
+                </div>
+                <button class="random-link-button" onclick="window.open('${randomArticle.link}', '_blank')">过去转转</button>
+                `;
+
                 articles.forEach(article => {
                     const card = document.createElement('div');
                     card.className = 'card';
