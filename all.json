@@ -1,12 +1,19 @@
 {
   "statistical_data": {
     "friends_num": 79,
-    "active_num": 55,
-    "error_num": 24,
-    "article_num": 243,
-    "last_updated_time": "2024-07-13 14:27:25"
+    "active_num": 54,
+    "error_num": 25,
+    "article_num": 233,
+    "last_updated_time": "2024-07-13 20:35:43"
   },
   "article_data": [
+    {
+      "title": "一串代码解决老爷机上Windows的TPM 2.0（受信任的平台模块验证）和cpu限制",
+      "created": "2024-07-13 09:39",
+      "link": "https://www.bbixb.top/archives/1513",
+      "author": "微生之最",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/04/66351f5b62b65.png"
+    },
     {
       "title": "Typecho 调取随机文章",
       "created": "2024-07-13 09:26",
@@ -181,13 +188,6 @@
       "link": "https://blog.zhilu.cyou/2024/auto-payment/",
       "author": "纸鹿本鹿",
       "avatar": "https://cdn.qyliu.top/i/2024/06/02/665c869ded7cd.png"
-    },
-    {
-      "title": "信盈达实习记录",
-      "created": "2024-07-07 09:13",
-      "link": "https://www.gan1ser.top/post/754a429b.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "时代造青年，还是青年造时代？",
@@ -442,13 +442,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/05/04/66351f5b62b65.png"
     },
     {
-      "title": "数字信号的2FSK调制与解调",
-      "created": "2024-06-26 20:13",
-      "link": "https://www.gan1ser.top/post/b9a95f5e.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
-    },
-    {
       "title": "浅谈前端各种模块化",
       "created": "2024-06-26 03:35",
       "link": "https://fe32.top/articles/moudel001/",
@@ -484,13 +477,6 @@
       "avatar": "https://std.thyuu.com/logo.svg"
     },
     {
-      "title": "OFDM学习过程及仿真",
-      "created": "2024-06-23 12:07",
-      "link": "https://www.gan1ser.top/post/ab4c01cf.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
-    },
-    {
       "title": "Cloudreve捐助版Docker部署指南",
       "created": "2024-06-23 10:15",
       "link": "https://www.lxink.cn/posts/73544047.html",
@@ -517,13 +503,6 @@
       "link": "https://yjvc.cn/index.php/archives/1376/",
       "author": "刘郎阁",
       "avatar": "https://cdn.qyliu.top/i/2024/04/19/66229406a68df.png"
-    },
-    {
-      "title": "分享一款TuneFree一款免费听歌软件，提供网页/Windows/安卓三端支持",
-      "created": "2024-06-22 10:34",
-      "link": "https://www.bbixb.top/archives/1357",
-      "author": "微生之最",
-      "avatar": "https://cdn.qyliu.top/i/2024/05/04/66351f5b62b65.png"
     },
     {
       "title": "RM 和 EDF 任务调度算法在 μCOSII 上的实现",
@@ -932,13 +911,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/03/31/66090bfe06ba6.png"
     },
     {
-      "title": "5月上旬",
-      "created": "2024-05-12 14:01",
-      "link": "https://flytusky.top/archives/141/",
-      "author": "微笔记",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/06/66117022b57a5.png"
-    },
-    {
       "title": "5月12日 随笔",
       "created": "2024-05-11 20:14",
       "link": "https://blog.xsot.cn/archives/note-24-05-12.html",
@@ -1016,13 +988,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/05/03/663458df4e6f0.png"
     },
     {
-      "title": "NLP谷歌语音指令训练大作业",
-      "created": "2024-04-29 21:13",
-      "link": "https://www.gan1ser.top/post/4c7a50a7.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
-    },
-    {
       "title": "说说人际关系",
       "created": "2024-04-28 10:50",
       "link": "https://www.henjinet.com/archives/ren-ji-guan-xi.html",
@@ -1058,25 +1023,11 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/06/661170950f7a2.png"
     },
     {
-      "title": "2024-4-20:The bad weather in GuangDong but something wonderful in school",
-      "created": "2024-04-21 11:21",
-      "link": "https://flytusky.top/archives/139/",
-      "author": "微笔记",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/06/66117022b57a5.png"
-    },
-    {
       "title": "一文让你理解网络阻塞与非阻塞和多路io复用",
       "created": "2024-04-21 09:55",
       "link": "https://huanxueblog.top/posts/a8fad53.html",
       "author": "幻雪博客",
       "avatar": "https://cdn.qyliu.top/i/2024/03/31/66090bfe06ba6.png"
-    },
-    {
-      "title": "万有引力定律与航空航天",
-      "created": "2024-04-20 22:16",
-      "link": "https://flytusky.top/archives/135/",
-      "author": "微笔记",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/06/66117022b57a5.png"
     },
     {
       "title": "在Windows上使用HomePod",
@@ -1149,13 +1100,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/27/662d1c9b7efe1.png"
     },
     {
-      "title": "多卡并行",
-      "created": "2024-04-17 16:25",
-      "link": "https://www.gan1ser.top/post/f229dda1.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
-    },
-    {
       "title": "517编程普及组数学之图论基础",
       "created": "2024-04-17 16:10",
       "link": "http://blog.wsq127.top/posts/362ffdf7/",
@@ -1224,20 +1168,6 @@
       "link": "https://dongjunke.cn/posts/2024/04/06/52154.html",
       "author": "东评西就",
       "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f26979229.png"
-    },
-    {
-      "title": "推荐一下维他命图床",
-      "created": "2024-04-05 17:14",
-      "link": "https://flytusky.top/archives/132/",
-      "author": "微笔记",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/06/66117022b57a5.png"
-    },
-    {
-      "title": "月考一的思考与感悟",
-      "created": "2024-04-05 10:12",
-      "link": "https://flytusky.top/archives/131/",
-      "author": "微笔记",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/06/66117022b57a5.png"
     },
     {
       "title": "免费安装杜比全景声",
