@@ -4,9 +4,16 @@
     "active_num": 54,
     "error_num": 25,
     "article_num": 238,
-    "last_updated_time": "2024-07-15 02:36:20"
+    "last_updated_time": "2024-07-15 09:36:46"
   },
   "article_data": [
+    {
+      "title": "HTML前端图表应用",
+      "created": "2024-07-15 09:04",
+      "link": "https://yjvc.cn/index.php/archives/1390/",
+      "author": "刘郎阁",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/19/66229406a68df.png"
+    },
     {
       "title": "肺系病的方证用药",
       "created": "2024-07-14 18:28",
@@ -552,13 +559,6 @@
       "link": "https://www.lyszm.com/914.html",
       "author": "六月是只猫",
       "avatar": "https://cdn.qyliu.top/i/2024/05/31/66597328bdd51.png"
-    },
-    {
-      "title": "开启新的交流通道“三言两语”留言板块",
-      "created": "2024-06-22 14:36",
-      "link": "https://yjvc.cn/index.php/archives/1376/",
-      "author": "刘郎阁",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/19/66229406a68df.png"
     },
     {
       "title": "RM 和 EDF 任务调度算法在 μCOSII 上的实现",
