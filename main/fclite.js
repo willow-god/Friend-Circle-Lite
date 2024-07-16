@@ -1,5 +1,10 @@
 function initialize_fc_lite() {
     const root = document.getElementById('friend-circle-lite-root');
+    
+    if (!root) return; // 确保根元素存在
+
+    // 清除之前的内容
+    root.innerHTML = '';
 
     const randomArticleContainer = document.createElement('div');
     randomArticleContainer.id = 'random-article';
@@ -195,9 +200,11 @@ function initialize_fc_lite() {
 };
 
 document.addEventListener("DOMContentLoaded", function() {
-    initialize_fc_lite();
+    setTimeout(initialize_fc_lite, 0);
 });
 
 document.addEventListener('pjax:complete', function() {
-    initialize_fc_lite();
+    setTimeout(initialize_fc_lite, 0);
 });
+
+setTimeout(initialize_fc_lite, 0);
