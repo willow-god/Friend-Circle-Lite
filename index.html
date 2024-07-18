@@ -5,23 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>文章卡片展示</title>
-    <link rel="stylesheet" href="./static/styles.css">
 </head>
 
 <body>
-    <div id="random-article"></div>
-    <div id="articles-container" class="articles-container"></div>
-    <button id="load-more-btn">显示更多</button>
-
-    <!-- 模态框结构 -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <img id="modal-author-avatar" src="" alt="">
-            <a id="modal-author-name-link"></a>
-            <div id="modal-articles-container"></div>
-        </div>
-    </div>
-    <script src="./static/script.js"></script>
+    <div id="friend-circle-lite-root"></div>
+<script>
+    if (typeof UserConfig === 'undefined') {
+        var UserConfig = {
+            // 填写你的fc Lite地址
+            private_api_url: 'https://fc.liushen.fun/',
+            // 点击加载更多时，一次最多加载几篇文章，默认20
+            page_turning_number: 20,
+            // 头像加载失败时，默认头像地址
+            error_img: 'https://pic.imgdb.cn/item/6695daa4d9c307b7e953ee3d.jpg', // https://cdn.qyliu.top/i/2024/03/22/65fcea97b3ca6.png
+        }
+    }
+</script>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/willow-god/Friend-Circle-Lite/main/fclite.min.css">
+<script src="https://fastly.jsdelivr.net/gh/willow-god/Friend-Circle-Lite/main/fclite.min.js"></script>
 </body>
 
 </html>
