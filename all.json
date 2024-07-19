@@ -1,25 +1,32 @@
 {
   "statistical_data": {
     "friends_num": 79,
-    "active_num": 50,
-    "error_num": 29,
-    "article_num": 223,
-    "last_updated_time": "2024-07-19 20:38:31"
+    "active_num": 51,
+    "error_num": 28,
+    "article_num": 228,
+    "last_updated_time": "2024-07-20 02:27:19"
   },
   "article_data": [
+    {
+      "title": "轻量友圈及issue邮箱订阅实现",
+      "created": "2024-07-19 16:01",
+      "link": "https://blog.qyliu.top/posts/4dc716ec/",
+      "author": "清羽飞扬",
+      "avatar": "https://blog.qyliu.top/info/avatar.ico"
+    },
+    {
+      "title": "索尼 NW-A55 第三方固件刷机教程",
+      "created": "2024-07-19 16:00",
+      "link": "https://dusays.com/729/",
+      "author": "杜老师说",
+      "avatar": "https://cdn.dusays.com/avatar.png"
+    },
     {
       "title": "网盘怎么选：一目了然",
       "created": "2024-07-19 12:46",
       "link": "https://yjvc.cn/index.php/archives/1393/",
       "author": "刘郎阁",
       "avatar": "https://cdn.qyliu.top/i/2024/04/19/66229406a68df.png"
-    },
-    {
-      "title": "Riverpod - flutter 状态管理的应用",
-      "created": "2024-07-18 21:24",
-      "link": "https://blog.xsot.cn/archives/riverpod.html",
-      "author": "星辰日记",
-      "avatar": "https://cdn.qyliu.top/i/2024/05/31/66595f03d46be.png"
     },
     {
       "title": "Bootcss CDN 被投毒后续",
@@ -309,6 +316,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/06/02/665c869ded7cd.png"
     },
     {
+      "title": "信盈达实习记录",
+      "created": "2024-07-07 09:13",
+      "link": "https://www.gan1ser.top/post/754a429b.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+    },
+    {
       "title": "时代造青年，还是青年造时代？",
       "created": "2024-07-07 07:31",
       "link": "http://blog.awaae001.top/posts/908575.html",
@@ -342,13 +356,6 @@
       "link": "https://blog.zhheo.com/p/61e9.html",
       "author": "张洪Heo",
       "avatar": "https://bu.dusays.com/2022/12/28/63ac2812183aa.png"
-    },
-    {
-      "title": "Tianji 访问统计运行监控服务器状态工具简单评测",
-      "created": "2024-07-04 16:00",
-      "link": "https://dusays.com/724/",
-      "author": "杜老师说",
-      "avatar": "https://cdn.dusays.com/avatar.png"
     },
     {
       "title": "彗星云跑路了",
@@ -498,6 +505,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/07/66123cff10a83.png"
     },
     {
+      "title": "数字信号的2FSK调制与解调",
+      "created": "2024-06-26 20:13",
+      "link": "https://www.gan1ser.top/post/b9a95f5e.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+    },
+    {
       "title": "浅谈前端各种模块化",
       "created": "2024-06-26 03:35",
       "link": "https://fe32.top/articles/moudel001/",
@@ -524,6 +538,13 @@
       "link": "https://www.thyuu.com/78325",
       "author": "风记星辰",
       "avatar": "https://std.thyuu.com/logo.svg"
+    },
+    {
+      "title": "OFDM学习过程及仿真",
+      "created": "2024-06-23 12:07",
+      "link": "https://www.gan1ser.top/post/ab4c01cf.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "Cloudreve捐助版Docker部署指南",
@@ -734,13 +755,6 @@
       "link": "https://talen.top/posts/6c819fda/",
       "author": "M.Talen",
       "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
-    },
-    {
-      "title": "Alist宝塔部署及其美化",
-      "created": "2024-06-04 11:24",
-      "link": "https://blog.qyliu.top/posts/a84f5e47/",
-      "author": "清羽飞扬",
-      "avatar": "https://blog.qyliu.top/info/avatar.ico"
     },
     {
       "title": "从零开始制作一个Butterfly主题",
@@ -967,6 +981,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/05/03/663458df4e6f0.png"
     },
     {
+      "title": "NLP谷歌语音指令训练大作业",
+      "created": "2024-04-29 21:13",
+      "link": "https://www.gan1ser.top/post/4c7a50a7.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+    },
+    {
       "title": "马里奥制造1打百人团教程",
       "created": "2024-04-27 19:43",
       "link": "https://blog.sinzmise.top/posts/10996/",
@@ -1070,6 +1091,13 @@
       "link": "http://blog.wsq127.top/posts/a996222c/",
       "author": "辞琼",
       "avatar": "https://cdn.qyliu.top/i/2024/04/27/662d1c9b7efe1.png"
+    },
+    {
+      "title": "多卡并行",
+      "created": "2024-04-17 16:25",
+      "link": "https://www.gan1ser.top/post/f229dda1.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "517编程普及组数学之图论基础",
@@ -1532,6 +1560,13 @@
       "link": "https://blog.imoyan.top/posts/cbff.html",
       "author": "陌颜Hao",
       "avatar": "https://bu.dusays.com/2024/03/15/65f3fd054c5db.jpg"
+    },
+    {
+      "title": "HHKB 使用体验",
+      "created": "2023-03-11 03:30",
+      "link": "https://blog.xsot.cn/archives/hhkb.html",
+      "author": "星辰日记",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/31/66595f03d46be.png"
     },
     {
       "title": "全自动博客部署方案",
