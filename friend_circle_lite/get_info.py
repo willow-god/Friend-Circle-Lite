@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil import parser
 import requests
 import feedparser
@@ -17,7 +17,7 @@ def format_published_time(time_str):
     """
     try:
         # 尝试自动解析
-        parsed_time = parser.parse(time_str)
+        parsed_time = parser.parse(time_str) + timedelta(hours=8)
         return parsed_time.strftime('%Y-%m-%d %H:%M')
     except (ValueError, parser.ParserError):
         pass
@@ -33,7 +33,7 @@ def format_published_time(time_str):
 
     for fmt in time_formats:
         try:
-            parsed_time = datetime.strptime(time_str, fmt)
+            parsed_time = datetime.strptime(time_str, fmt) + timedelta(hours=8)
             return parsed_time.strftime('%Y-%m-%d %H:%M')
         except ValueError:
             continue
