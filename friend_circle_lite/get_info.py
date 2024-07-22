@@ -207,6 +207,7 @@ def fetch_and_process_data(json_url, count=5):
     error_friends = 0
     total_articles = 0
     article_data = []
+    error_friends_info = []
 
     with ThreadPoolExecutor(max_workers=10) as executor:
         future_to_friend = {
@@ -224,9 +225,11 @@ def fetch_and_process_data(json_url, count=5):
                     total_articles += len(result['articles'])
                 else:
                     error_friends += 1
+                    error_friends_info.append(friend)
             except Exception as e:
                 print(f"处理 {friend} 时发生错误: {e}")
                 error_friends += 1
+                error_friends_info.append(friend)
 
     result = {
         'statistical_data': {
@@ -242,7 +245,7 @@ def fetch_and_process_data(json_url, count=5):
     print("数据处理完成")
     print("总共有 %d 位朋友，其中 %d 位博客可访问，%d 位博客无法访问" % (total_friends, active_friends, error_friends))
 
-    return result
+    return result, error_friends_info
 
 def sort_articles_by_time(data):
     """

@@ -1,2 +1,2 @@
 #!/bin/bash
-nohup python server.py > grab.log 2>&1 &
+nohup python3 server.py > grab.log 2>&1 &
