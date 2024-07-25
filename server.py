@@ -31,20 +31,23 @@ data_lock = Lock()
 def fetch_articles():
     global articles_data, error_friends_info
     logging.info("开始抓取文章...")
-    config = load_config("./conf.yaml")
-    if config["spider_settings"]["enable"]:
-        json_url = config['spider_settings']['json_url']
-        article_count = config['spider_settings']['article_count']
-        logging.info(f"正在从 {json_url} 中获取，每个博客获取 {article_count} 篇文章")
-        try:
+    try:
+        config = load_config("./conf.yaml")
+        if config["spider_settings"]["enable"]:
+            json_url = config['spider_settings']['json_url']
+            article_count = config['spider_settings']['article_count']
+            logging.info(f"正在从 {json_url} 中获取，每个博客获取 {article_count} 篇文章")
             result, errors = fetch_and_process_data(json_url=json_url, count=article_count)
             sorted_result = sort_articles_by_time(result)
             with data_lock:
-                articles_data = sorted_result
+                articles_data["article_data"] = sorted_result["article_data"]
+                articles_data["statistical_data"] = sorted_result["statistical_data"]
                 error_friends_info = errors
             logging.info("文章抓取成功")
-        except Exception as e:
-            logging.error(f"抓取文章时出错: {e}")
+        else:
+            logging.warning("抓取设置在配置中被禁用。")
+    except Exception as e:
+        logging.error(f"抓取文章时出错: {e}")
 
 # 每四个小时抓取一次文章
 scheduler.add_job(fetch_articles, 'interval', hours=4)
