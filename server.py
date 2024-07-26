@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from threading import Lock
 import logging
@@ -11,6 +12,14 @@ from friend_circle_lite.get_info import fetch_and_process_data, sort_articles_by
 from friend_circle_lite.get_conf import load_config
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 允许的域
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # 配置APScheduler
 scheduler = AsyncIOScheduler()

@@ -60,11 +60,12 @@ def check_feed(blog_url, session):
     """
     
     atom_url = blog_url.rstrip('/') + '/atom.xml'
-    rss_url = blog_url.rstrip('/') + '/rss2.xml'
+    rss_url = blog_url.rstrip('/') + '/rss.xml'  # 2024-07-26 添加 /rss.xml内容的支持
+    rss2_url = blog_url.rstrip('/') + '/rss2.xml'
     feed_url = blog_url.rstrip('/') + '/feed'
-    
-    # 2024-07-25 添加 /index.xml内容的支持
-    index_url = blog_url.rstrip('/') + '/index.xml'
+    feed2_url = blog_url.rstrip('/') + '/feed.xml'  # 2024-07-26 添加 /feed.xml内容的支持
+    feed3_url = blog_url.rstrip('/') + '/feed/'  # 2024-07-26 添加 /feed/内容的支持
+    index_url = blog_url.rstrip('/') + '/index.xml' # 2024-07-25 添加 /index.xml内容的支持
     
     try:
         atom_response = session.get(atom_url, headers=headers, timeout=timeout)
@@ -76,7 +77,14 @@ def check_feed(blog_url, session):
     try:
         rss_response = session.get(rss_url, headers=headers, timeout=timeout)
         if rss_response.status_code == 200:
-            return ['rss2', rss_url]
+            return ['rss', rss_url]
+    except requests.RequestException:
+        pass
+    
+    try:
+        rss_response = session.get(rss2_url, headers=headers, timeout=timeout)
+        if rss_response.status_code == 200:
+            return ['rss2', rss2_url]
     except requests.RequestException:
         pass
 
@@ -86,11 +94,25 @@ def check_feed(blog_url, session):
             return ['feed', feed_url]
     except requests.RequestException:
         pass
-        
+    
+    try:
+        feed_response = session.get(feed2_url, headers=headers, timeout=timeout)
+        if feed_response.status_code == 200:
+            return ['feed2', feed2_url]
+    except requests.RequestException:
+        pass
+    
     try:
         feed_response = session.get(index_url, headers=headers, timeout=timeout)
         if feed_response.status_code == 200:
             return ['index', index_url]
+    except requests.RequestException:
+        pass
+    
+    try:
+        feed_response = session.get(feed3_url, headers=headers, timeout=timeout)
+        if feed_response.status_code == 200:
+            return ['feed3', feed3_url]
     except requests.RequestException:
         pass
     
