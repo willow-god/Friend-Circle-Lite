@@ -136,18 +136,18 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 400px;
+    width: 350px;
     background-color: var(--modal-content-bg-color);
     padding: 20px;
     border: 1px solid var(--border-color);
     z-index: 1000;
-    max-height: 95%;
+    max-height: 85%;
     overflow-y: auto;
     border-radius: 20px;
     transition: opacity 0.3s;
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 440px) {
     .modal-content {
         width: 80%;
     }
@@ -194,6 +194,7 @@ body {
 }
 
 .modal-article .modal-article-title {
+    color: var(--text-color);
     font-size: 18px;
     line-height: 1.2;
     cursor: pointer;

@@ -20,19 +20,6 @@ function initialize_fc_lite() {
     loadMoreBtn.innerText = '显示更多';
     root.appendChild(loadMoreBtn);
 
-    // 创建模态框结构
-    const modal = document.createElement('div');
-    modal.id = 'modal';
-    modal.className = 'modal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <img id="modal-author-avatar" src="" alt="">
-            <a id="modal-author-name-link"></a>
-            <div id="modal-articles-container"></div>
-        </div>
-    `;
-    document.body.appendChild(modal); // this.body 改为 document.body
-
     // 创建统计信息容器
     const statsContainer = document.createElement('div');
     statsContainer.id = 'stats-container';
@@ -117,7 +104,7 @@ function initialize_fc_lite() {
 
             const date = document.createElement('div');
             date.className = 'card-date';
-            date.innerText = article.created.substring(0, 10);
+            date.innerText = "🗓️" + article.created.substring(0, 10);
             card.appendChild(date);
 
             const bgImg = document.createElement('img');
@@ -137,6 +124,21 @@ function initialize_fc_lite() {
     }
 
     function showAuthorArticles(author, avatar, link) {
+        // 如果不存在，则创建模态框结构
+        if (!document.getElementById('modal')) {
+            const modal = document.createElement('div');
+            modal.id = 'modal';
+            modal.className = 'modal';
+            modal.innerHTML = `
+            <div class="modal-content">
+                <img id="modal-author-avatar" src="" alt="">
+                <a id="modal-author-name-link"></a>
+                <div id="modal-articles-container"></div>
+            </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
         const modal = document.getElementById('modal');
         const modalArticlesContainer = document.getElementById('modal-articles-container');
         const modalAuthorAvatar = document.getElementById('modal-author-avatar');
@@ -149,7 +151,8 @@ function initialize_fc_lite() {
         modalAuthorNameLink.href = new URL(link).origin;
 
         const authorArticles = allArticles.filter(article => article.author === author);
-        authorArticles.forEach(article => {
+        // 仅仅取前五个，防止文章过多导致模态框过长，如果不够五个则全部取出
+        authorArticles.slice(0, 5).forEach(article => {
             const articleDiv = document.createElement('div');
             articleDiv.className = 'modal-article';
 
@@ -162,7 +165,7 @@ function initialize_fc_lite() {
 
             const date = document.createElement('div');
             date.className = 'modal-article-date';
-            date.innerText = "--" + article.created.substring(0, 10);
+            date.innerText = "📅" + article.created.substring(0, 10);
             articleDiv.appendChild(date);
 
             modalArticlesContainer.appendChild(articleDiv);
@@ -181,6 +184,7 @@ function initialize_fc_lite() {
         modal.classList.remove('modal-open');
         modal.addEventListener('transitionend', () => {
             modal.style.display = 'none';
+            document.body.removeChild(modal);
         }, { once: true });
     }
 
