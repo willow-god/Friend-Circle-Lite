@@ -141,7 +141,7 @@ body {
     padding: 20px;
     border: 1px solid var(--border-color);
     z-index: 1000;
-    max-height: 85%;
+    max-height: 90%;
     overflow-y: auto;
     border-radius: 20px;
     transition: opacity 0.3s;
