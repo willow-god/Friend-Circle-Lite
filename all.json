@@ -3,8 +3,8 @@
     "friends_num": 80,
     "active_num": 62,
     "error_num": 18,
-    "article_num": 275,
-    "last_updated_time": "2024-07-26 20:38:23"
+    "article_num": 280,
+    "last_updated_time": "2024-07-27 02:26:19"
   },
   "article_data": [
     {
@@ -31,7 +31,7 @@
     {
       "title": "视频传信教程",
       "created": "2024-07-26 02:31",
-      "link": "https://blog.zhwei.tech/index.php/{category}/202.html",
+      "link": "https://38.6.167.67/index.php/{category}/202.html",
       "author": "ZHI-BLOG",
       "avatar": "https://cdn.qyliu.top/i/2024/06/01/665a9a8f8418a.png"
     },
@@ -50,7 +50,7 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/15/661d443b5359c.png"
     },
     {
-      "title": "简单定时脚本的编写及应用（含简易的 CDN 攻击预警）",
+      "title": "利用 Cron 编写简单的定时脚本（含简易的 CDN 攻击预警）",
       "created": "2024-07-24 22:43",
       "link": "https://uuanqin.top/p/b9dad4e7/",
       "author": "半方池水",
@@ -115,7 +115,7 @@
     {
       "title": "ZHWEI-TXL使用文档-图文",
       "created": "2024-07-23 03:17",
-      "link": "https://blog.zhwei.tech/index.php/{category}/187.html",
+      "link": "https://38.6.167.67/index.php/{category}/187.html",
       "author": "ZHI-BLOG",
       "avatar": "https://cdn.qyliu.top/i/2024/06/01/665a9a8f8418a.png"
     },
@@ -129,7 +129,7 @@
     {
       "title": "ZHWEI-TXL使用文档-视频",
       "created": "2024-07-22 06:29",
-      "link": "https://blog.zhwei.tech/index.php/{category}/180.html",
+      "link": "https://38.6.167.67/index.php/{category}/180.html",
       "author": "ZHI-BLOG",
       "avatar": "https://cdn.qyliu.top/i/2024/06/01/665a9a8f8418a.png"
     },
@@ -195,6 +195,13 @@
       "link": "https://yjvc.cn/index.php/archives/1393/",
       "author": "刘郎阁",
       "avatar": "https://cdn.qyliu.top/i/2024/04/19/66229406a68df.png"
+    },
+    {
+      "title": "我为下一届辩论新生留下的文字",
+      "created": "2024-07-19 05:42",
+      "link": "https://blog.alenliu.space/p/%E6%88%91%E4%B8%BA%E4%B8%8B%E4%B8%80%E5%B1%8A%E8%BE%A9%E8%AE%BA%E6%96%B0%E7%94%9F%E7%95%99%E4%B8%8B%E7%9A%84%E6%96%87%E5%AD%97/",
+      "author": "AlenLiu",
+      "avatar": "https://cdn.qyliu.top/i/2024/03/31/66097a6d9363f.png"
     },
     {
       "title": "Riverpod - flutter 状态管理的应用",
@@ -283,14 +290,14 @@
     {
       "title": "二次项系数“为1“、“不为1“的十字相乘",
       "created": "2024-07-16 00:42",
-      "link": "https://blog.zhwei.tech/index.php/{category}/179.html",
+      "link": "https://38.6.167.67/index.php/{category}/179.html",
       "author": "ZHI-BLOG",
       "avatar": "https://cdn.qyliu.top/i/2024/06/01/665a9a8f8418a.png"
     },
     {
       "title": "因式分解",
       "created": "2024-07-16 00:32",
-      "link": "https://blog.zhwei.tech/index.php/{category}/172.html",
+      "link": "https://38.6.167.67/index.php/{category}/172.html",
       "author": "ZHI-BLOG",
       "avatar": "https://cdn.qyliu.top/i/2024/06/01/665a9a8f8418a.png"
     },
@@ -421,6 +428,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/27/662d1c9b7efe1.png"
     },
     {
+      "title": "高效利用 GitHub 搜索，精准快速获取所需",
+      "created": "2024-07-08 18:27",
+      "link": "https://talen.top/posts/b9a0156a/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
+    },
+    {
       "title": "技术之旅与办公室冷暖之争：探索与适应",
       "created": "2024-07-08 17:10",
       "link": "https://yjvc.cn/index.php/archives/1385/",
@@ -482,13 +496,6 @@
       "link": "https://blog.qyliu.top/posts/67189760/",
       "author": "清羽飞扬",
       "avatar": "https://blog.qyliu.top/info/avatar.ico"
-    },
-    {
-      "title": "我为下一届辩论新生留下的文字",
-      "created": "2024-07-05 05:42",
-      "link": "https://blog.alenliu.space/p/%E6%88%91%E4%B8%BA%E4%B8%8B%E4%B8%80%E5%B1%8A%E8%BE%A9%E8%AE%BA%E6%96%B0%E7%94%9F%E7%95%99%E4%B8%8B%E7%9A%84%E6%96%87%E5%AD%97/",
-      "author": "AlenLiu",
-      "avatar": "https://cdn.qyliu.top/i/2024/03/31/66097a6d9363f.png"
     },
     {
       "title": "彗星云跑路了",
@@ -601,6 +608,13 @@
       "link": "https://qq.mba/p/146ebd6.html",
       "author": "满心记",
       "avatar": "https://bu.dusays.com/2023/01/29/63d5bf7fa0d2c.png"
+    },
+    {
+      "title": "IDM：广受欢迎的高速下载管理器",
+      "created": "2024-07-01 00:20",
+      "link": "https://talen.top/posts/b832248a/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
     },
     {
       "title": "师大残酷青春物语",
@@ -750,6 +764,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/23/662748990165a.png"
     },
     {
+      "title": "让Meting API解锁音乐开发新可能",
+      "created": "2024-06-21 16:34",
+      "link": "https://talen.top/posts/833fcabb/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
+    },
+    {
       "title": "【开源项目】Scrcpy-GUI：一个简洁强大scrcpy客户端",
       "created": "2024-06-21 15:46",
       "link": "https://gyhwd.top/archives/I63eJVMi",
@@ -827,6 +848,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/26/662bcda2afd5d.png"
     },
     {
+      "title": "零基础Docker入门指南",
+      "created": "2024-06-13 22:54",
+      "link": "https://talen.top/posts/869715fc/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
+    },
+    {
       "title": "离歌不夜天",
       "created": "2024-06-12 22:25",
       "link": "https://meuicat.com/blog/88/",
@@ -895,6 +923,13 @@
       "link": "https://blog.xsot.cn/archives/dji-mini4k.html",
       "author": "星辰日记",
       "avatar": "https://cdn.qyliu.top/i/2024/05/31/66595f03d46be.png"
+    },
+    {
+      "title": "服务器最佳搭档，宝塔和1Panel的部署与选择",
+      "created": "2024-06-06 01:07",
+      "link": "https://talen.top/posts/6c819fda/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
     },
     {
       "title": "从零开始制作一个Butterfly主题",
