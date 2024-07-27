@@ -9,7 +9,7 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
 }
 
-timeout = (5, 10) # 连接超时和读取超时，防止requests接受时间过长
+timeout = (10, 15) # 连接超时和读取超时，防止requests接受时间过长
 
 def format_published_time(time_str):
     """
@@ -184,6 +184,7 @@ def process_friend(friend, session, count):
     """
     name, blog_url, avatar = friend
     feed_type, feed_url = check_feed(blog_url, session)
+    print(f"========“{name}”的博客“{blog_url}”的feed类型为“{feed_type}”========")
 
     if feed_type != 'none':
         feed_info = parse_feed(feed_url, session, count)

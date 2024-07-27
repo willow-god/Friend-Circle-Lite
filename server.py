@@ -1,29 +1,16 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse, HTMLResponse
-from fastapi.middleware.cors import CORSMiddleware
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from threading import Lock
+import schedule
+import time
 import logging
 import os
-import json
 import random
+from threading import Lock, Thread
 
 from friend_circle_lite.get_info import fetch_and_process_data, sort_articles_by_time
 from friend_circle_lite.get_conf import load_config
 
 app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # 允许的域
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# 配置APScheduler
-scheduler = AsyncIOScheduler()
-scheduler.start()
 
 # 配置日志记录
 log_file = "grab.log"
@@ -58,9 +45,6 @@ def fetch_articles():
     except Exception as e:
         logging.error(f"抓取文章时出错: {e}")
 
-# 每四个小时抓取一次文章
-scheduler.add_job(fetch_articles, 'interval', hours=4)
-
 @app.get("/", response_class=HTMLResponse)
 async def root():
     html_content = """
@@ -74,7 +58,7 @@ async def root():
         <p>这是一个轻量版友链朋友圈，有两种部署方式，其中自部署使用 fastAPI，还有 github action 部署方式，可以很方便的从友链中获取文章并展示到前端。</p>
         <ul>
             <li><a href="/all">查看所有文章，按照时间进行排序</a></li>
-            <li><a href="/errors">查看出错误数据，包含所有的错误友链信息，可自行发挥</a></li>
+            <li><a href="/errors">查看出错数据，包含所有的错误友链信息，可自行发挥</a></li>
             <li><a href="/random">随机文章</a></li>
         </ul>
     </body>
@@ -101,13 +85,24 @@ async def get_random_article():
         else:
             return JSONResponse(content={"error": "No articles available"}, status_code=404)
 
-if __name__ == '__main__':
-    import uvicorn
+def schedule_tasks():
+    schedule.every(4).hours.do(fetch_articles)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
 
+if __name__ == '__main__':
     # 清空日志文件
     if os.path.exists(log_file):
         with open(log_file, 'w'):
             pass
 
     fetch_articles()  # 启动时立即抓取一次
+
+    # 启动调度任务线程
+    task_thread = Thread(target=schedule_tasks)
+    task_thread.start()
+
+    # 启动FastAPI应用
+    import uvicorn
     uvicorn.run(app, host='0.0.0.0', port=1223)
