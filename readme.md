@@ -1,5 +1,7 @@
 ---
 
+<img align='right' src="./static/avatar.png" width="150" alt="fclite">
+
 # Friend-Circle-Lite
 
 [前端展示](https://fc.liushen.fun) | [详细文档](https://blog.qyliu.top/posts/4dc716ec/)
@@ -8,6 +10,12 @@
 
 ## 开发进度
 
+### 2024-07-28
+
+* 自部署添加跨域请求 
+* 修复内存占用异常问题
+* 将html资源分开存放，实现更加美观的页面
+
 ### 2024-07-26
 
 * 自部署添加跨域请求 
@@ -15,11 +23,16 @@
 * 修复PJAX下会多次出现模态框的问题，并且切换页面不消失
 * 修复模态框宽度问题，添加日历图标以更加美观
 
+<details>
+<summary>查看更多</summary>
 ### 2024-07-25
 
 * 自部署正在开发中，仅供测试
 * 添加`/errors.json`，用于获取丢失友链数据，提高自定义程度
 * 添加`/index.xml`接口的爬取，提高兼容性
+</details>
+
+
 
 ## 展示页面
 
