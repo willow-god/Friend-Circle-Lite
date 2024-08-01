@@ -36,7 +36,7 @@
 
 ## 展示页面
 
-* [清羽飞扬の友链朋友圈](https://blog.qyliu.top/fcircle-lite/)
+* [清羽飞扬の友链朋友圈](https://blog.qyliu.top/fcircle/)
 
 * [❖星港◎Star☆ 的友链朋友圈](https://blog.starsharbor.com/fcircle/)
 * 欢迎更多

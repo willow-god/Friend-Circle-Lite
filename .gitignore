@@ -7,3 +7,4 @@
 
 # 忽略 Jupyter Notebook 文件
 *.ipynb
+*.log
