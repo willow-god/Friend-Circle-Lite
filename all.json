@@ -1,10 +1,10 @@
 {
   "statistical_data": {
     "friends_num": 81,
-    "active_num": 60,
-    "error_num": 21,
-    "article_num": 273,
-    "last_updated_time": "2024-08-01 20:41:00"
+    "active_num": 61,
+    "error_num": 20,
+    "article_num": 279,
+    "last_updated_time": "2024-08-02 02:28:30"
   },
   "article_data": [
     {
@@ -13,6 +13,13 @@
       "link": "https://xiangming.site/847.html",
       "author": "湘铭",
       "avatar": "https://cdn.qyliu.top/i/2024/04/19/6622928fc416c.png"
+    },
+    {
+      "title": "SpringBoot 中的 IOC & DI 入门",
+      "created": "2024-08-02 00:40",
+      "link": "https://uuanqin.top/p/66216cb4/",
+      "author": "半方池水",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/14/661bf5b9d3d5c.png"
     },
     {
       "title": "风记星辰的参考与设计：优化菜单、优化评论、星度主题支持平台",
@@ -34,6 +41,13 @@
       "link": "https://uuanqin.top/p/e7aa13ce/",
       "author": "半方池水",
       "avatar": "https://cdn.qyliu.top/i/2024/04/14/661bf5b9d3d5c.png"
+    },
+    {
+      "title": "Hello Halo",
+      "created": "2024-08-01 09:57",
+      "link": "http://sodacode.top/archives/hello-halo",
+      "author": "sodacode",
+      "avatar": "https://cdn.qyliu.top/i/2024/07/22/669e7e548435a.webp"
     },
     {
       "title": "CloudFlare实用项目推荐",
@@ -71,11 +85,25 @@
       "avatar": "https://cdn.qyliu.top/i/2024/03/30/660769346d538.jpg"
     },
     {
+      "title": "Xterminal：颜值高、功能强，追求卓越体验的SSH工具",
+      "created": "2024-07-31 07:56",
+      "link": "https://talen.top/posts/d7f79b43/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
+    },
+    {
       "title": "2024-07小记",
       "created": "2024-07-31 06:42",
       "link": "https://blog.sinzmise.top/posts/15799/",
       "author": "星空故事",
       "avatar": "https://cdn.qyliu.top/i/2024/04/24/6628f767880fa.png"
+    },
+    {
+      "title": "进制转换",
+      "created": "2024-07-31 02:39",
+      "link": "https://blog.zhwei.tech/index.php/archives/282/",
+      "author": "ZHI-BLOG",
+      "avatar": "https://cdn.qyliu.top/i/2024/06/01/665a9a8f8418a.png"
     },
     {
       "title": "饮品测评记录「第二十二期」",
@@ -92,7 +120,7 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/19/66229406a68df.png"
     },
     {
-      "title": "about-my-recent-life",
+      "title": "最近的生活状态",
       "created": "2024-07-29 23:19",
       "link": "https://blog.ciraos.top/p/2e32758/",
       "author": "葱苓sama",
@@ -127,6 +155,13 @@
       "avatar": "https://bu.dusays.com/2023/01/29/63d5bf7fa0d2c.png"
     },
     {
+      "title": "c++指针",
+      "created": "2024-07-29 05:00",
+      "link": "https://blog.zhwei.tech/index.php/archives/277/",
+      "author": "ZHI-BLOG",
+      "avatar": "https://cdn.qyliu.top/i/2024/06/01/665a9a8f8418a.png"
+    },
+    {
       "title": "如何借助 Cloudflare 自建 NPM 镜像教程",
       "created": "2024-07-29 00:00",
       "link": "https://dusays.com/732/",
@@ -155,6 +190,20 @@
       "avatar": "https://cdn.qyliu.top/i/2024/07/07/668a9e330dc6a.webp"
     },
     {
+      "title": "htcsp语法补强//顺序结构 数组 字符串 函数 递归",
+      "created": "2024-07-28 03:28",
+      "link": "https://blog.zhwei.tech/index.php/archives/218/",
+      "author": "ZHI-BLOG",
+      "avatar": "https://cdn.qyliu.top/i/2024/06/01/665a9a8f8418a.png"
+    },
+    {
+      "title": "htcsp计算机基础",
+      "created": "2024-07-28 01:05",
+      "link": "https://blog.zhwei.tech/index.php/archives/209/",
+      "author": "ZHI-BLOG",
+      "avatar": "https://cdn.qyliu.top/i/2024/06/01/665a9a8f8418a.png"
+    },
+    {
       "title": "typecho热力图插件",
       "created": "2024-07-27 00:13",
       "link": "https://www.yvii.cn/archives/2025.html",
@@ -169,11 +218,11 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/19/6622928fc416c.png"
     },
     {
-      "title": "深圳租房记录",
-      "created": "2024-07-26 04:27",
-      "link": "https://blog.june-pj.cn/posts/f7040945/",
-      "author": "June",
-      "avatar": "https://cdn.qyliu.top/i/2024/03/22/65fc5b18a2574.png"
+      "title": "视频传信教程",
+      "created": "2024-07-26 02:31",
+      "link": "https://blog.zhwei.tech/index.php/archives/202/",
+      "author": "ZHI-BLOG",
+      "avatar": "https://cdn.qyliu.top/i/2024/06/01/665a9a8f8418a.png"
     },
     {
       "title": "由“原神” 4.8 版本舆情引发的一些思考",
@@ -372,25 +421,11 @@
       "avatar": "https://bu.dusays.com/2023/01/29/63d5bf7fa0d2c.png"
     },
     {
-      "title": "2024版IDEA终端无法打开",
-      "created": "2024-07-18 06:45",
-      "link": "https://blog.june-pj.cn/posts/638470e5/",
-      "author": "June",
-      "avatar": "https://cdn.qyliu.top/i/2024/03/22/65fc5b18a2574.png"
-    },
-    {
       "title": "plugin-blog-hao 插件部分功能演示",
       "created": "2024-07-17 19:03",
       "link": "https://blog.wenjing.xin/archives/nhqdbrBO",
       "author": "dreamChaser",
       "avatar": "https://cdn.qyliu.top/i/2024/03/22/65fc59b439430.png"
-    },
-    {
-      "title": "SpringBoot 的原理以及写一个自定义 Starter",
-      "created": "2024-07-16 21:25",
-      "link": "https://uuanqin.top/p/21b7da2d/",
-      "author": "半方池水",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/14/661bf5b9d3d5c.png"
     },
     {
       "title": "「花与罪的无限回廊」｜陈致逸全新专辑先行曲试听体验",
@@ -533,6 +568,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/27/662d1c9b7efe1.png"
     },
     {
+      "title": "高效利用 GitHub 搜索，精准快速获取所需",
+      "created": "2024-07-08 18:27",
+      "link": "https://talen.top/posts/b9a0156a/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
+    },
+    {
       "title": "技术之旅与办公室冷暖之争：探索与适应",
       "created": "2024-07-08 17:10",
       "link": "https://yjvc.cn/index.php/archives/1385/",
@@ -594,13 +636,6 @@
       "link": "https://qq.mba/p/e23ab292.html",
       "author": "满心记",
       "avatar": "https://bu.dusays.com/2023/01/29/63d5bf7fa0d2c.png"
-    },
-    {
-      "title": "广州游记",
-      "created": "2024-07-04 06:21",
-      "link": "https://blog.june-pj.cn/posts/87c54a92/",
-      "author": "June",
-      "avatar": "https://cdn.qyliu.top/i/2024/03/22/65fc5b18a2574.png"
     },
     {
       "title": "特殊用途格式详细介绍",
@@ -666,6 +701,13 @@
       "avatar": "https://bu.dusays.com/2023/01/29/63d5bf7fa0d2c.png"
     },
     {
+      "title": "IDM：广受欢迎的高速下载管理器",
+      "created": "2024-07-01 00:20",
+      "link": "https://talen.top/posts/b832248a/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
+    },
+    {
       "title": "师大残酷青春物语",
       "created": "2024-06-30 22:25",
       "link": "https://www.hitagi.icu/posts/5db6f10/",
@@ -699,13 +741,6 @@
       "link": "https://blog.sinzmise.top/posts/64935/",
       "author": "星空故事",
       "avatar": "https://cdn.qyliu.top/i/2024/04/24/6628f767880fa.png"
-    },
-    {
-      "title": "Pip版本更新导致友圈爬虫异常",
-      "created": "2024-06-28 19:28",
-      "link": "https://blog.june-pj.cn/posts/5715eb81/",
-      "author": "June",
-      "avatar": "https://cdn.qyliu.top/i/2024/03/22/65fc5b18a2574.png"
     },
     {
       "title": "Butterfly的魔改教程：最新评论页",
@@ -792,6 +827,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/23/662748990165a.png"
     },
     {
+      "title": "让Meting API解锁音乐开发新可能",
+      "created": "2024-06-21 16:34",
+      "link": "https://talen.top/posts/833fcabb/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
+    },
+    {
       "title": "【开源项目】Scrcpy-GUI：一个简洁强大scrcpy客户端",
       "created": "2024-06-21 15:46",
       "link": "https://gyhwd.top/archives/I63eJVMi",
@@ -841,6 +883,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/26/662bcda2afd5d.png"
     },
     {
+      "title": "零基础Docker入门指南",
+      "created": "2024-06-13 22:54",
+      "link": "https://talen.top/posts/869715fc/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
+    },
+    {
       "title": "离歌不夜天",
       "created": "2024-06-12 22:25",
       "link": "https://meuicat.com/blog/88/",
@@ -888,13 +937,6 @@
       "link": "https://blog.ciraos.top/p/ac068839/",
       "author": "葱苓sama",
       "avatar": "https://cdn.qyliu.top/i/2024/05/03/663458df4e6f0.png"
-    },
-    {
-      "title": "张家界游记",
-      "created": "2024-06-09 06:13",
-      "link": "https://blog.june-pj.cn/posts/a46d76f0/",
-      "author": "June",
-      "avatar": "https://cdn.qyliu.top/i/2024/03/22/65fc5b18a2574.png"
     },
     {
       "title": "hexo + github-action持续集成",
