@@ -1,6 +1,6 @@
 ---
 
-<img align='right' src="./static/avatar.png" width="150" alt="fclite">
+<img align='right' src="./static/icon.webp" width="150" alt="fclite">
 
 # Friend-Circle-Lite
 
