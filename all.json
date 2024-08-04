@@ -1,12 +1,19 @@
 {
   "statistical_data": {
     "friends_num": 84,
-    "active_num": 63,
-    "error_num": 21,
+    "active_num": 64,
+    "error_num": 20,
     "article_num": 288,
-    "last_updated_time": "2024-08-04 14:28:50"
+    "last_updated_time": "2024-08-04 20:37:35"
   },
   "article_data": [
+    {
+      "title": "关于DNS的学习记录 其一",
+      "created": "2024-08-04 19:25",
+      "link": "https://www.hitagi.icu/posts/94d49d67/",
+      "author": "Hitagi",
+      "avatar": "https://cdn.qyliu.top/i/2024/07/07/668a9e330dc6a.webp"
+    },
     {
       "title": "真·彩虹猫加载动画",
       "created": "2024-08-03 01:12",
@@ -26,7 +33,7 @@
       "created": "2024-08-02 14:40",
       "link": "https://blog.zhheo.com/p/7003.html",
       "author": "张洪Heo",
-      "avatar": "https://bu.dusays.com/2022/12/28/63ac2812183aa.png"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2e22827be.webp"
     },
     {
       "title": "懵逼加油记",
@@ -47,7 +54,7 @@
       "created": "2024-08-02 10:49",
       "link": "https://blog.zhheo.com/p/b45f.html",
       "author": "张洪Heo",
-      "avatar": "https://bu.dusays.com/2022/12/28/63ac2812183aa.png"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2e22827be.webp"
     },
     {
       "title": "不负责任的猫爸-一语成谶了",
@@ -68,7 +75,7 @@
       "created": "2024-08-01 19:51",
       "link": "https://www.thyuu.com/78404",
       "author": "风记星辰",
-      "avatar": "https://std.thyuu.com/logo.svg"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2d2430f68.webp"
     },
     {
       "title": "人没逝，感谢关心（咬牙切齿）",
@@ -96,7 +103,7 @@
       "created": "2024-08-01 00:00",
       "link": "https://dusays.com/733/",
       "author": "杜老师说",
-      "avatar": "https://cdn.dusays.com/avatar.png"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af33a4d6643.webp"
     },
     {
       "title": "SPI 概念及案例实践（上）",
@@ -145,7 +152,7 @@
       "created": "2024-07-30 17:40",
       "link": "https://blog.starsharbor.com/posts/beverage-evaluation-record-22/",
       "author": "星港Star",
-      "avatar": "https://bu.dusays.com/2023/09/27/6513053bebdb2.webp"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af3198042a2.webp"
     },
     {
       "title": "七月后：探索不断、假期将至",
@@ -166,7 +173,7 @@
       "created": "2024-07-29 16:56",
       "link": "https://www.thyuu.com/78366",
       "author": "风记星辰",
-      "avatar": "https://std.thyuu.com/logo.svg"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2d2430f68.webp"
     },
     {
       "title": "飞跃13号房-对网瘾治疗披露与反抗",
@@ -187,7 +194,7 @@
       "created": "2024-07-29 09:22",
       "link": "https://qq.mba/p/56f2c3c.html",
       "author": "满心记",
-      "avatar": "https://bu.dusays.com/2023/01/29/63d5bf7fa0d2c.png"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
     },
     {
       "title": "c++指针",
@@ -201,7 +208,7 @@
       "created": "2024-07-29 00:00",
       "link": "https://dusays.com/732/",
       "author": "杜老师说",
-      "avatar": "https://cdn.dusays.com/avatar.png"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af33a4d6643.webp"
     },
     {
       "title": "在 NAT 网络环境下获得被外网访问的权利",
@@ -215,7 +222,7 @@
       "created": "2024-07-28 19:00",
       "link": "https://blog.starsharbor.com/posts/solitude-changefiles/",
       "author": "星港Star",
-      "avatar": "https://bu.dusays.com/2023/09/27/6513053bebdb2.webp"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af3198042a2.webp"
     },
     {
       "title": "Linux中Cron定时任务的踩坑",
@@ -244,6 +251,13 @@
       "link": "http://localhost:12000/article/2024-07-28-001",
       "author": "365云栈",
       "avatar": "https://cdn.qyliu.top/i/2024/08/02/66acf256da797.webp"
+    },
+    {
+      "title": "通过Webdav给群晖挂载115网盘",
+      "created": "2024-07-27 21:06",
+      "link": "https://www.lxink.cn/posts/1d46e004.html",
+      "author": "凉心",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/24/66500d797ac38.png"
     },
     {
       "title": "typecho热力图插件",
@@ -278,7 +292,7 @@
       "created": "2024-07-26 00:00",
       "link": "https://dusays.com/731/",
       "author": "杜老师说",
-      "avatar": "https://cdn.dusays.com/avatar.png"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af33a4d6643.webp"
     },
     {
       "title": "华为 Pura 70 Pro — 不完美的 GMS 体验",
@@ -320,14 +334,14 @@
       "created": "2024-07-24 17:07",
       "link": "https://blog.zhheo.com/p/a61a.html",
       "author": "张洪Heo",
-      "avatar": "https://bu.dusays.com/2022/12/28/63ac2812183aa.png"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2e22827be.webp"
     },
     {
       "title": "❖星港◎Star☆｜博客一周年记",
       "created": "2024-07-24 00:00",
       "link": "https://blog.starsharbor.com/posts/blog-1st-anniversary/",
       "author": "星港Star",
-      "avatar": "https://bu.dusays.com/2023/09/27/6513053bebdb2.webp"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af3198042a2.webp"
     },
     {
       "title": "哔哩哔哩视频下载方法大汇总",
@@ -348,7 +362,7 @@
       "created": "2024-07-23 00:00",
       "link": "https://dusays.com/730/",
       "author": "杜老师说",
-      "avatar": "https://cdn.dusays.com/avatar.png"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af33a4d6643.webp"
     },
     {
       "title": "Typecho后台轻简美化增强插件-AdminElegance",
@@ -404,7 +418,7 @@
       "created": "2024-07-20 00:00",
       "link": "https://dusays.com/729/",
       "author": "杜老师说",
-      "avatar": "https://cdn.dusays.com/avatar.png"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af33a4d6643.webp"
     },
     {
       "title": "网盘怎么选：一目了然",
@@ -446,14 +460,14 @@
       "created": "2024-07-18 10:15",
       "link": "https://qq.mba/p/7f374c15.html",
       "author": "满心记",
-      "avatar": "https://bu.dusays.com/2023/01/29/63d5bf7fa0d2c.png"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
     },
     {
       "title": "关于各大平台域名竞价的那些事儿",
       "created": "2024-07-18 08:43",
       "link": "https://qq.mba/p/8f09b6d6.html",
       "author": "满心记",
-      "avatar": "https://bu.dusays.com/2023/01/29/63d5bf7fa0d2c.png"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
     },
     {
       "title": "plugin-blog-hao 插件部分功能演示",
@@ -467,7 +481,7 @@
       "created": "2024-07-16 19:00",
       "link": "https://blog.starsharbor.com/posts/short-essay-2/",
       "author": "星港Star",
-      "avatar": "https://bu.dusays.com/2023/09/27/6513053bebdb2.webp"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af3198042a2.webp"
     },
     {
       "title": "太姥山旅游之钻洞洞",
@@ -488,14 +502,14 @@
       "created": "2024-07-15 11:39",
       "link": "https://blog.zhheo.com/p/66b2.html",
       "author": "张洪Heo",
-      "avatar": "https://bu.dusays.com/2022/12/28/63ac2812183aa.png"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2e22827be.webp"
     },
     {
       "title": "在Mac上使用微信输入法的最佳解决方案，避免错误切换到ABC输入法",
       "created": "2024-07-15 10:05",
       "link": "https://blog.zhheo.com/p/998c.html",
       "author": "张洪Heo",
-      "avatar": "https://bu.dusays.com/2022/12/28/63ac2812183aa.png"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2e22827be.webp"
     },
     {
       "title": "肺系病的方证用药",
@@ -540,11 +554,18 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/19/662145a134a68.png"
     },
     {
+      "title": "最近折腾群晖那点事",
+      "created": "2024-07-13 23:07",
+      "link": "https://www.lxink.cn/posts/b7c76dae.html",
+      "author": "凉心",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/24/66500d797ac38.png"
+    },
+    {
       "title": "其实大部分人，已经见完了彼此的最后一面。",
       "created": "2024-07-13 13:58",
       "link": "https://www.thyuu.com/78347",
       "author": "风记星辰",
-      "avatar": "https://std.thyuu.com/logo.svg"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2d2430f68.webp"
     },
     {
       "title": "Windows 空间管理/清理指南",
@@ -614,7 +635,7 @@
       "created": "2024-07-08 12:39",
       "link": "https://blog.imoyan.top/posts/mosha.html",
       "author": "陌颜Hao",
-      "avatar": "https://bu.dusays.com/2024/03/15/65f3fd054c5db.jpg"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af3318f1d1c.webp"
     },
     {
       "title": "记录一次CDN流量被刷的经历",
@@ -631,13 +652,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/06/02/665c869ded7cd.png"
     },
     {
-      "title": "信盈达实习记录",
-      "created": "2024-07-07 17:13",
-      "link": "https://www.gan1ser.top/post/754a429b.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
-    },
-    {
       "title": "时代造青年，还是青年造时代？",
       "created": "2024-07-07 15:31",
       "link": "http://blog.awaae001.top/posts/908575.html",
@@ -649,7 +663,7 @@
       "created": "2024-07-06 14:28",
       "link": "https://www.thyuu.com/78324",
       "author": "风记星辰",
-      "avatar": "https://std.thyuu.com/logo.svg"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2d2430f68.webp"
     },
     {
       "title": "Spikformer脉冲神经网络学习",
@@ -663,14 +677,14 @@
       "created": "2024-07-04 11:45",
       "link": "https://qq.mba/p/e23ab292.html",
       "author": "满心记",
-      "avatar": "https://bu.dusays.com/2023/01/29/63d5bf7fa0d2c.png"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
     },
     {
       "title": "特殊用途格式详细介绍",
       "created": "2024-07-04 02:10",
       "link": "https://blog.starsharbor.com/posts/audio-format-5/",
       "author": "星港Star",
-      "avatar": "https://bu.dusays.com/2023/09/27/6513053bebdb2.webp"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af3198042a2.webp"
     },
     {
       "title": "Solitude：实用技巧",
@@ -726,7 +740,7 @@
       "created": "2024-07-01 10:43",
       "link": "https://qq.mba/p/596c9ceb.html",
       "author": "满心记",
-      "avatar": "https://bu.dusays.com/2023/01/29/63d5bf7fa0d2c.png"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
     },
     {
       "title": "IDM：广受欢迎的高速下载管理器",
@@ -778,18 +792,11 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/07/66123cff10a83.png"
     },
     {
-      "title": "数字信号的2FSK调制与解调",
-      "created": "2024-06-27 04:13",
-      "link": "https://www.gan1ser.top/post/b9a95f5e.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
-    },
-    {
       "title": "浅谈前端各种模块化",
       "created": "2024-06-26 11:35",
       "link": "https://fe32.top/articles/moudel001/",
       "author": "唐志远",
-      "avatar": "https://bu.dusays.com/2022/05/02/626f92e193879.jpg"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af324b5e627.webp"
     },
     {
       "title": "商家店铺简单实现扫一扫连接WiFi",
@@ -824,14 +831,7 @@
       "created": "2024-06-23 22:17",
       "link": "https://www.thyuu.com/78325",
       "author": "风记星辰",
-      "avatar": "https://std.thyuu.com/logo.svg"
-    },
-    {
-      "title": "OFDM学习过程及仿真",
-      "created": "2024-06-23 20:07",
-      "link": "https://www.gan1ser.top/post/ab4c01cf.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2d2430f68.webp"
     },
     {
       "title": "hexo部署到vercel和服务器多线路解析",
@@ -839,6 +839,13 @@
       "link": "https://blog.bsgun.cn/posts/78e9208e/",
       "author": "梦爱吃鱼",
       "avatar": "https://cdn.qyliu.top/i/2024/08/02/66acfd1f993ce.webp"
+    },
+    {
+      "title": "Cloudreve捐助版Docker部署指南",
+      "created": "2024-06-23 18:15",
+      "link": "https://www.lxink.cn/posts/73544047.html",
+      "author": "凉心",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/24/66500d797ac38.png"
     },
     {
       "title": "个人博客图床存储实践方案",
@@ -971,7 +978,7 @@
       "created": "2024-06-12 17:16",
       "link": "https://blog.imoyan.top/posts/2dd7.html",
       "author": "陌颜Hao",
-      "avatar": "https://bu.dusays.com/2024/03/15/65f3fd054c5db.jpg"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af3318f1d1c.webp"
     },
     {
       "title": "实用教程：R4AGv2 安装 OpenWrt",
@@ -1027,7 +1034,7 @@
       "created": "2024-06-04 12:25",
       "link": "https://blog.imoyan.top/posts/e86c.html",
       "author": "陌颜Hao",
-      "avatar": "https://bu.dusays.com/2024/03/15/65f3fd054c5db.jpg"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af3318f1d1c.webp"
     },
     {
       "title": "好看的电脑壁纸",
@@ -1077,6 +1084,13 @@
       "link": "https://blog.sinzmise.top/posts/10021/",
       "author": "星空故事",
       "avatar": "https://cdn.qyliu.top/i/2024/04/24/6628f767880fa.png"
+    },
+    {
+      "title": "不蒜子统计私有化部署",
+      "created": "2024-05-26 18:04",
+      "link": "https://www.lxink.cn/posts/815893be.html",
+      "author": "凉心",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/24/66500d797ac38.png"
     },
     {
       "title": "Ruffle测试",
@@ -1198,6 +1212,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/06/23/6678094c8d38d.webp"
     },
     {
+      "title": "给Cloudreve修改站点图标",
+      "created": "2024-05-13 14:50",
+      "link": "https://www.lxink.cn/posts/6dff1329.html",
+      "author": "凉心",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/24/66500d797ac38.png"
+    },
+    {
       "title": "关于创建mysql连接池的具体思路和实现",
       "created": "2024-05-12 22:52",
       "link": "https://huanxueblog.top/posts/a3bc84e3.html",
@@ -1294,13 +1315,6 @@
       "link": "https://blog.fiveth.cc/p/138e/",
       "author": "Fiveth",
       "avatar": "https://cdn.qyliu.top/i/2024/04/20/6623d64f16aee.png"
-    },
-    {
-      "title": "NLP谷歌语音指令训练大作业",
-      "created": "2024-04-30 05:13",
-      "link": "https://www.gan1ser.top/post/4c7a50a7.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "每个人都可以写一份属于自己的Phigros自制谱——Re: PhiEdit简明教程",
@@ -1422,25 +1436,11 @@
       "avatar": "https://cdn.qyliu.top/i/2024/03/31/66097a6d9363f.png"
     },
     {
-      "title": "多卡并行",
-      "created": "2024-04-18 00:25",
-      "link": "https://www.gan1ser.top/post/f229dda1.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
-    },
-    {
       "title": "517编程普及组数学之图论基础",
       "created": "2024-04-18 00:10",
       "link": "http://blog.wsq127.top/posts/362ffdf7/",
       "author": "辞琼",
       "avatar": "https://cdn.qyliu.top/i/2024/04/27/662d1c9b7efe1.png"
-    },
-    {
-      "title": "解决JS通过Blob下载文件时文件损坏的问题",
-      "created": "2024-04-17 17:34",
-      "link": "https://www.hitagi.icu/posts/8c26a9e9/",
-      "author": "Hitagi",
-      "avatar": "https://cdn.qyliu.top/i/2024/07/07/668a9e330dc6a.webp"
     },
     {
       "title": "517编程普及组数学之二进制",
@@ -1594,7 +1594,7 @@
       "created": "2024-03-28 15:24",
       "link": "https://fe32.top/articles/css10006/",
       "author": "唐志远",
-      "avatar": "https://bu.dusays.com/2022/05/02/626f92e193879.jpg"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af324b5e627.webp"
     },
     {
       "title": "用Xd画一个文章封面",
@@ -1671,7 +1671,7 @@
       "created": "2024-02-23 18:17",
       "link": "https://fe32.top/articles/linux001/",
       "author": "唐志远",
-      "avatar": "https://bu.dusays.com/2022/05/02/626f92e193879.jpg"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af324b5e627.webp"
     },
     {
       "title": "现代汉语常用字表（常用3500字）",
@@ -1895,14 +1895,14 @@
       "created": "2023-10-23 15:02",
       "link": "https://fe32.top/articles/vue20006/",
       "author": "唐志远",
-      "avatar": "https://bu.dusays.com/2022/05/02/626f92e193879.jpg"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af324b5e627.webp"
     },
     {
       "title": "前端断点调试是如何实现的？",
       "created": "2023-10-23 09:01",
       "link": "https://fe32.top/articles/fe100003/",
       "author": "唐志远",
-      "avatar": "https://bu.dusays.com/2022/05/02/626f92e193879.jpg"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af324b5e627.webp"
     },
     {
       "title": "最近我都干了些什么",
@@ -1986,7 +1986,7 @@
       "created": "2023-06-19 11:45",
       "link": "https://blog.imoyan.top/posts/cbff.html",
       "author": "陌颜Hao",
-      "avatar": "https://bu.dusays.com/2024/03/15/65f3fd054c5db.jpg"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af3318f1d1c.webp"
     },
     {
       "title": "全自动博客部署方案",
@@ -2021,7 +2021,7 @@
       "created": "2022-11-11 20:11",
       "link": "https://blog.imoyan.top/posts/5f2e.html",
       "author": "陌颜Hao",
-      "avatar": "https://bu.dusays.com/2024/03/15/65f3fd054c5db.jpg"
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af3318f1d1c.webp"
     }
   ]
 }
