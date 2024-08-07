@@ -3,8 +3,8 @@
     "friends_num": 84,
     "active_num": 69,
     "error_num": 15,
-    "article_num": 298,
-    "last_updated_time": "2024-08-07 02:29:20"
+    "article_num": 303,
+    "last_updated_time": "2024-08-07 09:37:07"
   },
   "article_data": [
     {
@@ -729,6 +729,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/06/02/665c869ded7cd.png"
     },
     {
+      "title": "信盈达实习记录",
+      "created": "2024-07-07 17:13",
+      "link": "https://www.gan1ser.top/post/754a429b.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+    },
+    {
       "title": "时代造青年，还是青年造时代？",
       "created": "2024-07-07 15:31",
       "link": "http://blog.awaae001.top/posts/908575.html",
@@ -883,6 +890,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/07/66123cff10a83.png"
     },
     {
+      "title": "数字信号的2FSK调制与解调",
+      "created": "2024-06-27 04:13",
+      "link": "https://www.gan1ser.top/post/b9a95f5e.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+    },
+    {
       "title": "浅谈前端各种模块化",
       "created": "2024-06-26 11:35",
       "link": "https://fe32.top/articles/moudel001/",
@@ -916,6 +930,13 @@
       "link": "https://blog.qyliu.top/posts/c2262998/",
       "author": "清羽飞扬",
       "avatar": "https://blog.qyliu.top/info/avatar.ico"
+    },
+    {
+      "title": "OFDM学习过程及仿真",
+      "created": "2024-06-23 20:07",
+      "link": "https://www.gan1ser.top/post/ab4c01cf.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "hexo部署到vercel和服务器多线路解析",
@@ -1408,6 +1429,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/20/6623d64f16aee.png"
     },
     {
+      "title": "NLP谷歌语音指令训练大作业",
+      "created": "2024-04-30 05:13",
+      "link": "https://www.gan1ser.top/post/4c7a50a7.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+    },
+    {
       "title": "每个人都可以写一份属于自己的Phigros自制谱——Re: PhiEdit简明教程",
       "created": "2024-04-26 21:10",
       "link": "https://blog.yaria.top/posts/303b5edc/",
@@ -1525,6 +1553,13 @@
       "link": "https://blog.alenliu.space/p/%E5%9B%9B%E6%9C%88%E4%B8%AD%E6%97%AC/",
       "author": "AlenLiu",
       "avatar": "https://cdn.qyliu.top/i/2024/03/31/66097a6d9363f.png"
+    },
+    {
+      "title": "多卡并行",
+      "created": "2024-04-18 00:25",
+      "link": "https://www.gan1ser.top/post/f229dda1.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "517编程普及组数学之图论基础",
