@@ -1,12 +1,26 @@
 {
   "statistical_data": {
-    "friends_num": 84,
-    "active_num": 69,
+    "friends_num": 85,
+    "active_num": 70,
     "error_num": 15,
-    "article_num": 303,
-    "last_updated_time": "2024-08-07 09:37:07"
+    "article_num": 308,
+    "last_updated_time": "2024-08-07 14:29:34"
   },
   "article_data": [
+    {
+      "title": "😘 2024.8.1周刊",
+      "created": "2024-08-07 20:41",
+      "link": "https://xiangming.site/851.html",
+      "author": "湘铭",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/19/6622928fc416c.png"
+    },
+    {
+      "title": "立秋",
+      "created": "2024-08-07 19:44",
+      "link": "https://xiangming.site/850.html",
+      "author": "湘铭",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/19/6622928fc416c.png"
+    },
     {
       "title": "我的Web生活宝典：CMD命令集",
       "created": "2024-08-07 00:30",
@@ -24,7 +38,7 @@
     {
       "title": "手把手教你搭建一个站点·域名：将DNS转移到Cloudflare",
       "created": "2024-08-06 21:54",
-      "link": "http://localhost:12000/article/2024-08-06-001",
+      "link": "https://blog.365sites.top/article/2024-08-06-001",
       "author": "365云栈",
       "avatar": "https://cdn.qyliu.top/i/2024/08/02/66acf256da797.webp"
     },
@@ -36,11 +50,25 @@
       "avatar": "https://cdn.qyliu.top/i/2024/05/04/66351f5b62b65.png"
     },
     {
+      "title": "在Mac上使用CosyVoice教程：人声克隆，跨语种复刻、AITTS文本转语音",
+      "created": "2024-08-06 18:40",
+      "link": "https://blog.zhheo.com/p/e950.html",
+      "author": "张洪Heo",
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2e22827be.webp"
+    },
+    {
       "title": "Delphi7 idhttpserver Post Json",
       "created": "2024-08-06 16:50",
       "link": "https://h4ck.org.cn/2024/08/17770",
       "author": "obaby",
       "avatar": "https://cdn.qyliu.top/i/2024/04/15/661d443b5359c.png"
+    },
+    {
+      "title": "我的备案没了",
+      "created": "2024-08-06 08:00",
+      "link": "https://www.yoghurtlee.com/my-icp-gone/",
+      "author": "Chlorine",
+      "avatar": "https://cdn.qyliu.top/i/2024/08/07/66b2daf9ab79f.webp"
     },
     {
       "title": "关于“拼多多助力活动”这件事",
@@ -62,6 +90,13 @@
       "link": "https://blog.zhheo.com/p/bf38.html",
       "author": "张洪Heo",
       "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2e22827be.webp"
+    },
+    {
+      "title": "园子装修日志",
+      "created": "2024-08-05 08:00",
+      "link": "https://www.yoghurtlee.com/yuanzi-decorating/",
+      "author": "Chlorine",
+      "avatar": "https://cdn.qyliu.top/i/2024/08/07/66b2daf9ab79f.webp"
     },
     {
       "title": "投票选择——怎样更好的收集数据结果",
@@ -139,6 +174,13 @@
       "link": "https://blog.zhheo.com/p/b45f.html",
       "author": "张洪Heo",
       "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2e22827be.webp"
+    },
+    {
+      "title": "Ephemeralis-Weekly（4）：缝隙之间",
+      "created": "2024-08-02 08:00",
+      "link": "https://www.yoghurtlee.com/weekly-4/",
+      "author": "Chlorine",
+      "avatar": "https://cdn.qyliu.top/i/2024/08/07/66b2daf9ab79f.webp"
     },
     {
       "title": "不负责任的猫爸-一语成谶了",
@@ -281,6 +323,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
     },
     {
+      "title": "Hello，Sink",
+      "created": "2024-07-29 08:00",
+      "link": "https://www.yoghurtlee.com/hello-sink/",
+      "author": "Chlorine",
+      "avatar": "https://cdn.qyliu.top/i/2024/08/07/66b2daf9ab79f.webp"
+    },
+    {
       "title": "c++指针",
       "created": "2024-07-29 05:00",
       "link": "https://blog.zhwei101.com/index.php/archives/277/",
@@ -332,7 +381,7 @@
     {
       "title": "手把手教你搭建一个站点·域名：从挑选一个域名开始",
       "created": "2024-07-28 00:00",
-      "link": "http://localhost:12000/article/2024-07-28-001",
+      "link": "https://blog.365sites.top/article/2024-07-28-001",
       "author": "365云栈",
       "avatar": "https://cdn.qyliu.top/i/2024/08/02/66acf256da797.webp"
     },
@@ -356,6 +405,13 @@
       "link": "https://www.bbixb.top/archives/1565",
       "author": "微生之最",
       "avatar": "https://cdn.qyliu.top/i/2024/05/04/66351f5b62b65.png"
+    },
+    {
+      "title": "解决Swup导致的JavaScript加载失效问题",
+      "created": "2024-07-26 08:00",
+      "link": "https://www.yoghurtlee.com/swup-modifying/",
+      "author": "Chlorine",
+      "avatar": "https://cdn.qyliu.top/i/2024/08/07/66b2daf9ab79f.webp"
     },
     {
       "title": "空气炸锅维修",
@@ -419,13 +475,6 @@
       "link": "https://blog.bsgun.cn/posts/609bcdb9/",
       "author": "梦爱吃鱼",
       "avatar": "https://cdn.qyliu.top/i/2024/08/02/66acfd1f993ce.webp"
-    },
-    {
-      "title": "如何更改Mac上左上角的苹果图标样式，个性化自定义Mac美化菜单栏",
-      "created": "2024-07-24 17:07",
-      "link": "https://blog.zhheo.com/p/a61a.html",
-      "author": "张洪Heo",
-      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2e22827be.webp"
     },
     {
       "title": "❖星港◎Star☆｜博客一周年记",
@@ -533,13 +582,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/03/22/65fc59b439430.png"
     },
     {
-      "title": "Bootcss CDN 被投毒后续",
-      "created": "2024-07-18 20:58",
-      "link": "https://xiangming.site/822.html",
-      "author": "湘铭",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/19/6622928fc416c.png"
-    },
-    {
       "title": "关于友链申请规则调整通知",
       "created": "2024-07-18 10:15",
       "link": "https://qq.mba/p/7f374c15.html",
@@ -573,13 +615,6 @@
       "link": "https://blog.starsharbor.com/posts/short-essay-2/",
       "author": "星港Star",
       "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af3198042a2.webp"
-    },
-    {
-      "title": "太姥山旅游之钻洞洞",
-      "created": "2024-07-15 20:06",
-      "link": "https://xiangming.site/834.html",
-      "author": "湘铭",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/19/6622928fc416c.png"
     },
     {
       "title": "HTML前端图表应用",
@@ -682,7 +717,7 @@
     {
       "title": "博客整改记:盘点这一周的博客变化",
       "created": "2024-07-10 08:20",
-      "link": "http://localhost:12000/article/2024-07-10-001",
+      "link": "https://blog.365sites.top/article/2024-07-10-001",
       "author": "365云栈",
       "avatar": "https://cdn.qyliu.top/i/2024/08/02/66acf256da797.webp"
     },
@@ -815,7 +850,7 @@
     {
       "title": "Halo初体验：还不错但需优化的一个博客框架",
       "created": "2024-07-02 00:00",
-      "link": "http://localhost:12000/article/2024-07-02-001",
+      "link": "https://blog.365sites.top/article/2024-07-02-001",
       "author": "365云栈",
       "avatar": "https://cdn.qyliu.top/i/2024/08/02/66acf256da797.webp"
     },
@@ -969,7 +1004,7 @@
     {
       "title": "编辑MongoDB：使用VSCode编辑数据库",
       "created": "2024-06-22 00:00",
-      "link": "http://localhost:12000/article/2024-06-22-001",
+      "link": "https://blog.365sites.top/article/2024-06-22-001",
       "author": "365云栈",
       "avatar": "https://cdn.qyliu.top/i/2024/08/02/66acf256da797.webp"
     },
