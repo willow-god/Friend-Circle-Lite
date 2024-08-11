@@ -1,13 +1,8 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, JSONResponse
 from starlette.middleware.cors import CORSMiddleware
-import schedule
-import time
-import logging
-import os
 import json
 import random
-from threading import Lock, Thread
 
 from friend_circle_lite.get_info import fetch_and_process_data, sort_articles_by_time
 from friend_circle_lite.get_conf import load_config
@@ -22,10 +17,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# 配置日志记录
-log_file = "cron_grab"
-logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
@@ -74,10 +65,6 @@ async def get_random_article():
         return JSONResponse(content={"error": "Failed to decode JSON"}, status_code=500)
 
 if __name__ == '__main__':
-    # 清空日志文件
-    if os.path.exists(log_file):
-        with open(log_file, 'w'):
-            pass
     # 启动FastAPI应用
     import uvicorn
     uvicorn.run(app, host='0.0.0.0', port=1223)
