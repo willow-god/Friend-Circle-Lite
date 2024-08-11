@@ -1,5 +1,5 @@
 # 引入 check_feed 和 parse_feed 函数
-from friend_circle_lite.get_info import fetch_and_process_data, sort_articles_by_time
+from friend_circle_lite.get_info import fetch_and_process_data, sort_articles_by_time, marge_data_from_json_url, marge_errors_from_json_url
 from friend_circle_lite.get_conf import load_config
 from rss_subscribe.push_article_update import get_latest_articles_from_link, extract_emails_from_issues
 from push_rss_update.send_email import send_emails
@@ -16,6 +16,12 @@ if config["spider_settings"]["enable"]:
     article_count = config['spider_settings']['article_count']
     print("正在从 {json_url} 中获取，每个博客获取 {article_count} 篇文章".format(json_url=json_url, article_count=article_count))
     result, lost_friends = fetch_and_process_data(json_url=json_url, count=article_count)
+    if config["spider_settings"]["merge_result"]["enable"]:
+        marge_json_url = config['spider_settings']["merge_result"]['merge_json_url']
+        print("合并数据功能开启，从 {marge_json_url} 中获取境外数据并合并".format(marge_json_url=marge_json_url + "/all.json"))
+        result = marge_data_from_json_url(result, marge_json_url + "/all.json")
+        lost_friends = marge_errors_from_json_url(lost_friends, marge_json_url + "/errors.json")
+        
     sorted_result = sort_articles_by_time(result)
     with open("all.json", "w", encoding="utf-8") as f:
         json.dump(sorted_result, f, ensure_ascii=False, indent=2)
@@ -30,7 +36,7 @@ if config["email_push"]["enable"] or config["rss_subscribe"]["enable"]:
     port = email_settings["port"]
     use_tls = email_settings["use_tls"]
     password = os.getenv("SMTP_PWD")
-    print("密码检测是否存在：", password[:4], "****", password[-3:])
+    print("密码检测是否存在：", password[:2], "****", password[-2:])
 
 if config["email_push"]["enable"]:
     print("邮件推送已启用")

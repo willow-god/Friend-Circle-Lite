@@ -298,3 +298,53 @@ def sort_articles_by_time(data):
         )
         data['article_data'] = sorted_articles
     return data
+
+def marge_data_from_json_url(data, marge_json_url):
+    """
+    从另一个 JSON 文件中获取数据并合并到原数据中。
+
+    参数：
+    data (dict): 包含文章信息的字典
+    marge_json_url (str): 包含另一个文章信息的 JSON 文件的 URL。
+
+    返回：
+    dict: 合并后的文章信息字典，已去重处理
+    """
+    try:
+        response = requests.get(marge_json_url, headers=headers, timeout=timeout)
+        marge_data = response.json()
+    except Exception as e:
+        print(f"无法获取该链接：{marge_json_url}, 出现的问题为：{e}")
+        return data
+    
+    if 'article_data' in marge_data:
+        print("开始合并数据，原数据共有 %d 篇文章，境外数据共有 %d 篇文章" % (len(data['article_data']), len(marge_data['article_data'])))
+        data['article_data'].extend(marge_data['article_data'])
+        data['article_data'] = list({v['link']:v for v in data['article_data']}.values())
+        print("合并数据完成，现在共有 %d 篇文章" % len(data['article_data']))
+    return data
+
+def marge_errors_from_json_url(errors, marge_json_url):
+    """
+    从另一个网络 JSON 文件中获取错误信息并遍历，删除在errors中，不存在于marge_errors中的友链信息。
+
+    参数：
+    errors (list): 包含错误信息的列表
+    marge_json_url (str): 包含另一个错误信息的 JSON 文件的 URL。
+
+    返回：
+    list: 合并后的错误信息列表
+    """
+    try:
+        response = requests.get(marge_json_url, headers=headers, timeout=timeout)
+        marge_errors = response.json()
+    except Exception as e:
+        print(f"无法获取该链接：{marge_json_url}, 出现的问题为：{e}")
+        return errors
+
+    print("开始合并错误信息，原错误信息共有 %d 位朋友，境外错误信息共有 %d 位朋友" % (len(errors), len(marge_errors)))
+    for error in errors:
+        if error not in marge_errors:
+            errors.remove(error)
+    print("合并错误信息完成，现在共有 %d 位朋友" % len(errors))
+    return errors

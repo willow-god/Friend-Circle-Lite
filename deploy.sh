@@ -42,5 +42,5 @@ if [ "$USER_CHOICE" -eq 1 ]; then
     python3 $SCRIPT_DIR/run.py
     echo "****爬取成功****"
 else
-    echo "退出选项被选择。"
+    echo "退出选项被选择，掰掰！"
 fi
