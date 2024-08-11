@@ -11,7 +11,7 @@ spider_settings:
   json_url: "https://blog.liushen.fun/friend.json"
   article_count: 5
   merge_result:
-    enable: true
+    enable: false
     merge_json_url: "https://fc.liushen.fun"
 
 # 邮箱推送功能配置，暂未实现，等待后续开发

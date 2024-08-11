@@ -77,8 +77,9 @@
 * 随机钓鱼
 * 邮箱推送
 * 美观邮箱模板
+* 自部署(2024-08-11添加)
 
-## 使用方法
+## action部署使用方法
 
 ### 前置工作
 
@@ -118,6 +119,9 @@
        enable: true
        json_url: "https://blog.qyliu.top/friend.json"
        article_count: 5
+       merge_result:
+         enable: true
+         merge_json_url: "https://fc.liushen.fun"
      ```
      
      `enable`：开启或关闭，默认开启；
@@ -125,6 +129,12 @@
      `json_url`：友链朋友圈通用爬取格式第一种（下方有配置方法）;
      
      `article_count`：每个作者留存文章个数。
+
+     `marge_result`：是否合并多个json文件，若为true则会合并指定网络地址和本地地址的json文件
+     
+     - `enable`：是否启用合并功能，该功能提供与自部署的友链合并功能，可以解决服务器部分国外网站，服务器无法访问的问题
+     
+     - `marge_json_path`：请填写网络地址的json文件，用于合并，不带空格！！！
      
    - **邮箱推送功能配置**
      暂未实现，预留用于将每天的友链文章更新推送给指定邮箱。
@@ -267,6 +277,78 @@
 其中第一个地址填入你自己的地址即可，**注意**尾部带`/`，不要遗漏。
 
 然后你就可以在前端页面看到我们的结果了。效果图如上展示网站，其中两个文件你可以自行修改，在同目录下我也提供了未压缩版本，有基础的可以很便捷的进行修改。
+
+## 自部署使用方法
+
+如果你有一台境内服务器，你也可以通过以下操作将其部署到你的服务器上，操作如下：
+
+### 前置工作
+
+确保你的服务器有定时任务 `crontab` 功能包，一般是linux自带，如果你没有宝塔等可以管理定时任务的面板工具，可能需要你自行了解定时工具并导入，本教程提供了简单的介绍。
+
+首先克隆仓库并进入对应路径：
+
+```bash
+git clone https://github.com/willow-god/Friend-Circle-Lite.git
+cd Friend-Circle-Lite
+```
+
+由于不存在issue，所以不支持邮箱推送(主要是懒得分类写了，要不然还得从secret中获取密码的功能剥离QAQ)，请将除第一部分抓取以外的功能均设置为false
+
+下载服务相关包，其中 `requirements-server.txt` 是部署API服务所用包， `requirements.txt` 是抓取服务所用包，请均下载一遍。
+
+```bash
+pip install -r ./requirements.txt
+pip install -r ./requirements-server.txt
+```
+
+### 部署API服务
+
+如果环境配置完毕，你可以进入目录路径后直接运行`deploy.sh`脚本启动API服务：
+
+```bash
+chmod +x ./deploy.sh
+./deploy.sh
+```
+
+其中的注释应该是较为详细的，如果部署成功你可以使用以下命令进行测试，如果获取到了首页html内容则成功：
+
+```bash
+curl 127.0.0.1:1223
+```
+
+这个端口号可以修改，在server.py最后一行修改数字即可，如果你想删除该API服务，可以使用ps找到对应进程并使用Kill命令杀死进程：
+
+```bash
+ps aux | grep python
+kill -9 [这里填写上面查询结果中对应的进程号]
+```
+
+### 合并github数据
+
+你是不是以为github数据没用了？并不是！因为有很多站长是使用的GitHub page等服务部署的，这种服务可能无法被你的服务器抓取，此时你就需要合并两个的爬取数据。修改第一个配置中的以下部分：
+
+```yaml
+merge_result:
+    enable: true
+    merge_json_url: "https://fc.liushen.fun"
+```
+其中地址项不要添加最后的斜杠，这样就会在本地爬取结束后合并远程的数据，以做到更高的准确率！
+
+### 定时抓取文章
+
+由于原生的crontab可能较为复杂，如果有兴趣可以查看./deploy.sh文件中，屏蔽掉的部分，这里我不会细讲，这里我主要讲解宝塔面板添加定时任务，这样可以最大程度减少内存占用，其他面板服务类似：
+
+![](./static/baota.png)
+
+点击宝塔右侧的定时任务后，点击添加，按照上图配置，并在命令中输入：
+
+```bash
+cd /www/wwwroot/Friend-Circle-Lite
+python3 run.py
+```
+
+具体地址可以按照自己的需要进行修改，这样我们就可以做到定时修改文件内容了！然后请求api就是从本地文件中返回所有内容的过程，和爬取是分开的，所以并不影响！
 
 ## 问题与贡献
 

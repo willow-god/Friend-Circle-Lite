@@ -42,7 +42,7 @@ sleep 5  # 等待API服务启动，可能需要调整等待时间
 echo "API 服务已启动：http://localhost:1223"
 echo "API 服务进程号：$API_PID"
 echo "API 服务关闭命令：kill -9 $API_PID"
-echo "文档地址：https://blog.qyliu.top/posts/4dc716ec/"
+echo "文档地址：https://blog.liushen.fun/posts/4dc716ec/"
 echo "===================================="
 
 # 用户选择是否执行爬取
