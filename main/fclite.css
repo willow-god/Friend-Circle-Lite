@@ -26,7 +26,7 @@
     --shadow-color: var(--shadow-color-light);
     --border-color: var(--border-color-light);
     --modal-bg-color: rgba(255, 255, 255, 0.5);
-    --modal-content-bg-color: rgba(239, 250, 255, 0.7);
+    --modal-content-bg-color: rgba(239, 250, 255, 0.5);
     --load-more-btn-bg-color: var(--container-bg-color);
 }
 
@@ -155,10 +155,10 @@ body {
 
 #modal-author-avatar {
     display: block;
-    margin: 0 auto 10px;
+    margin: 0 auto;
     border-radius: 50%;
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     object-fit: cover;
 }
 
@@ -166,7 +166,7 @@ body {
     display: block;
     text-align: center;
     font-size: 15px;
-    margin: 25px 0;
+    margin: 15px 0;
     color: var(--hover-color);
     text-decoration: none;
 }
@@ -242,6 +242,11 @@ body {
     flex-direction: column;
     justify-content: space-between;
     height: 150px;
+    transition: border 0.3s;
+}
+
+.card:hover {
+    border: 1px solid var(--hover-color);
 }
 
 .card-title {
@@ -319,6 +324,13 @@ body {
     width: 140px;
     height: 140px;
     opacity: 0.4;
+    transition: transform 0.6s ease, bottom 0.3s ease, right 0.3s ease; /* 0.3秒的平滑过渡效果 */
+}
+
+#friend-circle-lite-root .card:hover .card-bg {
+    transform: scale(1.1);
+    bottom: -10px;
+    right: -8px;
 }
 
 #load-more-btn {
@@ -327,7 +339,7 @@ body {
     background-color: var(--container-bg-color);
     cursor: pointer;
     width: 200px;
-    border-radius: 20px;
+    border-radius: 10px;
     border: 1px solid var(--border-color);
     padding: 3px;
     transition: all 0.3s;

@@ -17,7 +17,7 @@ function initialize_fc_lite() {
     
     const loadMoreBtn = document.createElement('button');
     loadMoreBtn.id = 'load-more-btn';
-    loadMoreBtn.innerText = '显示更多';
+    loadMoreBtn.innerText = '再来亿点';
     root.appendChild(loadMoreBtn);
 
     // 创建统计信息容器
@@ -42,7 +42,7 @@ function initialize_fc_lite() {
             }
         }
 
-        fetch(`${UserConfig.private_api_url}all.json`)
+        fetch(`${UserConfig.private_api_url}all`)
             .then(response => response.json())
             .then(data => {
                 localStorage.setItem(cacheKey, JSON.stringify(data));
@@ -50,7 +50,7 @@ function initialize_fc_lite() {
                 processArticles(data);
             })
             .finally(() => {
-                loadMoreBtn.innerText = '显示更多'; // 恢复按钮文本
+                loadMoreBtn.innerText = '再来亿点'; // 恢复按钮文本
             });
     }
 
@@ -152,7 +152,7 @@ function initialize_fc_lite() {
 
         const authorArticles = allArticles.filter(article => article.author === author);
         // 仅仅取前五个，防止文章过多导致模态框过长，如果不够五个则全部取出
-        authorArticles.slice(0, 5).forEach(article => {
+        authorArticles.slice(0, 4).forEach(article => {
             const articleDiv = document.createElement('div');
             articleDiv.className = 'modal-article';
 
@@ -203,12 +203,19 @@ function initialize_fc_lite() {
     };
 };
 
-document.addEventListener("DOMContentLoaded", function() {
-    setTimeout(initialize_fc_lite, 0);
-});
+//document.addEventListener("DOMContentLoaded", function() {
+//    setTimeout(initialize_fc_lite, 0);
+//});
 
-document.addEventListener('pjax:complete', function() {
-    setTimeout(initialize_fc_lite, 0);
-});
+//document.addEventListener('pjax:complete', function() {
+//    setTimeout(initialize_fc_lite, 0);
+//});
 
-setTimeout(initialize_fc_lite, 0);
+//setTimeout(initialize_fc_lite, 0);
+
+function whenDOMReady() {
+    initialize_fc_lite();
+}
+
+whenDOMReady()
+document.addEventListener("pjax:complete", whenDOMReady)

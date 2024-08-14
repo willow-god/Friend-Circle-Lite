@@ -30,7 +30,7 @@ async def root():
 @app.get('/all')
 async def get_all_articles():
     try:
-        with open('all.json', 'r', encoding='utf-8') as f:
+        with open('./all.json', 'r', encoding='utf-8') as f:
             articles_data = json.load(f)
         return JSONResponse(content=articles_data)
     except FileNotFoundError:
@@ -41,7 +41,7 @@ async def get_all_articles():
 @app.get('/errors')
 async def get_error_friends():
     try:
-        with open('errors.json', 'r', encoding='utf-8') as f:
+        with open('./errors.json', 'r', encoding='utf-8') as f:
             errors_data = json.load(f)
         return JSONResponse(content=errors_data)
     except FileNotFoundError:
@@ -52,7 +52,7 @@ async def get_error_friends():
 @app.get('/random')
 async def get_random_article():
     try:
-        with open('all.json', 'r', encoding='utf-8') as f:
+        with open('./all.json', 'r', encoding='utf-8') as f:
             articles_data = json.load(f)
         if articles_data.get("article_data"):
             random_article = random.choice(articles_data["article_data"])
