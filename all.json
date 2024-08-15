@@ -1,10 +1,10 @@
 {
   "statistical_data": {
     "friends_num": 82,
-    "active_num": 63,
-    "error_num": 19,
-    "article_num": 278,
-    "last_updated_time": "2024-08-15 02:28:10"
+    "active_num": 65,
+    "error_num": 17,
+    "article_num": 292,
+    "last_updated_time": "2024-08-15 09:25:15"
   },
   "article_data": [
     {
@@ -34,6 +34,13 @@
       "link": "https://h4ck.org.cn/2024/08/17823",
       "author": "obaby",
       "avatar": "https://cdn.qyliu.top/i/2024/04/15/661d443b5359c.png"
+    },
+    {
+      "title": "Hello World",
+      "created": "2024-08-13 12:06",
+      "link": "https://blog.ifeng.asia/p/4a17b156.html",
+      "author": "听风小屋",
+      "avatar": "https://cdn.qyliu.top/i/2024/03/31/6608e2697634c.png"
     },
     {
       "title": "服务器操作系统安全加固项",
@@ -412,6 +419,13 @@
       "link": "http://blog.awaae001.top/posts/38498.html",
       "author": "呓语梦轩",
       "avatar": "https://cdn.qyliu.top/i/2024/03/30/660769346d538.jpg"
+    },
+    {
+      "title": "Xterminal：颜值高、功能强，追求卓越体验的SSH工具",
+      "created": "2024-07-31 07:56",
+      "link": "https://talen.top/posts/d7f79b43/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
     },
     {
       "title": "2024-07小记",
@@ -799,6 +813,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/27/662d1c9b7efe1.png"
     },
     {
+      "title": "高效利用 GitHub 搜索，精准快速获取所需",
+      "created": "2024-07-08 18:27",
+      "link": "https://talen.top/posts/b9a0156a/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
+    },
+    {
       "title": "遭遇APP乱象：老人的「钱袋子」开线了",
       "created": "2024-07-08 03:52",
       "link": "/2024/auto-payment",
@@ -811,6 +832,13 @@
       "link": "https://www.lyszm.com/924.html",
       "author": "六月是只猫",
       "avatar": "https://cdn.qyliu.top/i/2024/05/31/66597328bdd51.png"
+    },
+    {
+      "title": "信盈达实习记录",
+      "created": "2024-07-07 17:13",
+      "link": "https://www.gan1ser.top/post/754a429b.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "时代造青年，还是青年造时代？",
@@ -883,6 +911,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/06/23/6678094c8d38d.webp"
     },
     {
+      "title": "IDM：广受欢迎的高速下载管理器",
+      "created": "2024-07-01 00:20",
+      "link": "https://talen.top/posts/b832248a/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
+    },
+    {
       "title": "师大残酷青春物语",
       "created": "2024-06-30 22:25",
       "link": "https://www.hitagi.icu/posts/5db6f10/",
@@ -932,6 +967,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/07/66123cff10a83.png"
     },
     {
+      "title": "数字信号的2FSK调制与解调",
+      "created": "2024-06-27 04:13",
+      "link": "https://www.gan1ser.top/post/b9a95f5e.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+    },
+    {
       "title": "浅谈前端各种模块化",
       "created": "2024-06-26 11:35",
       "link": "https://fe32.top/articles/moudel001/",
@@ -960,6 +1002,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/06/23/6678094c8d38d.webp"
     },
     {
+      "title": "OFDM学习过程及仿真",
+      "created": "2024-06-23 20:07",
+      "link": "https://www.gan1ser.top/post/ab4c01cf.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+    },
+    {
       "title": "Cloudreve捐助版Docker部署指南",
       "created": "2024-06-23 18:15",
       "link": "https://www.lxink.cn/posts/73544047.html",
@@ -986,6 +1035,13 @@
       "link": "https://gyhwd.top/archives/cqzkr5Xo",
       "author": "青竹小轩",
       "avatar": "https://cdn.qyliu.top/i/2024/04/23/662748990165a.png"
+    },
+    {
+      "title": "让Meting API解锁音乐开发新可能",
+      "created": "2024-06-21 16:34",
+      "link": "https://talen.top/posts/833fcabb/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
     },
     {
       "title": "【开源项目】Scrcpy-GUI：一个简洁强大scrcpy客户端",
@@ -1077,6 +1133,13 @@
       "link": "https://blog.xing-ye.top/posts/7b314330/",
       "author": "XINGYE",
       "avatar": "https://cdn.qyliu.top/i/2024/05/18/6648b84c682e1.png"
+    },
+    {
+      "title": "零基础Docker入门指南",
+      "created": "2024-06-13 22:54",
+      "link": "https://talen.top/posts/869715fc/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
     },
     {
       "title": "离歌不夜天",
@@ -1338,6 +1401,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/20/6623d64f16aee.png"
     },
     {
+      "title": "NLP谷歌语音指令训练大作业",
+      "created": "2024-04-30 05:13",
+      "link": "https://www.gan1ser.top/post/4c7a50a7.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+    },
+    {
       "title": "一些头像源（稳定性自测）",
       "created": "2024-04-26 20:01",
       "link": "https://luckqf.cn/archives/set-cravatar",
@@ -1448,6 +1518,13 @@
       "link": "https://blog.alenliu.space/p/%E5%9B%9B%E6%9C%88%E4%B8%AD%E6%97%AC/",
       "author": "AlenLiu",
       "avatar": "https://cdn.qyliu.top/i/2024/03/31/66097a6d9363f.png"
+    },
+    {
+      "title": "多卡并行",
+      "created": "2024-04-18 00:25",
+      "link": "https://www.gan1ser.top/post/f229dda1.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "517编程普及组数学之图论基础",
@@ -1807,6 +1884,20 @@
       "avatar": "https://avatars.githubusercontent.com/u/81922999?v=4"
     },
     {
+      "title": "提问的智慧",
+      "created": "2023-11-18 23:38",
+      "link": "https://blog.ifeng.asia/p/fb3832f5.html",
+      "author": "听风小屋",
+      "avatar": "https://cdn.qyliu.top/i/2024/03/31/6608e2697634c.png"
+    },
+    {
+      "title": "百度网盘不限速下载插件（2023.11可用）",
+      "created": "2023-11-18 19:31",
+      "link": "https://blog.ifeng.asia/p/55a4942b.html",
+      "author": "听风小屋",
+      "avatar": "https://cdn.qyliu.top/i/2024/03/31/6608e2697634c.png"
+    },
+    {
       "title": "幽门螺旋杆菌的治疗",
       "created": "2023-11-12 12:10",
       "link": "https://blog.leonus.cn/2023/Helicobacter-pylori.html",
@@ -1889,6 +1980,13 @@
       "link": "https://kmar.top/posts/b70ec88f/",
       "author": "山岳库博",
       "avatar": "https://cdn.qyliu.top/i/2024/04/06/66116c3ba58c3.png"
+    },
+    {
+      "title": "缤纷云+PicGo搭建图床",
+      "created": "2023-07-30 18:22",
+      "link": "https://blog.ifeng.asia/p/9bf74e64.html",
+      "author": "听风小屋",
+      "avatar": "https://cdn.qyliu.top/i/2024/03/31/6608e2697634c.png"
     },
     {
       "title": "hexo备份",
