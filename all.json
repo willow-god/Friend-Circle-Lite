@@ -1,12 +1,19 @@
 {
   "statistical_data": {
     "friends_num": 84,
-    "active_num": 68,
-    "error_num": 16,
-    "article_num": 304,
-    "last_updated_time": "2024-08-20 09:36:50"
+    "active_num": 65,
+    "error_num": 19,
+    "article_num": 294,
+    "last_updated_time": "2024-08-20 14:30:49"
   },
   "article_data": [
+    {
+      "title": "macOS 自动重新打开意外退出的应用",
+      "created": "2024-08-20 11:00",
+      "link": "https://www.imaegoo.com/2024/macos-auto-restart-crashed-app/",
+      "author": "虹墨",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/31/6659668724466.png"
+    },
     {
       "title": "一些个人博主设计博客时的SEO避坑点",
       "created": "2024-08-20 06:27",
@@ -20,6 +27,13 @@
       "link": "https://www.henjinet.com/archives/ai-seo-chong-ji.html",
       "author": "痕迹小站",
       "avatar": "https://cdn.qyliu.top/i/2024/05/31/6659688bbf14b.png"
+    },
+    {
+      "title": "满心记换主题啦",
+      "created": "2024-08-19 21:39",
+      "link": "https://qq.mba/15.html",
+      "author": "满心记",
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
     },
     {
       "title": "《人体八大系统》(叫帅哥",
@@ -127,13 +141,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af33a4d6643.webp"
     },
     {
-      "title": "网页中神奇的水缸加水进度条！用html＋css＋js实现思路解析",
-      "created": "2024-08-15 22:24",
-      "link": "https://www.swszz.cn/archives/1615",
-      "author": "微生之最",
-      "avatar": "https://cdn.qyliu.top/i/2024/05/04/66351f5b62b65.png"
-    },
-    {
       "title": "【GitHub】基于Actions和Pages实现项目的自动构建与部署",
       "created": "2024-08-15 17:06",
       "link": "https://blog.meta-code.top/2024/08/15/2024-13/",
@@ -219,8 +226,8 @@
     },
     {
       "title": "迟来的博客二周年记",
-      "created": "2024-08-12 10:03",
-      "link": "https://qq.mba/p/e0892fa5.html",
+      "created": "2024-08-12 18:03",
+      "link": "https://qq.mba/10.html",
       "author": "满心记",
       "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
     },
@@ -379,13 +386,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/08/02/66acf256da797.webp"
     },
     {
-      "title": "速度超快！电脑端文件高效搜索神器：Everything 分享，吊打Windows自带资源管理器",
-      "created": "2024-08-06 20:36",
-      "link": "https://www.swszz.cn/archives/1572",
-      "author": "微生之最",
-      "avatar": "https://cdn.qyliu.top/i/2024/05/04/66351f5b62b65.png"
-    },
-    {
       "title": "在Mac上使用CosyVoice教程：人声克隆，跨语种复刻、AITTS文本转语音",
       "created": "2024-08-06 18:40",
       "link": "https://blog.zhheo.com/p/e950.html",
@@ -454,13 +454,6 @@
       "link": "https://dusays.com/734/",
       "author": "杜老师说",
       "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af33a4d6643.webp"
-    },
-    {
-      "title": "Serv00部署Memos",
-      "created": "2024-08-03 19:23",
-      "link": "https://www.gan1ser.top/post/6a236522.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "真·彩虹猫加载动画",
@@ -540,6 +533,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/03/30/660769346d538.jpg"
     },
     {
+      "title": "Xterminal：颜值高、功能强，追求卓越体验的SSH工具",
+      "created": "2024-07-31 07:56",
+      "link": "https://talen.top/posts/d7f79b43/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
+    },
+    {
       "title": "2024-07小记",
       "created": "2024-07-31 06:42",
       "link": "https://blog.sinzmise.top/posts/15799/",
@@ -573,13 +573,6 @@
       "link": "http://blog.awaae001.top/posts/6884.html",
       "author": "呓语梦轩",
       "avatar": "https://cdn.qyliu.top/i/2024/03/30/660769346d538.jpg"
-    },
-    {
-      "title": "咸鱼网页版重新上线了",
-      "created": "2024-07-29 09:22",
-      "link": "https://qq.mba/p/56f2c3c.html",
-      "author": "满心记",
-      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
     },
     {
       "title": "在 NAT 网络环境下获得被外网访问的权利",
@@ -622,13 +615,6 @@
       "link": "https://www.yvii.cn/archives/2025.html",
       "author": "乙未博客",
       "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f05e2f75c.png"
-    },
-    {
-      "title": "安卓手机端免费音乐下载神器-音乐适配：无需付费/免费听音乐/免费匹配歌词",
-      "created": "2024-07-26 19:49",
-      "link": "https://www.swszz.cn/archives/1565",
-      "author": "微生之最",
-      "avatar": "https://cdn.qyliu.top/i/2024/05/04/66351f5b62b65.png"
     },
     {
       "title": "空气炸锅维修",
@@ -757,20 +743,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/03/22/65fc59b439430.png"
     },
     {
-      "title": "关于友链申请规则调整通知",
-      "created": "2024-07-18 10:15",
-      "link": "https://qq.mba/p/7f374c15.html",
-      "author": "满心记",
-      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
-    },
-    {
-      "title": "关于各大平台域名竞价的那些事儿",
-      "created": "2024-07-18 08:43",
-      "link": "https://qq.mba/p/8f09b6d6.html",
-      "author": "满心记",
-      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
-    },
-    {
       "title": "2024版IDEA终端无法打开",
       "created": "2024-07-18 06:45",
       "link": "https://blog.june-pj.cn/posts/638470e5/",
@@ -792,13 +764,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/05/24/66500d797ac38.png"
     },
     {
-      "title": "一串代码解决老爷机上Windows的TPM 2.0（受信任的平台模块验证）和cpu限制",
-      "created": "2024-07-13 17:39",
-      "link": "https://www.swszz.cn/archives/1513",
-      "author": "微生之最",
-      "avatar": "https://cdn.qyliu.top/i/2024/05/04/66351f5b62b65.png"
-    },
-    {
       "title": "其实大部分人，已经见完了彼此的最后一面。",
       "created": "2024-07-13 13:58",
       "link": "https://www.thyuu.com/78347",
@@ -813,13 +778,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/06/02/665c869ded7cd.png"
     },
     {
-      "title": "记第一次给自己开方",
-      "created": "2024-07-13 01:33",
-      "link": "https://www.henjinet.com/archives/di-yi-ci-kai-fang.html",
-      "author": "痕迹小站",
-      "avatar": "https://cdn.qyliu.top/i/2024/05/31/6659688bbf14b.png"
-    },
-    {
       "title": "腾讯云 CDN 防刷经验分享",
       "created": "2024-07-10 17:00",
       "link": "https://www.imaegoo.com/2024/qcloud-cdn-defense/",
@@ -832,13 +790,6 @@
       "link": "https://yuuu.org/post/43443.html",
       "author": "微霞",
       "avatar": "https://cdn.qyliu.top/i/2024/04/06/66116f0fe045d.png"
-    },
-    {
-      "title": "专业激活版顶级安卓手机清理神器：CCleaner，一款知名的系统优化/隐私保护/垃圾清理神器",
-      "created": "2024-07-10 16:37",
-      "link": "https://www.swszz.cn/archives/1506",
-      "author": "微生之最",
-      "avatar": "https://cdn.qyliu.top/i/2024/05/04/66351f5b62b65.png"
     },
     {
       "title": "halo 插件开发中的一些踩坑记录",
@@ -869,6 +820,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/27/662d1c9b7efe1.png"
     },
     {
+      "title": "高效利用 GitHub 搜索，精准快速获取所需",
+      "created": "2024-07-08 18:27",
+      "link": "https://talen.top/posts/b9a0156a/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
+    },
+    {
       "title": "遭遇APP乱象：老人的「钱袋子」开线了",
       "created": "2024-07-08 03:52",
       "link": "https://blog.zhilu.cyou/2024/auto-payment",
@@ -881,13 +839,6 @@
       "link": "https://www.lyszm.com/924.html",
       "author": "六月是只猫",
       "avatar": "https://cdn.qyliu.top/i/2024/05/31/66597328bdd51.png"
-    },
-    {
-      "title": "信盈达实习记录",
-      "created": "2024-07-07 17:13",
-      "link": "https://www.gan1ser.top/post/754a429b.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "时代造青年，还是青年造时代？",
@@ -925,13 +876,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/08/18/66c0dbddc587a.webp"
     },
     {
-      "title": "彗星云跑路了",
-      "created": "2024-07-04 11:45",
-      "link": "https://qq.mba/p/e23ab292.html",
-      "author": "满心记",
-      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
-    },
-    {
       "title": "广州游记",
       "created": "2024-07-04 06:21",
       "link": "https://blog.june-pj.cn/posts/87c54a92/",
@@ -965,6 +909,20 @@
       "link": "https://blog.yaria.top/posts/a12c6b5d/",
       "author": "Ariasaka",
       "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
+    },
+    {
+      "title": "重新启用我的小米手环5",
+      "created": "2024-07-01 18:14",
+      "link": "https://qq.mba/7.html",
+      "author": "满心记",
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
+    },
+    {
+      "title": "IDM：广受欢迎的高速下载管理器",
+      "created": "2024-07-01 00:20",
+      "link": "https://talen.top/posts/b832248a/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
     },
     {
       "title": "师大残酷青春物语",
@@ -1023,13 +981,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/07/66123cff10a83.png"
     },
     {
-      "title": "数字信号的2FSK调制与解调",
-      "created": "2024-06-27 04:13",
-      "link": "https://www.gan1ser.top/post/b9a95f5e.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
-    },
-    {
       "title": "浅谈前端各种模块化",
       "created": "2024-06-26 11:35",
       "link": "https://fe32.top/articles/moudel001/",
@@ -1056,13 +1007,6 @@
       "link": "https://blog.serms.top/archives/1719216942375",
       "author": "SerMs",
       "avatar": "https://cdn.qyliu.top/i/2024/06/23/6678094c8d38d.webp"
-    },
-    {
-      "title": "OFDM学习过程及仿真",
-      "created": "2024-06-23 20:07",
-      "link": "https://www.gan1ser.top/post/ab4c01cf.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "Cloudreve捐助版Docker部署指南",
@@ -1093,6 +1037,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/23/662748990165a.png"
     },
     {
+      "title": "让Meting API解锁音乐开发新可能",
+      "created": "2024-06-21 16:34",
+      "link": "https://talen.top/posts/833fcabb/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
+    },
+    {
       "title": "【开源项目】Scrcpy-GUI：一个简洁强大scrcpy客户端",
       "created": "2024-06-21 15:46",
       "link": "https://gyhwd.top/archives/I63eJVMi",
@@ -1112,13 +1063,6 @@
       "link": "https://hexo.shangskr.top/posts/21.html",
       "author": "安小歪blog",
       "avatar": "https://cdn.qyliu.top/i/2024/08/18/66c0dbddc587a.webp"
-    },
-    {
-      "title": "温病与伤寒的关联区别",
-      "created": "2024-06-20 07:11",
-      "link": "https://www.henjinet.com/archives/wen-bing-shang-han.html",
-      "author": "痕迹小站",
-      "avatar": "https://cdn.qyliu.top/i/2024/05/31/6659688bbf14b.png"
     },
     {
       "title": "使用Cloudflare免费开启全站https配置SSL证书",
@@ -1198,6 +1142,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/05/18/6648b84c682e1.png"
     },
     {
+      "title": "零基础Docker入门指南",
+      "created": "2024-06-13 22:54",
+      "link": "https://talen.top/posts/869715fc/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
+    },
+    {
       "title": "离歌不夜天",
       "created": "2024-06-12 22:25",
       "link": "https://meuicat.com/blog/88/",
@@ -1219,6 +1170,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/05/31/6659668724466.png"
     },
     {
+      "title": "端午抽空去东湖磨山风景区走了一圈",
+      "created": "2024-06-11 22:12",
+      "link": "https://qq.mba/25.html",
+      "author": "满心记",
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
+    },
+    {
       "title": "Fiveth's Life 1",
       "created": "2024-06-10 08:00",
       "link": "https://blog.fiveth.cc/p/life-1/",
@@ -1231,6 +1189,13 @@
       "link": "https://blog.ciraos.top/p/ac068839/",
       "author": "葱苓sama",
       "avatar": "https://cdn.qyliu.top/i/2024/05/03/663458df4e6f0.png"
+    },
+    {
+      "title": "给办公电脑换两根16G内存条",
+      "created": "2024-06-07 22:56",
+      "link": "https://qq.mba/23.html",
+      "author": "满心记",
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
     },
     {
       "title": "hexo + github-action持续集成",
@@ -1366,13 +1331,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/03/21/65fc59764c0be.png"
     },
     {
-      "title": "解决火绒 6.0 造成的 Node.js fetch 方法 unable to verify the first certificate 报错",
-      "created": "2024-05-13 17:00",
-      "link": "https://www.imaegoo.com/2024/nodejs-fetch-cert-error/",
-      "author": "虹墨",
-      "avatar": "https://cdn.qyliu.top/i/2024/05/31/6659668724466.png"
-    },
-    {
       "title": "如何排查慢SQL",
       "created": "2024-05-13 16:16",
       "link": "https://blog.serms.top/archives/1718957754049",
@@ -1464,11 +1422,11 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/20/6623d64f16aee.png"
     },
     {
-      "title": "NLP谷歌语音指令训练大作业",
-      "created": "2024-04-30 05:13",
-      "link": "https://www.gan1ser.top/post/4c7a50a7.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+      "title": "说说人际关系",
+      "created": "2024-04-28 18:50",
+      "link": "https://www.henjinet.com/archives/ren-ji-guan-xi.html",
+      "author": "痕迹小站",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/31/6659688bbf14b.png"
     },
     {
       "title": "每个人都可以写一份属于自己的Phigros自制谱——Re: PhiEdit简明教程",
@@ -1728,6 +1686,13 @@
       "link": "https://www.quenan.love/posts/29665.html",
       "author": "鹊楠",
       "avatar": "https://cdn.qyliu.top/i/2024/04/10/66164fd0e92b6.png"
+    },
+    {
+      "title": "不可能有不被取代的行业",
+      "created": "2024-03-25 02:30",
+      "link": "https://www.henjinet.com/archives/bu-bei-qu-dai-de-hang-ye.html",
+      "author": "痕迹小站",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/31/6659688bbf14b.png"
     },
     {
       "title": "音乐分享 - doi微醺氛围",
@@ -2031,46 +1996,11 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/06/661170950f7a2.png"
     },
     {
-      "title": "那些年用过的CSS奇妙用法之能用CSS就不用JS技巧系列",
-      "created": "2023-08-27 19:22",
-      "link": "https://blog.anheyu.com/posts/340b.html",
-      "author": "安知鱼",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/06/66117080f2460.png"
-    },
-    {
-      "title": "什么是CDN？它解决了什么难题？国内CDN加Vercel，无服务器使用办法",
-      "created": "2023-08-26 19:24",
-      "link": "https://blog.anheyu.com/posts/136a.html",
-      "author": "安知鱼",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/06/66117080f2460.png"
-    },
-    {
-      "title": "腾讯出品免费logo制作神器AI Logo,腾讯这次真的良心了",
-      "created": "2023-08-19 18:42",
-      "link": "https://blog.anheyu.com/posts/8105.html",
-      "author": "安知鱼",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/06/66117080f2460.png"
-    },
-    {
-      "title": "当AI加上PS后让我变的极为振奋(附mac安装ps beta25.0)教程",
-      "created": "2023-08-18 19:24",
-      "link": "https://blog.anheyu.com/posts/4eb4.html",
-      "author": "安知鱼",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/06/66117080f2460.png"
-    },
-    {
       "title": "Swpp Backends 官方文档",
       "created": "2023-08-09 16:18",
       "link": "https://kmar.top/posts/b70ec88f/",
       "author": "山岳库博",
       "avatar": "https://cdn.qyliu.top/i/2024/04/06/66116c3ba58c3.png"
-    },
-    {
-      "title": "CNAME解析至cf：分流解析cloudflare处理国外请求",
-      "created": "2023-07-23 17:55",
-      "link": "https://blog.anheyu.com/posts/40fd.html",
-      "author": "安知鱼",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/06/66117080f2460.png"
     },
     {
       "title": "hexo备份",
