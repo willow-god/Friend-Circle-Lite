@@ -1,12 +1,26 @@
 {
   "statistical_data": {
     "friends_num": 85,
-    "active_num": 67,
-    "error_num": 18,
+    "active_num": 66,
+    "error_num": 19,
     "article_num": 299,
-    "last_updated_time": "2024-08-21 20:39:03"
+    "last_updated_time": "2024-08-22 02:29:53"
   },
   "article_data": [
+    {
+      "title": "2024适合个人成长阅读的书单有哪些？",
+      "created": "2024-08-22 06:30",
+      "link": "https://www.henjinet.com/archives/2024-ge-ren-cheng-zhang.html",
+      "author": "痕迹小站",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/31/6659688bbf14b.png"
+    },
+    {
+      "title": "2024年必阅读书单有哪些？",
+      "created": "2024-08-22 06:24",
+      "link": "https://www.henjinet.com/archives/2024-bi-du-shu-dan.html",
+      "author": "痕迹小站",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/31/6659688bbf14b.png"
+    },
     {
       "title": "Centos 7 安装PyMuPDF",
       "created": "2024-08-21 10:38",
@@ -554,6 +568,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2d2430f68.webp"
     },
     {
+      "title": "人没逝，感谢关心（咬牙切齿）",
+      "created": "2024-08-01 18:46",
+      "link": "https://blog.leonus.cn/2024/alive.html",
+      "author": "Leonus",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/11/6617da4084197.png"
+    },
+    {
       "title": "CloudFlare实用项目推荐",
       "created": "2024-08-01 01:31",
       "link": "https://blog.liushen.fun/posts/3850e950/",
@@ -937,13 +958,6 @@
       "link": "https://blog.serms.top/archives/1719892063663",
       "author": "SerMs",
       "avatar": "https://cdn.qyliu.top/i/2024/06/23/6678094c8d38d.webp"
-    },
-    {
-      "title": "博客二周年祭——为什么会变成这样呢？",
-      "created": "2024-07-02 10:22",
-      "link": "https://blog.yaria.top/posts/a12c6b5d/",
-      "author": "Ariasaka",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
     },
     {
       "title": "重新启用我的小米手环5",
@@ -1450,13 +1464,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/05/31/6659688bbf14b.png"
     },
     {
-      "title": "每个人都可以写一份属于自己的Phigros自制谱——Re: PhiEdit简明教程",
-      "created": "2024-04-26 21:10",
-      "link": "https://blog.yaria.top/posts/303b5edc/",
-      "author": "Ariasaka",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
-    },
-    {
       "title": "一些头像源（稳定性自测）",
       "created": "2024-04-26 20:01",
       "link": "https://luckqf.cn/archives/set-cravatar",
@@ -1709,25 +1716,11 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/10/66164fd0e92b6.png"
     },
     {
-      "title": "不可能有不被取代的行业",
-      "created": "2024-03-25 02:30",
-      "link": "https://www.henjinet.com/archives/bu-bei-qu-dai-de-hang-ye.html",
-      "author": "痕迹小站",
-      "avatar": "https://cdn.qyliu.top/i/2024/05/31/6659688bbf14b.png"
-    },
-    {
       "title": "音乐分享 - doi微醺氛围",
       "created": "2024-03-25 00:16",
       "link": "https://meuicat.com/blog/85/",
       "author": "爱吃肉的猫",
       "avatar": "https://cdn.qyliu.top/i/2024/04/07/66123cff10a83.png"
-    },
-    {
-      "title": "何为说服？",
-      "created": "2024-03-23 02:48",
-      "link": "https://www.henjinet.com/archives/he-wei-shui-fu.html",
-      "author": "痕迹小站",
-      "avatar": "https://cdn.qyliu.top/i/2024/05/31/6659688bbf14b.png"
     },
     {
       "title": "Curve 主题文档 - 快速开始",
@@ -1737,25 +1730,11 @@
       "avatar": "https://cdn.qyliu.top/i/2024/03/21/65fc59764c0be.png"
     },
     {
-      "title": "如何在RK系开发板的linux冷门内核上编译CH340驱动",
-      "created": "2024-03-15 16:34",
-      "link": "https://blog.yaria.top/posts/dad8e69b/",
-      "author": "Ariasaka",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
-    },
-    {
       "title": "使用容器在国产超算平台安装 PyTorch CUDA",
       "created": "2024-03-11 22:08",
       "link": "https://www.zouht.com/3724.html",
       "author": "ChrisKim",
       "avatar": "https://cdn.qyliu.top/i/2024/06/27/667d880789765.webp"
-    },
-    {
-      "title": "！！！如何解决Chrome121更新后导致的滚动条样式失效！！！",
-      "created": "2024-03-09 11:05",
-      "link": "https://blog.yaria.top/posts/dea522be/",
-      "author": "Ariasaka",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
     },
     {
       "title": "【业务实践】探索 Excel 表数据的导入和导出功能的完整实现方案",
@@ -1884,11 +1863,11 @@
       "avatar": "https://cdn.qyliu.top/i/2024/03/31/66090bfe06ba6.png"
     },
     {
-      "title": "我的2023回忆录——还有遗憾吗？明年会怎么样呢？",
-      "created": "2023-12-31 08:34",
-      "link": "https://blog.yaria.top/posts/b7bc969f/",
-      "author": "Ariasaka",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
+      "title": "新年倒计时改良&随便说说",
+      "created": "2023-12-25 20:24",
+      "link": "https://blog.leonus.cn/2023/newYearCard2.html",
+      "author": "Leonus",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/11/6617da4084197.png"
     },
     {
       "title": "【显微镜下的世界】0x1",
@@ -1940,6 +1919,20 @@
       "avatar": "https://cdn.qyliu.top/i/2024/08/16/66bef97a8b1ce.webp"
     },
     {
+      "title": "幽门螺旋杆菌的治疗",
+      "created": "2023-11-12 12:10",
+      "link": "https://blog.leonus.cn/2023/Helicobacter-pylori.html",
+      "author": "Leonus",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/11/6617da4084197.png"
+    },
+    {
+      "title": "《光年 星环》蓝牙耳机购买体验",
+      "created": "2023-11-07 20:14",
+      "link": "https://blog.leonus.cn/2023/star-ring.html",
+      "author": "Leonus",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/11/6617da4084197.png"
+    },
+    {
       "title": "2023 级新生周赛第二周题解",
       "created": "2023-11-05 17:03",
       "link": "https://kmar.top/posts/fd60364e/",
@@ -1980,6 +1973,13 @@
       "link": "https://fe32.top/articles/fe100003/",
       "author": "唐志远",
       "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af324b5e627.webp"
+    },
+    {
+      "title": "最近我都干了些什么",
+      "created": "2023-10-22 09:05",
+      "link": "https://blog.leonus.cn/2023/recently.html",
+      "author": "Leonus",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/11/6617da4084197.png"
     },
     {
       "title": "闪电入职vs光速离职",
