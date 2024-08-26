@@ -3,8 +3,8 @@
     "friends_num": 85,
     "active_num": 67,
     "error_num": 18,
-    "article_num": 304,
-    "last_updated_time": "2024-08-26 20:41:54"
+    "article_num": 299,
+    "last_updated_time": "2024-08-27 02:29:20"
   },
   "article_data": [
     {
@@ -596,6 +596,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/21/66249e0a775f8.png"
     },
     {
+      "title": "Serv00部署Memos",
+      "created": "2024-08-03 19:23",
+      "link": "https://www.gan1ser.top/post/6a236522.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+    },
+    {
       "title": "真·彩虹猫加载动画",
       "created": "2024-08-03 01:12",
       "link": "https://blog.sinzmise.top/posts/46640/",
@@ -974,6 +981,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/05/31/66597328bdd51.png"
     },
     {
+      "title": "信盈达实习记录",
+      "created": "2024-07-07 17:13",
+      "link": "https://www.gan1ser.top/post/754a429b.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+    },
+    {
       "title": "时代造青年，还是青年造时代？",
       "created": "2024-07-07 15:31",
       "link": "http://blog.awaae001.top/posts/908575.html",
@@ -1028,13 +1042,6 @@
       "link": "https://blog.serms.top/archives/1719892063663",
       "author": "SerMs",
       "avatar": "https://cdn.qyliu.top/i/2024/06/23/6678094c8d38d.webp"
-    },
-    {
-      "title": "博客二周年祭——为什么会变成这样呢？",
-      "created": "2024-07-02 10:22",
-      "link": "https://blog.yaria.top/posts/a12c6b5d/",
-      "author": "Ariasaka",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
     },
     {
       "title": "IDM：广受欢迎的高速下载管理器",
@@ -1100,6 +1107,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/07/66123cff10a83.png"
     },
     {
+      "title": "数字信号的2FSK调制与解调",
+      "created": "2024-06-27 04:13",
+      "link": "https://www.gan1ser.top/post/b9a95f5e.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+    },
+    {
       "title": "浅谈前端各种模块化",
       "created": "2024-06-26 11:35",
       "link": "https://fe32.top/articles/moudel001/",
@@ -1126,6 +1140,13 @@
       "link": "https://blog.serms.top/archives/1719216942375",
       "author": "SerMs",
       "avatar": "https://cdn.qyliu.top/i/2024/06/23/6678094c8d38d.webp"
+    },
+    {
+      "title": "OFDM学习过程及仿真",
+      "created": "2024-06-23 20:07",
+      "link": "https://www.gan1ser.top/post/ab4c01cf.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "Cloudreve捐助版Docker部署指南",
@@ -1415,13 +1436,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/03/31/66090bfe06ba6.png"
     },
     {
-      "title": "5月上旬",
-      "created": "2024-05-12 22:01",
-      "link": "https://flytusky.top/archives/141/",
-      "author": "微笔记",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/06/66117022b57a5.png"
-    },
-    {
       "title": "5月12日 随笔",
       "created": "2024-05-12 04:14",
       "link": "https://blog.xsot.cn/archives/note-24-05-12.html",
@@ -1485,11 +1499,11 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/20/6623d64f16aee.png"
     },
     {
-      "title": "每个人都可以写一份属于自己的Phigros自制谱——Re: PhiEdit简明教程",
-      "created": "2024-04-26 21:10",
-      "link": "https://blog.yaria.top/posts/303b5edc/",
-      "author": "Ariasaka",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
+      "title": "NLP谷歌语音指令训练大作业",
+      "created": "2024-04-30 05:13",
+      "link": "https://www.gan1ser.top/post/4c7a50a7.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "一些头像源（稳定性自测）",
@@ -1513,25 +1527,11 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/06/661170950f7a2.png"
     },
     {
-      "title": "2024-4-20:The bad weather in GuangDong but something wonderful in school",
-      "created": "2024-04-21 19:21",
-      "link": "https://flytusky.top/archives/139/",
-      "author": "微笔记",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/06/66117022b57a5.png"
-    },
-    {
       "title": "一文让你理解网络阻塞与非阻塞和多路io复用",
       "created": "2024-04-21 17:55",
       "link": "https://huanxueblog.top/posts/a8fad53.html",
       "author": "幻雪博客",
       "avatar": "https://cdn.qyliu.top/i/2024/03/31/66090bfe06ba6.png"
-    },
-    {
-      "title": "万有引力定律与航空航天",
-      "created": "2024-04-21 06:16",
-      "link": "https://flytusky.top/archives/135/",
-      "author": "微笔记",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/06/66117022b57a5.png"
     },
     {
       "title": "探秘米哈游技术进步：《绝区零》三测体验",
@@ -1667,20 +1667,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f26979229.png"
     },
     {
-      "title": "推荐一下维他命图床",
-      "created": "2024-04-06 01:14",
-      "link": "https://flytusky.top/archives/132/",
-      "author": "微笔记",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/06/66117022b57a5.png"
-    },
-    {
-      "title": "月考一的思考与感悟",
-      "created": "2024-04-05 18:12",
-      "link": "https://flytusky.top/archives/131/",
-      "author": "微笔记",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/06/66117022b57a5.png"
-    },
-    {
       "title": "免费安装杜比全景声",
       "created": "2024-04-03 11:09",
       "link": "https://www.quenan.love/posts/40496.html",
@@ -1751,25 +1737,11 @@
       "avatar": "https://cdn.qyliu.top/i/2024/03/21/65fc59764c0be.png"
     },
     {
-      "title": "如何在RK系开发板的linux冷门内核上编译CH340驱动",
-      "created": "2024-03-15 16:34",
-      "link": "https://blog.yaria.top/posts/dad8e69b/",
-      "author": "Ariasaka",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
-    },
-    {
       "title": "使用容器在国产超算平台安装 PyTorch CUDA",
       "created": "2024-03-11 22:08",
       "link": "https://www.zouht.com/3724.html",
       "author": "ChrisKim",
       "avatar": "https://cdn.qyliu.top/i/2024/06/27/667d880789765.webp"
-    },
-    {
-      "title": "！！！如何解决Chrome121更新后导致的滚动条样式失效！！！",
-      "created": "2024-03-09 11:05",
-      "link": "https://blog.yaria.top/posts/dea522be/",
-      "author": "Ariasaka",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
     },
     {
       "title": "【业务实践】探索 Excel 表数据的导入和导出功能的完整实现方案",
@@ -1889,13 +1861,6 @@
       "link": "https://huanxueblog.top/posts/6f6925cb.html",
       "author": "幻雪博客",
       "avatar": "https://cdn.qyliu.top/i/2024/03/31/66090bfe06ba6.png"
-    },
-    {
-      "title": "我的2023回忆录——还有遗憾吗？明年会怎么样呢？",
-      "created": "2023-12-31 08:34",
-      "link": "https://blog.yaria.top/posts/b7bc969f/",
-      "author": "Ariasaka",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
     },
     {
       "title": "新年倒计时改良&随便说说",
