@@ -42,7 +42,7 @@ function initialize_fc_lite() {
             }
         }
 
-        fetch(`${UserConfig.private_api_url}all`)
+        fetch(`${UserConfig.private_api_url}all.json`)
             .then(response => response.json())
             .then(data => {
                 localStorage.setItem(cacheKey, JSON.stringify(data));
@@ -217,5 +217,5 @@ function whenDOMReady() {
     initialize_fc_lite();
 }
 
-whenDOMReady()
-document.addEventListener("pjax:complete", whenDOMReady)
+whenDOMReady();
+document.addEventListener("pjax:complete", whenDOMReady);

@@ -6,18 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>文章卡片展示</title>
 </head>
+<style>
+    .root-container {
+        margin: 0 auto;
+        padding: 20px;
+    }
+</style>
 
 <body>
-    <div id="friend-circle-lite-root"></div>
+    <div class="root-container" style="max-width: 1000px;">
+        <div id="friend-circle-lite-root"></div>
+    </div>
 <script>
     if (typeof UserConfig === 'undefined') {
         var UserConfig = {
             // 填写你的fc Lite地址
-            private_api_url: 'https://fc.liushen.fun/',
+            private_api_url: './',
             // 点击加载更多时，一次最多加载几篇文章，默认20
-            page_turning_number: 20,
+            page_turning_number: 24,
             // 头像加载失败时，默认头像地址
-            error_img: 'https://pic.imgdb.cn/item/6695daa4d9c307b7e953ee3d.jpg', // https://cdn.qyliu.top/i/2024/03/22/65fcea97b3ca6.png
+            error_img: 'https://i.p-i.vip/30/20240815-66bced9226a36.webp', // https://pic.imgdb.cn/item/6695daa4d9c307b7e953ee3d.jpg
         }
     }
 </script>
