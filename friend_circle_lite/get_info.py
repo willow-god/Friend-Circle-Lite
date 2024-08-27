@@ -149,7 +149,15 @@ def parse_feed(url, session, count=5):
             if i >= count:
                 break
             
-            published = format_published_time(entry.published) if 'published' in entry else ''
+            if 'published' in entry:
+                published = format_published_time(entry.published)
+            elif 'updated' in entry:
+                published = format_published_time(entry.updated)
+                # 输出警告信息
+                print(f"警告：文章 {entry.title} 未包含发布时间，请尽快联系站长处理，暂时已设置为更新时间 {published}")
+            else:
+                published = ''
+                print(f"警告：文章 {entry.title} 未包含任何时间信息，请尽快联系站长处理")
             article = {
                 'title': entry.title if 'title' in entry else '',
                 'author': entry.author if 'author' in entry else '',
@@ -290,6 +298,13 @@ def sort_articles_by_time(data):
     返回：
     dict: 按时间排序后的文章信息字典
     """
+    # 先确保每个元素存在时间
+    for article in data['article_data']:
+        if article['created'] == '' or article['created'] == None:
+            article['created'] = '2024-01-01 00:00'
+            # 输出警告信息
+            print(f"警告：文章 {article['title']} 未包含任何可提取的时间信息，已设置为默认时间 2024-01-01 00:00")
+    
     if 'article_data' in data:
         sorted_articles = sorted(
             data['article_data'],
