@@ -1,10 +1,10 @@
 {
   "statistical_data": {
     "friends_num": 87,
-    "active_num": 69,
-    "error_num": 18,
-    "article_num": 314,
-    "last_updated_time": "2024-09-01 20:40:35"
+    "active_num": 68,
+    "error_num": 19,
+    "article_num": 309,
+    "last_updated_time": "2024-09-02 02:28:09"
   },
   "article_data": [
     {
@@ -36,11 +36,25 @@
       "avatar": "https://cdn.qyliu.top/i/2024/06/01/665a9a8f8418a.png"
     },
     {
+      "title": "来日方长",
+      "created": "2024-09-02 06:50",
+      "link": "https://koxiuqiu.cn/2024/9y1d2/",
+      "author": "朽丘博",
+      "avatar": "https://cdn.qyliu.top/i/2024/08/20/66c41c9c45e2a.webp"
+    },
+    {
       "title": "MiniCover封面设计",
       "created": "2024-09-01 16:00",
       "link": "https://koxiuqiu.cn/2024/9y1d1/",
       "author": "朽丘博",
       "avatar": "https://cdn.qyliu.top/i/2024/08/20/66c41c9c45e2a.webp"
+    },
+    {
+      "title": "Windows工具-让你的Windows锦上添花，添了又添",
+      "created": "2024-09-01 11:24",
+      "link": "http://blog.awaae001.top/posts/44173.html",
+      "author": "呓语梦轩",
+      "avatar": "https://cdn.qyliu.top/i/2024/03/30/660769346d538.jpg"
     },
     {
       "title": "GESP二级(三)",
@@ -76,6 +90,13 @@
       "link": "https://h.liyy.us.kg/2024/09/01/hexo-mp4/",
       "author": "茗辰原",
       "avatar": "https://cdn.qyliu.top/i/2024/04/21/66249e0a775f8.png"
+    },
+    {
+      "title": "2024-08小记",
+      "created": "2024-08-31 19:33",
+      "link": "https://blog.sinzmise.top/posts/15688/",
+      "author": "星空故事",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/24/6628f767880fa.png"
     },
     {
       "title": "八月底：家庭与事业",
@@ -358,7 +379,7 @@
       "avatar": "https://cdn.qyliu.top/i/2024/08/02/66acf256da797.webp"
     },
     {
-      "title": "THYUU星度主题优化和新增进度（20240826）",
+      "title": "THYUU星度主题优化和新增进度（20240901）",
       "created": "2024-08-21 08:36",
       "link": "https://www.thyuu.com/78444",
       "author": "风记星辰",
@@ -398,13 +419,6 @@
       "link": "https://blog.wzwzx.cn/kaleidoscopeos-for-begonia.html",
       "author": "蛋蛋困了",
       "avatar": "https://cdn.qyliu.top/i/2024/04/30/6631024628e0d.png"
-    },
-    {
-      "title": "最近半个月的报告",
-      "created": "2024-08-19 00:50",
-      "link": "https://koxiuqiu.cn/2024/8/18/1/",
-      "author": "朽丘博",
-      "avatar": "https://cdn.qyliu.top/i/2024/08/20/66c41c9c45e2a.webp"
     },
     {
       "title": "PicHoro 一个用于快速上传图片和管理图床的移动端工具",
@@ -701,13 +715,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/21/66249e0a775f8.png"
     },
     {
-      "title": "Serv00部署Memos",
-      "created": "2024-08-03 19:23",
-      "link": "https://www.gan1ser.top/post/6a236522.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
-    },
-    {
       "title": "真·彩虹猫加载动画",
       "created": "2024-08-03 01:12",
       "link": "https://blog.sinzmise.top/posts/46640/",
@@ -869,7 +876,7 @@
       "avatar": "https://cdn.qyliu.top/i/2024/06/02/665c869ded7cd.png"
     },
     {
-      "title": "Umami？不，还是51LA",
+      "title": "配置Umami到about页",
       "created": "2024-07-25 02:11",
       "link": "https://blog.bsgun.cn/posts/609bcdb9/",
       "author": "梦爱吃鱼",
@@ -1030,13 +1037,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/05/31/66597328bdd51.png"
     },
     {
-      "title": "信盈达实习记录",
-      "created": "2024-07-07 17:13",
-      "link": "https://www.gan1ser.top/post/754a429b.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
-    },
-    {
       "title": "时代造青年，还是青年造时代？",
       "created": "2024-07-07 15:31",
       "link": "http://blog.awaae001.top/posts/908575.html",
@@ -1149,13 +1149,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/07/66123cff10a83.png"
     },
     {
-      "title": "数字信号的2FSK调制与解调",
-      "created": "2024-06-27 04:13",
-      "link": "https://www.gan1ser.top/post/b9a95f5e.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
-    },
-    {
       "title": "浅谈前端各种模块化",
       "created": "2024-06-26 11:35",
       "link": "https://fe32.top/articles/moudel001/",
@@ -1182,13 +1175,6 @@
       "link": "https://blog.serms.top/archives/1719216942375",
       "author": "SerMs",
       "avatar": "https://cdn.qyliu.top/i/2024/06/23/6678094c8d38d.webp"
-    },
-    {
-      "title": "OFDM学习过程及仿真",
-      "created": "2024-06-23 20:07",
-      "link": "https://www.gan1ser.top/post/ab4c01cf.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "Cloudreve捐助版Docker部署指南",
@@ -1331,13 +1317,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/05/03/663458df4e6f0.png"
     },
     {
-      "title": "hexo + github-action持续集成",
-      "created": "2024-06-07 17:18",
-      "link": "http://blog.awaae001.top/posts/26785.html",
-      "author": "呓语梦轩",
-      "avatar": "https://cdn.qyliu.top/i/2024/03/30/660769346d538.jpg"
-    },
-    {
       "title": "大疆 Mini 4K 初体验",
       "created": "2024-06-07 13:35",
       "link": "https://blog.xsot.cn/archives/dji-mini4k.html",
@@ -1385,13 +1364,6 @@
       "link": "https://www.lxink.cn/posts/815893be.html",
       "author": "凉心",
       "avatar": "https://cdn.qyliu.top/i/2024/05/24/66500d797ac38.png"
-    },
-    {
-      "title": "Ruffle测试",
-      "created": "2024-05-26 05:12",
-      "link": "https://blog.sinzmise.top/posts/57692/",
-      "author": "星空故事",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/24/6628f767880fa.png"
     },
     {
       "title": "Linux 系统 CUDA 多版本共存以及切换",
@@ -1560,13 +1532,6 @@
       "link": "https://blog.fiveth.cc/p/138e/",
       "author": "Fiveth",
       "avatar": "https://cdn.qyliu.top/i/2024/04/20/6623d64f16aee.png"
-    },
-    {
-      "title": "NLP谷歌语音指令训练大作业",
-      "created": "2024-04-30 05:13",
-      "link": "https://www.gan1ser.top/post/4c7a50a7.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "每个人都可以写一份属于自己的Phigros自制谱——Re: PhiEdit简明教程",
