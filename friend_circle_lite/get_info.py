@@ -160,7 +160,7 @@ def parse_feed(url, session, count=5):
                 print(f"警告：文章 {entry.title} 未包含任何时间信息，请尽快联系站长处理")
             article = {
                 'title': entry.title if 'title' in entry else '',
-                'author': entry.author if 'author' in entry else '',
+                'author': result['author'],
                 'link': entry.link if 'link' in entry else '',
                 'published': published,
                 'summary': entry.summary if 'summary' in entry else '',
