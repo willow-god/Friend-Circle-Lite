@@ -2,7 +2,7 @@
     "articles": [
         {
             "title": "太白山&法门寺三日游游记",
-            "author": "",
+            "author": "Willow-God",
             "link": "https://blog.liushen.fun/posts/62e27d26/",
             "published": "2024-08-27 00:06",
             "summary": "转瞬之间，暑假即将过去，我父母决定带我出去玩，经过一番选择，我们选择了太白山国家森林公园，以及其周围的法门寺，经过三天的游玩，我们了解到了很多新知识，也锻炼了身体，放松了身心。",
@@ -10,7 +10,7 @@
         },
         {
             "title": "魔改笔记七：分类条及外链卡片",
-            "author": "",
+            "author": "Willow-God",
             "link": "https://blog.liushen.fun/posts/a64defb4/",
             "published": "2024-08-10 01:39",
             "summary": "虽然说域名换了几乎等于从头开始，但是仍然浇不灭我对于网站的热情，该进行的还是得进行。很久都没有总结魔改了，这篇文章就将最近魔改最大的几个部分进行记录，同时对有需要的朋友提供帮助。",
@@ -18,7 +18,7 @@
         },
         {
             "title": "域名迁移至 blog.liushen.fun",
-            "author": "",
+            "author": "Willow-God",
             "link": "https://blog.liushen.fun/posts/159f1aa5/",
             "published": "2024-08-09 16:00",
             "summary": "近期遇见了一个很烦人的事情，bing的所有搜索结果全部消失，我也不知道是怎么回事，已经在联系bing管理员了，不过，其实我很早之前就像换域名了，今天趁此机会，干脆直接换了得了！原有的域名301至新域名，不会影响任何使用。",
@@ -26,7 +26,7 @@
         },
         {
             "title": "CloudFlare实用项目推荐",
-            "author": "",
+            "author": "Willow-God",
             "link": "https://blog.liushen.fun/posts/3850e950/",
             "published": "2024-08-01 01:31",
             "summary": "之前我向大家推荐过vercel上的一些项目，都非常的有趣实用，最近，在和朋友安小歪的聊天中，发现了一些很好玩的cloud flare项目，比如临时邮箱，临时文件传送，计数统计，等等，很多项目都非常好玩，于是在此推荐给大家。",
@@ -34,7 +34,7 @@
         },
         {
             "title": "Friend-Circle-Lite:轻量友链朋友圈",
-            "author": "",
+            "author": "Willow-God",
             "link": "https://blog.liushen.fun/posts/4dc716ec/",
             "published": "2024-07-21 00:01",
             "summary": "前两天出现了友链朋友圈因为版本原因导致无法运行的问题，虽然我已经改好了，但是由于bundle文件过大，经常导致加载较慢，于是我自己手搓了一个轻量化友链朋友圈，同时支持通过提交issue实现邮箱订阅本站最新文章，也算是友链朋友圈部署新思路啦，适合喜欢轻量和免费快速的朋友尝试！",
