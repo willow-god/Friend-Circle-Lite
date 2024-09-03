@@ -1,10 +1,10 @@
 {
   "statistical_data": {
     "friends_num": 87,
-    "active_num": 66,
-    "error_num": 21,
-    "article_num": 299,
-    "last_updated_time": "2024-09-03 02:29:51"
+    "active_num": 68,
+    "error_num": 19,
+    "article_num": 305,
+    "last_updated_time": "2024-09-03 09:41:06"
   },
   "article_data": [
     {
@@ -62,6 +62,13 @@
       "link": "https://koxiuqiu.cn/2024/9y1d1/",
       "author": "朽丘博",
       "avatar": "https://cdn.qyliu.top/i/2024/08/20/66c41c9c45e2a.webp"
+    },
+    {
+      "title": "Windows工具-让你的Windows锦上添花，添了又添",
+      "created": "2024-09-01 11:24",
+      "link": "http://blog.awaae001.top/posts/44173.html",
+      "author": "呓语梦轩",
+      "avatar": "https://cdn.qyliu.top/i/2024/03/30/660769346d538.jpg"
     },
     {
       "title": "GESP二级(三)",
@@ -393,13 +400,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2e22827be.webp"
     },
     {
-      "title": "KaleidoscopeOS For Begonia",
-      "created": "2024-08-19 02:00",
-      "link": "https://blog.wzwzx.cn/kaleidoscopeos-for-begonia.html",
-      "author": "蛋蛋困了",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/30/6631024628e0d.png"
-    },
-    {
       "title": "PicHoro 一个用于快速上传图片和管理图床的移动端工具",
       "created": "2024-08-19 00:00",
       "link": "https://dusays.com/739/",
@@ -687,6 +687,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/21/66249e0a775f8.png"
     },
     {
+      "title": "Serv00部署Memos",
+      "created": "2024-08-03 19:23",
+      "link": "https://www.gan1ser.top/post/6a236522.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+    },
+    {
       "title": "真·彩虹猫加载动画",
       "created": "2024-08-03 01:12",
       "link": "https://blog.sinzmise.top/posts/46640/",
@@ -706,6 +713,13 @@
       "link": "https://h.liyy.us.kg/2024/08/03/wu-muose/",
       "author": "茗辰原",
       "avatar": "https://cdn.qyliu.top/i/2024/04/21/66249e0a775f8.png"
+    },
+    {
+      "title": "Python实战项目：外星人入侵（源码分享）",
+      "created": "2024-08-02 14:33",
+      "link": "https://blog.wenjing.xin/archives/mK0pfmcB",
+      "author": "dreamChaser",
+      "avatar": "https://cdn.qyliu.top/i/2024/03/22/65fc59b439430.png"
     },
     {
       "title": "不负责任的猫爸-一语成谶了",
@@ -883,6 +897,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/07/07/668a9e330dc6a.webp"
     },
     {
+      "title": "theme-hao主题适配友链自助提交插件",
+      "created": "2024-07-21 09:30",
+      "link": "https://blog.wenjing.xin/archives/xMlRKBEd",
+      "author": "dreamChaser",
+      "avatar": "https://cdn.qyliu.top/i/2024/03/22/65fc59b439430.png"
+    },
+    {
       "title": "Friend-Circle-Lite:轻量友链朋友圈",
       "created": "2024-07-21 00:01",
       "link": "https://blog.liushen.fun/posts/4dc716ec/",
@@ -904,11 +925,25 @@
       "avatar": "https://cdn.qyliu.top/i/2024/05/31/66595f03d46be.png"
     },
     {
+      "title": "plugin-artalk 插件保姆级使用教程",
+      "created": "2024-07-18 23:42",
+      "link": "https://blog.wenjing.xin/archives/DV1kKzJX",
+      "author": "dreamChaser",
+      "avatar": "https://cdn.qyliu.top/i/2024/03/22/65fc59b439430.png"
+    },
+    {
       "title": "2024版IDEA终端无法打开",
       "created": "2024-07-18 06:45",
       "link": "https://blog.june-pj.cn/posts/638470e5/",
       "author": "June",
       "avatar": "https://cdn.qyliu.top/i/2024/03/22/65fc5b18a2574.png"
+    },
+    {
+      "title": "plugin-blog-hao 插件部分功能演示",
+      "created": "2024-07-17 19:03",
+      "link": "https://blog.wenjing.xin/archives/nhqdbrBO",
+      "author": "dreamChaser",
+      "avatar": "https://cdn.qyliu.top/i/2024/03/22/65fc59b439430.png"
     },
     {
       "title": "最近折腾群晖那点事",
@@ -932,6 +967,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/06/66116f0fe045d.png"
     },
     {
+      "title": "halo 插件开发中的一些踩坑记录",
+      "created": "2024-07-10 14:52",
+      "link": "https://blog.wenjing.xin/archives/sl9ZmDTr",
+      "author": "dreamChaser",
+      "avatar": "https://cdn.qyliu.top/i/2024/03/22/65fc59b439430.png"
+    },
+    {
       "title": "使用MinIO+PicGo在服务器搭建图床",
       "created": "2024-07-09 00:00",
       "link": "http://blog.gzzz.pro/posts/e14931f5/",
@@ -951,6 +993,13 @@
       "link": "https://www.lyszm.com/924.html",
       "author": "六月是只猫",
       "avatar": "https://cdn.qyliu.top/i/2024/05/31/66597328bdd51.png"
+    },
+    {
+      "title": "信盈达实习记录",
+      "created": "2024-07-07 17:13",
+      "link": "https://www.gan1ser.top/post/754a429b.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "时代造青年，还是青年造时代？",
@@ -1004,7 +1053,7 @@
     {
       "title": "博客二周年祭——为什么会变成这样呢？",
       "created": "2024-07-02 10:22",
-      "link": "https://blog.yaria.top/posts/a12c6b5d/",
+      "link": "https://blognext.yaria.top/posts/a12c6b5d",
       "author": "Ariasaka",
       "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
     },
@@ -1065,6 +1114,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/07/66123cff10a83.png"
     },
     {
+      "title": "数字信号的2FSK调制与解调",
+      "created": "2024-06-27 04:13",
+      "link": "https://www.gan1ser.top/post/b9a95f5e.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+    },
+    {
       "title": "浅谈前端各种模块化",
       "created": "2024-06-26 11:35",
       "link": "https://fe32.top/articles/moudel001/",
@@ -1091,6 +1147,13 @@
       "link": "https://blog.serms.top/archives/1719216942375",
       "author": "SerMs",
       "avatar": "https://cdn.qyliu.top/i/2024/06/23/6678094c8d38d.webp"
+    },
+    {
+      "title": "OFDM学习过程及仿真",
+      "created": "2024-06-23 20:07",
+      "link": "https://www.gan1ser.top/post/ab4c01cf.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "Cloudreve捐助版Docker部署指南",
@@ -1231,13 +1294,6 @@
       "link": "https://blog.ciraos.top/p/ac068839/",
       "author": "葱苓sama",
       "avatar": "https://cdn.qyliu.top/i/2024/05/03/663458df4e6f0.png"
-    },
-    {
-      "title": "hexo + github-action持续集成",
-      "created": "2024-06-07 17:18",
-      "link": "http://blog.awaae001.top/posts/26785.html",
-      "author": "呓语梦轩",
-      "avatar": "https://cdn.qyliu.top/i/2024/03/30/660769346d538.jpg"
     },
     {
       "title": "大疆 Mini 4K 初体验",
@@ -1422,20 +1478,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/27/662d1c9b7efe1.png"
     },
     {
-      "title": "[EN] ParanoidAndroid For OPKONA",
-      "created": "2024-05-04 22:14",
-      "link": "https://blog.wzwzx.cn/en-paranoidandroid-for-opkona.html",
-      "author": "蛋蛋困了",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/30/6631024628e0d.png"
-    },
-    {
-      "title": "ParanoidAndroid For OPKONA",
-      "created": "2024-05-04 20:01",
-      "link": "https://blog.wzwzx.cn/paranoidandroid-for-opkona.html",
-      "author": "蛋蛋困了",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/30/6631024628e0d.png"
-    },
-    {
       "title": "探索 | 我只是想保存一个 Key！",
       "created": "2024-05-03 22:14",
       "link": "https://blog.hesiy.cn/posts/i-just-want-to-save-keys/",
@@ -1457,9 +1499,16 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/20/6623d64f16aee.png"
     },
     {
+      "title": "NLP谷歌语音指令训练大作业",
+      "created": "2024-04-30 05:13",
+      "link": "https://www.gan1ser.top/post/4c7a50a7.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+    },
+    {
       "title": "每个人都可以写一份属于自己的Phigros自制谱——Re: PhiEdit简明教程",
       "created": "2024-04-26 21:10",
-      "link": "https://blog.yaria.top/posts/303b5edc/",
+      "link": "https://blognext.yaria.top/posts/303b5edc",
       "author": "Ariasaka",
       "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
     },
@@ -1718,7 +1767,7 @@
     {
       "title": "如何在RK系开发板的linux冷门内核上编译CH340驱动",
       "created": "2024-03-15 16:34",
-      "link": "https://blog.yaria.top/posts/dad8e69b/",
+      "link": "https://blognext.yaria.top/posts/dad8e69b",
       "author": "Ariasaka",
       "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
     },
@@ -1732,7 +1781,7 @@
     {
       "title": "！！！如何解决Chrome121更新后导致的滚动条样式失效！！！",
       "created": "2024-03-09 11:05",
-      "link": "https://blog.yaria.top/posts/dea522be/",
+      "link": "https://blognext.yaria.top/posts/dea522be",
       "author": "Ariasaka",
       "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
     },
@@ -1793,13 +1842,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/06/66116f0fe045d.png"
     },
     {
-      "title": "世界，您好！",
-      "created": "2024-02-08 11:18",
-      "link": "https://blog.wzwzx.cn/hello-world.html",
-      "author": "蛋蛋困了",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/30/6631024628e0d.png"
-    },
-    {
       "title": "你好 2024",
       "created": "2024-01-27 22:10",
       "link": "https://blog.xsot.cn/archives/2023-annual-summary.html",
@@ -1851,7 +1893,7 @@
     {
       "title": "我的2023回忆录——还有遗憾吗？明年会怎么样呢？",
       "created": "2023-12-31 08:34",
-      "link": "https://blog.yaria.top/posts/b7bc969f/",
+      "link": "https://blognext.yaria.top/posts/b7bc969f",
       "author": "Ariasaka",
       "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
     },
