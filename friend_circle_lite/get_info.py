@@ -178,7 +178,7 @@ def parse_feed(url, session, count=5):
             'articles': []
         }
 
-def process_friend(friend, session, count):
+def process_friend(friend, session, count, specific_RSS=[]):
     """
     处理单个朋友的博客信息。
 
@@ -186,13 +186,24 @@ def process_friend(friend, session, count):
     friend (list): 包含朋友信息的列表 [name, blog_url, avatar]。
     session (requests.Session): 用于请求的会话对象。
     count (int): 获取每个博客的最大文章数。
+    specific_RSS (list): 包含特定 RSS 源的字典列表 [{name, url}]
 
     返回：
     dict: 包含朋友博客信息的字典。
     """
     name, blog_url, avatar = friend
-    feed_type, feed_url = check_feed(blog_url, session)
-    print(f"========“{name}”的博客“{blog_url}”的feed类型为“{feed_type}”========")
+    
+    # 如果 specific_RSS 中有对应的 name，则直接返回 feed_url
+    if specific_RSS is None:
+        specific_RSS = []
+    rss_feed = next((rss['url'] for rss in specific_RSS if rss['name'] == name), None)
+    if rss_feed:
+        feed_url = rss_feed
+        feed_type = 'specific'
+        print(f"========“{name}”的博客“{blog_url}”为特定RSS源“{feed_url}”========")
+    else:
+        feed_type, feed_url = check_feed(blog_url, session)
+        print(f"========“{name}”的博客“{blog_url}”的feed类型为“{feed_type}”========")
 
     if feed_type != 'none':
         feed_info = parse_feed(feed_url, session, count)
@@ -223,13 +234,14 @@ def process_friend(friend, session, count):
             'articles': []
         }
 
-def fetch_and_process_data(json_url, count=5):
+def fetch_and_process_data(json_url, specific_RSS=[], count=5):
     """
     读取 JSON 数据并处理订阅信息，返回统计数据和文章信息。
 
     参数：
     json_url (str): 包含朋友信息的 JSON 文件的 URL。
     count (int): 获取每个博客的最大文章数。
+    specific_RSS (list): 包含特定 RSS 源的字典列表 [{name, url}]
 
     返回：
     dict: 包含统计数据和文章信息的字典。
@@ -252,7 +264,7 @@ def fetch_and_process_data(json_url, count=5):
 
     with ThreadPoolExecutor(max_workers=10) as executor:
         future_to_friend = {
-            executor.submit(process_friend, friend, session, count): friend
+            executor.submit(process_friend, friend, session, count, specific_RSS): friend
             for friend in friends_data['friends']
         }
         
