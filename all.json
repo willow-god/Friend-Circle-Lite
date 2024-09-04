@@ -3,8 +3,8 @@
     "friends_num": 87,
     "active_num": 71,
     "error_num": 16,
-    "article_num": 319,
-    "last_updated_time": "2024-09-04 20:43:36"
+    "article_num": 324,
+    "last_updated_time": "2024-09-05 02:28:35"
   },
   "article_data": [
     {
@@ -29,6 +29,20 @@
       "avatar": "https://cdn.qyliu.top/i/2024/06/01/665a9a8f8418a.png"
     },
     {
+      "title": "OpenGist--自部署代码片段保存项目",
+      "created": "2024-09-05 00:06",
+      "link": "https://blog.liushen.fun/posts/1ab3d6a1/",
+      "author": "清羽飞扬",
+      "avatar": "https://blog.liushen.fun/info/avatar.ico"
+    },
+    {
+      "title": "【刷题必看】字符串的匹配算法（单模式串）",
+      "created": "2024-09-04 23:58",
+      "link": "https://uuanqin.top/p/53501b47/",
+      "author": "半方池水",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/14/661bf5b9d3d5c.png"
+    },
+    {
       "title": "FreshRSS实现文章订阅",
       "created": "2024-09-04 17:01",
       "link": "https://qq.mba/182.html",
@@ -50,7 +64,7 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/23/662748990165a.png"
     },
     {
-      "title": "【刷题】手写 LRU 缓存以理解 Java 中的 LinkedHashMap",
+      "title": "【刷题必看】手写 LRU 缓存以理解 Java 中的 LinkedHashMap",
       "created": "2024-09-03 23:25",
       "link": "https://uuanqin.top/p/270917b1/",
       "author": "半方池水",
@@ -92,7 +106,7 @@
       "avatar": "https://cdn.qyliu.top/i/2024/08/20/66c41c9c45e2a.webp"
     },
     {
-      "title": "【刷题】最大子数组问题",
+      "title": "【刷题必看】最大子数组问题",
       "created": "2024-09-01 22:30",
       "link": "https://uuanqin.top/p/19c8c246/",
       "author": "半方池水",
@@ -134,7 +148,7 @@
       "avatar": "https://cdn.qyliu.top/i/2024/07/28/66a6324891ba1.webp"
     },
     {
-      "title": "【刷题】O(n) 内找出只出现 1 次的数字",
+      "title": "【刷题必看】在 O(n) 内找出只出现 1 次的数字",
       "created": "2024-09-01 00:03",
       "link": "https://uuanqin.top/p/bf3f2242/",
       "author": "半方池水",
@@ -218,7 +232,7 @@
       "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af2e22827be.webp"
     },
     {
-      "title": "【刷题】SQL 写题技巧积累",
+      "title": "【刷题必看】SQL 写题技巧积累",
       "created": "2024-08-28 16:37",
       "link": "https://uuanqin.top/p/12bc4bc9/",
       "author": "半方池水",
@@ -582,13 +596,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/07/28/66a6324891ba1.webp"
     },
     {
-      "title": "单例模式的应用——为 Java 程序应用全局配置",
-      "created": "2024-08-13 20:13",
-      "link": "https://uuanqin.top/p/43de456a/",
-      "author": "半方池水",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/14/661bf5b9d3d5c.png"
-    },
-    {
       "title": "服务器操作系统安全加固项",
       "created": "2024-08-13 00:00",
       "link": "https://dusays.com/737/",
@@ -769,6 +776,13 @@
       "link": "https://h.liyy.us.kg/2024/08/04/ab/",
       "author": "茗辰原",
       "avatar": "https://cdn.qyliu.top/i/2024/04/21/66249e0a775f8.png"
+    },
+    {
+      "title": "Serv00部署Memos",
+      "created": "2024-08-03 19:23",
+      "link": "https://www.gan1ser.top/post/6a236522.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "真·彩虹猫加载动画",
@@ -988,13 +1002,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/03/22/65fc59b439430.png"
     },
     {
-      "title": "Friend-Circle-Lite:轻量友链朋友圈",
-      "created": "2024-07-21 00:01",
-      "link": "https://blog.liushen.fun/posts/4dc716ec/",
-      "author": "清羽飞扬",
-      "avatar": "https://blog.liushen.fun/info/avatar.ico"
-    },
-    {
       "title": "我为下一届辩论新生留下的文字",
       "created": "2024-07-19 05:42",
       "link": "https://blog.alenliu.space/p/%E6%88%91%E4%B8%BA%E4%B8%8B%E4%B8%80%E5%B1%8A%E8%BE%A9%E8%AE%BA%E6%96%B0%E7%94%9F%E7%95%99%E4%B8%8B%E7%9A%84%E6%96%87%E5%AD%97/",
@@ -1084,6 +1091,13 @@
       "link": "https://www.lyszm.com/924.html",
       "author": "六月是只猫",
       "avatar": "https://cdn.qyliu.top/i/2024/05/31/66597328bdd51.png"
+    },
+    {
+      "title": "信盈达实习记录",
+      "created": "2024-07-07 17:13",
+      "link": "https://www.gan1ser.top/post/754a429b.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "时代造青年，还是青年造时代？",
@@ -1205,6 +1219,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/07/66123cff10a83.png"
     },
     {
+      "title": "数字信号的2FSK调制与解调",
+      "created": "2024-06-27 04:13",
+      "link": "https://www.gan1ser.top/post/b9a95f5e.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
+    },
+    {
       "title": "浅谈前端各种模块化",
       "created": "2024-06-26 11:35",
       "link": "https://fe32.top/articles/moudel001/",
@@ -1231,6 +1252,13 @@
       "link": "https://blog.serms.top/archives/1719216942375",
       "author": "SerMs",
       "avatar": "https://cdn.qyliu.top/i/2024/06/23/6678094c8d38d.webp"
+    },
+    {
+      "title": "OFDM学习过程及仿真",
+      "created": "2024-06-23 20:07",
+      "link": "https://www.gan1ser.top/post/ab4c01cf.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "Cloudreve捐助版Docker部署指南",
@@ -1581,6 +1609,13 @@
       "link": "https://blog.fiveth.cc/p/138e/",
       "author": "Fiveth",
       "avatar": "https://cdn.qyliu.top/i/2024/04/20/6623d64f16aee.png"
+    },
+    {
+      "title": "NLP谷歌语音指令训练大作业",
+      "created": "2024-04-30 05:13",
+      "link": "https://www.gan1ser.top/post/4c7a50a7.html",
+      "author": "GanSer",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "每个人都可以写一份属于自己的Phigros自制谱——Re: PhiEdit简明教程",
