@@ -4,7 +4,7 @@
     "active_num": 70,
     "error_num": 17,
     "article_num": 319,
-    "last_updated_time": "2024-09-04 09:42:03"
+    "last_updated_time": "2024-09-04 14:31:48"
   },
   "article_data": [
     {
@@ -43,6 +43,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/19/66229406a68df.png"
     },
     {
+      "title": "如何快速找到你的 Windows 激活密钥和 OEM 数字许可证",
+      "created": "2024-09-04 11:27",
+      "link": "https://gyhwd.top/archives/gi3T0IeQ",
+      "author": "青竹小轩",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/23/662748990165a.png"
+    },
+    {
       "title": "【刷题】手写 LRU 缓存以理解 Java 中的 LinkedHashMap",
       "created": "2024-09-03 23:25",
       "link": "https://uuanqin.top/p/270917b1/",
@@ -69,6 +76,13 @@
       "link": "https://qq.mba/181.html",
       "author": "满心记",
       "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
+    },
+    {
+      "title": "再见，朱丽叶",
+      "created": "2024-09-02 11:08",
+      "link": "https://h4ck.org.cn/2024/09/17956",
+      "author": "obaby",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/15/661d443b5359c.png"
     },
     {
       "title": "来日方长",
@@ -218,6 +232,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
     },
     {
+      "title": "暴打渣男，耶✌️ — 《黑神话 悟空》",
+      "created": "2024-08-28 09:39",
+      "link": "https://h4ck.org.cn/2024/08/17943",
+      "author": "obaby",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/15/661d443b5359c.png"
+    },
+    {
       "title": "周刊20240827",
       "created": "2024-08-28 06:14",
       "link": "https://xiangming.site/860.html",
@@ -253,6 +274,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/05/31/6659668724466.png"
     },
     {
+      "title": "秋风起",
+      "created": "2024-08-27 14:50",
+      "link": "https://h4ck.org.cn/2024/08/17926",
+      "author": "obaby",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/15/661d443b5359c.png"
+    },
+    {
       "title": "太白山&法门寺三日游游记",
       "created": "2024-08-27 00:06",
       "link": "https://blog.liushen.fun/posts/62e27d26/",
@@ -272,6 +300,13 @@
       "link": "https://www.imaegoo.com/2024/setup-nodejs-without-admin/",
       "author": "虹墨",
       "avatar": "https://cdn.qyliu.top/i/2024/05/31/6659668724466.png"
+    },
+    {
+      "title": "PIP Chill–更精简的依赖包导出工具",
+      "created": "2024-08-26 16:57",
+      "link": "https://h4ck.org.cn/2024/08/17921",
+      "author": "obaby",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/15/661d443b5359c.png"
     },
     {
       "title": "24年8月小结",
@@ -328,6 +363,13 @@
       "link": "https://www.yvii.cn/archives/2028.html",
       "author": "乙未博客",
       "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f05e2f75c.png"
+    },
+    {
+      "title": "《黑神话:悟空》修改器+地图",
+      "created": "2024-08-24 21:42",
+      "link": "https://h4ck.org.cn/2024/08/17898",
+      "author": "obaby",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/15/661d443b5359c.png"
     },
     {
       "title": "写作技巧分享_这样的方法能更好的出好文章？",
@@ -398,6 +440,13 @@
       "link": "https://dongjunke.cn/posts/2024/08/22/63066.html",
       "author": "东评西就",
       "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f26979229.png"
+    },
+    {
+      "title": "杜老师的视频录制流程",
+      "created": "2024-08-22 00:00",
+      "link": "https://dusays.com/740/",
+      "author": "杜老师说",
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af33a4d6643.webp"
     },
     {
       "title": "【网站公告】短期服务中断通知",
@@ -666,13 +715,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af3198042a2.webp"
     },
     {
-      "title": "Nginx 可视化编辑工具 Nginx UI 安装和使用",
-      "created": "2024-08-07 00:00",
-      "link": "https://dusays.com/735/",
-      "author": "杜老师说",
-      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af33a4d6643.webp"
-    },
-    {
       "title": "风记星辰秋季壹言：金风如诗话·九秋照露寒",
       "created": "2024-08-07 00:00",
       "link": "https://www.thyuu.com/78400",
@@ -720,13 +762,6 @@
       "link": "https://h.liyy.us.kg/2024/08/04/ab/",
       "author": "茗辰原",
       "avatar": "https://cdn.qyliu.top/i/2024/04/21/66249e0a775f8.png"
-    },
-    {
-      "title": "Serv00部署Memos",
-      "created": "2024-08-03 19:23",
-      "link": "https://www.gan1ser.top/post/6a236522.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "真·彩虹猫加载动画",
@@ -1044,13 +1079,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/05/31/66597328bdd51.png"
     },
     {
-      "title": "信盈达实习记录",
-      "created": "2024-07-07 17:13",
-      "link": "https://www.gan1ser.top/post/754a429b.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
-    },
-    {
       "title": "时代造青年，还是青年造时代？",
       "created": "2024-07-07 15:31",
       "link": "http://blog.awaae001.top/posts/908575.html",
@@ -1170,13 +1198,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/07/66123cff10a83.png"
     },
     {
-      "title": "数字信号的2FSK调制与解调",
-      "created": "2024-06-27 04:13",
-      "link": "https://www.gan1ser.top/post/b9a95f5e.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
-    },
-    {
       "title": "浅谈前端各种模块化",
       "created": "2024-06-26 11:35",
       "link": "https://fe32.top/articles/moudel001/",
@@ -1203,13 +1224,6 @@
       "link": "https://blog.serms.top/archives/1719216942375",
       "author": "SerMs",
       "avatar": "https://cdn.qyliu.top/i/2024/06/23/6678094c8d38d.webp"
-    },
-    {
-      "title": "OFDM学习过程及仿真",
-      "created": "2024-06-23 20:07",
-      "link": "https://www.gan1ser.top/post/ab4c01cf.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "Cloudreve捐助版Docker部署指南",
@@ -1245,13 +1259,6 @@
       "link": "https://talen.top/posts/833fcabb/",
       "author": "M.Talen",
       "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
-    },
-    {
-      "title": "【开源软件】Scrcpy-GUI：一个简洁强大scrcpy客户端",
-      "created": "2024-06-21 15:46",
-      "link": "https://gyhwd.top/archives/I63eJVMi",
-      "author": "青竹小轩",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/23/662748990165a.png"
     },
     {
       "title": "百度、谷歌、必应收录个人博客网站",
@@ -1574,13 +1581,6 @@
       "link": "https://blog.fiveth.cc/p/138e/",
       "author": "Fiveth",
       "avatar": "https://cdn.qyliu.top/i/2024/04/20/6623d64f16aee.png"
-    },
-    {
-      "title": "NLP谷歌语音指令训练大作业",
-      "created": "2024-04-30 05:13",
-      "link": "https://www.gan1ser.top/post/4c7a50a7.html",
-      "author": "GanSer",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/29/662fbba91addc.png"
     },
     {
       "title": "每个人都可以写一份属于自己的Phigros自制谱——Re: PhiEdit简明教程",
