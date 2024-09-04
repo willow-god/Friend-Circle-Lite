@@ -1,10 +1,10 @@
 {
   "statistical_data": {
     "friends_num": 87,
-    "active_num": 69,
-    "error_num": 18,
-    "article_num": 314,
-    "last_updated_time": "2024-09-04 02:29:37"
+    "active_num": 70,
+    "error_num": 17,
+    "article_num": 319,
+    "last_updated_time": "2024-09-04 09:42:03"
   },
   "article_data": [
     {
@@ -27,6 +27,20 @@
       "link": "https://blog.zhwei101.com/index.php/archives/569/",
       "author": "ZHI-BLOG",
       "avatar": "https://cdn.qyliu.top/i/2024/06/01/665a9a8f8418a.png"
+    },
+    {
+      "title": "FreshRSS实现文章订阅",
+      "created": "2024-09-04 17:01",
+      "link": "https://qq.mba/182.html",
+      "author": "满心记",
+      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
+    },
+    {
+      "title": "Cloudflare Tunnels：内网穿透临时方案",
+      "created": "2024-09-04 15:18",
+      "link": "https://yjvc.cn/index.php/archives/1439/",
+      "author": "刘郎阁",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/19/66229406a68df.png"
     },
     {
       "title": "【刷题】手写 LRU 缓存以理解 Java 中的 LinkedHashMap",
@@ -195,6 +209,13 @@
       "link": "https://uuanqin.top/p/12bc4bc9/",
       "author": "半方池水",
       "avatar": "https://cdn.qyliu.top/i/2024/04/14/661bf5b9d3d5c.png"
+    },
+    {
+      "title": "使用Ventoy集成多PE打造强大U盘",
+      "created": "2024-08-28 13:30",
+      "link": "https://talen.top/posts/a595b813/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
     },
     {
       "title": "周刊20240827",
@@ -645,13 +666,6 @@
       "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af3198042a2.webp"
     },
     {
-      "title": "我的Web生活宝典：CMD命令集",
-      "created": "2024-08-07 00:30",
-      "link": "https://yjvc.cn/index.php/archives/1421/",
-      "author": "刘郎阁",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/19/66229406a68df.png"
-    },
-    {
       "title": "Nginx 可视化编辑工具 Nginx UI 安装和使用",
       "created": "2024-08-07 00:00",
       "link": "https://dusays.com/735/",
@@ -778,6 +792,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/03/30/660769346d538.jpg"
     },
     {
+      "title": "Xterminal：颜值高、功能强，追求卓越体验的SSH工具",
+      "created": "2024-07-31 07:56",
+      "link": "https://talen.top/posts/d7f79b43/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
+    },
+    {
       "title": "2024-07小记",
       "created": "2024-07-31 06:42",
       "link": "https://blog.sinzmise.top/posts/15799/",
@@ -790,13 +811,6 @@
       "link": "https://blog.starsharbor.com/posts/beverage-evaluation-record-22/",
       "author": "星港Star",
       "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af3198042a2.webp"
-    },
-    {
-      "title": "咸鱼网页版重新上线了",
-      "created": "2024-07-29 17:22",
-      "link": "https://qq.mba/90.html",
-      "author": "满心记",
-      "avatar": "https://cdn.qyliu.top/i/2024/08/04/66af31bec75a0.webp"
     },
     {
       "title": "风记得的第1520天星辰：WordPress 6.6、沈阳暴雨、电影《抓娃娃》、面貌焦虑",
@@ -1016,6 +1030,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/04/27/662d1c9b7efe1.png"
     },
     {
+      "title": "高效利用 GitHub 搜索，精准快速获取所需",
+      "created": "2024-07-08 18:27",
+      "link": "https://talen.top/posts/b9a0156a/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
+    },
+    {
       "title": "记录一次CDN流量被刷的经历",
       "created": "2024-07-08 03:47",
       "link": "https://www.lyszm.com/924.html",
@@ -1084,6 +1105,13 @@
       "link": "https://blognext.yaria.top/posts/a12c6b5d",
       "author": "Ariasaka",
       "avatar": "https://cdn.qyliu.top/i/2024/04/09/6614f40b65114.png"
+    },
+    {
+      "title": "IDM：广受欢迎的高速下载管理器",
+      "created": "2024-07-01 00:20",
+      "link": "https://talen.top/posts/b832248a/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
     },
     {
       "title": "师大残酷青春物语",
@@ -1210,6 +1238,13 @@
       "link": "https://gyhwd.top/archives/cqzkr5Xo",
       "author": "青竹小轩",
       "avatar": "https://cdn.qyliu.top/i/2024/04/23/662748990165a.png"
+    },
+    {
+      "title": "让Meting API解锁音乐开发新可能",
+      "created": "2024-06-21 16:34",
+      "link": "https://talen.top/posts/833fcabb/",
+      "author": "M.Talen",
+      "avatar": "https://cdn.qyliu.top/i/2024/05/23/664eda97bdec6.png"
     },
     {
       "title": "【开源软件】Scrcpy-GUI：一个简洁强大scrcpy客户端",
