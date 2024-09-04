@@ -14,33 +14,79 @@ jobs:
 
     steps:
     - name: Pull Latest Repository
-      uses: actions/checkout@v3
-    
-    - name: Install Python
-      uses: actions/setup-python@v4
+      uses: actions/checkout@v4
+
+    - name: Cache pip packages
+      uses: actions/cache@v4
       with:
-        python-version: '3.x'
-        
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        
+
+    - name: Download last_articles.json artifact
+      uses: dawidd6/action-download-artifact@v6
+      with:
+        github_token: ${{secrets.GITHUB_TOKEN}}
+        branch: main
+        name: 'last_articles'
+        path: './rss_subscribe'
+        if_no_artifact_found: warn
+
     - name: Check RSS feeds
       env:
         SMTP_PWD: ${{ secrets.SMTP_PWD }}
       run: |
         python run.py
-        
+
+    - name: Upload last_articles.json as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: 'last_articles'
+        path: './rss_subscribe/last_articles.json'
+        retention-days: 90
+
     - name: git config
       run: |
-        git config --global user.name 'GitHub Actions'
-        git config --global user.email 'actions@github.com'
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
     - name: Commit changes
-      env:
-        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
       run: |
+        mkdir pages
+        cp -r main index.html all.json errors.json pages/
+        cd pages
+        git init
         git add .
-        git commit -m "⏱️GitHub Action定时更新"
-        git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git main
+        git commit -m "⏱️ $(date +"%Z %Y-%m-%d %A %H:%M:%S") Updated By GitHub Actions"
+        git push --force https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:gh-pages
+
+    - name: Delete Workflow Runs
+      uses: Mattraks/delete-workflow-runs@v2
+      with:
+        retain_days: 90
+        keep_minimum_runs: 6
+
+  keepalive-workflow:
+    name: Keepalive Workflow
+    if: ${{ always() }}
+    needs: friend-circle-lite
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gautamkrishnar/keepalive-workflow@v2
+        with:
+          committer_username: "github-actions[bot]"
+          committer_email: "github-actions[bot]@users.noreply.github.com"
