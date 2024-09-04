@@ -1,10 +1,10 @@
 {
   "statistical_data": {
     "friends_num": 87,
-    "active_num": 70,
-    "error_num": 17,
+    "active_num": 71,
+    "error_num": 16,
     "article_num": 319,
-    "last_updated_time": "2024-09-04 14:31:48"
+    "last_updated_time": "2024-09-04 20:43:36"
   },
   "article_data": [
     {
@@ -743,6 +743,13 @@
       "avatar": "https://cdn.qyliu.top/i/2024/06/02/665c869ded7cd.png"
     },
     {
+      "title": "装机必备佳软（持续更新中…）",
+      "created": "2024-08-04 19:47",
+      "link": "https://gyhwd.top/archives/ArlNkj6O",
+      "author": "青竹小轩",
+      "avatar": "https://cdn.qyliu.top/i/2024/04/23/662748990165a.png"
+    },
+    {
       "title": "关于DNS的学习记录 其一",
       "created": "2024-08-04 19:25",
       "link": "https://www.hitagi.icu/posts/94d49d67/",
@@ -1245,13 +1252,6 @@
       "link": "https://www.lyszm.com/914.html",
       "author": "六月是只猫",
       "avatar": "https://cdn.qyliu.top/i/2024/05/31/66597328bdd51.png"
-    },
-    {
-      "title": "【开源软件】QtScrcpy：一个友好强大的Scrcpy升级版项目",
-      "created": "2024-06-21 19:43",
-      "link": "https://gyhwd.top/archives/cqzkr5Xo",
-      "author": "青竹小轩",
-      "avatar": "https://cdn.qyliu.top/i/2024/04/23/662748990165a.png"
     },
     {
       "title": "让Meting API解锁音乐开发新可能",
