@@ -320,7 +320,7 @@
             // 点击加载更多时，一次最多加载几篇文章，默认20
             page_turning_number: 20,
             // 头像加载失败时，默认头像地址
-            error_img: 'https://pic.imgdb.cn/item/6695daa4d9c307b7e953ee3d.jpg', // https://cdn.qyliu.top/i/2024/03/22/65fcea97b3ca6.png
+            error_img: 'https://i.p-i.vip/30/20240815-66bced9226a36.webp',
         }
     }
 </script>
@@ -353,7 +353,7 @@ cd Friend-Circle-Lite
 
 ```bash
 pip install -r ./requirements.txt
-pip install -r ./requirements-server.txt
+pip install -r ./server/requirements-server.txt
 ```
 
 ### 部署API服务

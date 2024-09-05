@@ -21,7 +21,7 @@ app.add_middleware(
 @app.get("/", response_class=HTMLResponse)
 async def root():
     try:
-        with open('./static/deploy-home.html', 'r', encoding='utf-8') as f:
+        with open('./server/deploy-home.html', 'r', encoding='utf-8') as f:
             html_content = f.read()
         return HTMLResponse(content=html_content)
     except FileNotFoundError:
