@@ -136,7 +136,7 @@ function initialize_fc_lite() {
                 <div id="modal-articles-container"></div>
             </div>
             `;
-            document.body.appendChild(modal);
+            root.appendChild(modal);
         }
 
         const modal = document.getElementById('modal');
