@@ -134,7 +134,7 @@ function initialize_fc_lite() {
                 <img id="modal-author-avatar" src="" alt="">
                 <a id="modal-author-name-link"></a>
                 <div id="modal-articles-container"></div>
-                <img id="modal-b" src="" alt="">
+                <img id="modal-bg" src="" alt="">
             </div>
             `;
             root.appendChild(modal);
