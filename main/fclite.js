@@ -42,7 +42,7 @@ function initialize_fc_lite() {
             }
         }
 
-        fetch(`${UserConfig.private_api_url}all.json`)
+        fetch(`${UserConfig.private_api_url}all`)
             .then(response => response.json())
             .then(data => {
                 localStorage.setItem(cacheKey, JSON.stringify(data));
@@ -125,7 +125,7 @@ function initialize_fc_lite() {
 
     function showAuthorArticles(author, avatar, link) {
         // 如果不存在，则创建模态框结构
-        if (!document.getElementById('modal')) {
+        if (!document.getElementById('fclite-modal')) {
             const modal = document.createElement('div');
             modal.id = 'modal';
             modal.className = 'modal';
@@ -134,6 +134,7 @@ function initialize_fc_lite() {
                 <img id="modal-author-avatar" src="" alt="">
                 <a id="modal-author-name-link"></a>
                 <div id="modal-articles-container"></div>
+                <img id="modal-bg-avatar" src="" alt="">
             </div>
             `;
             root.appendChild(modal);
@@ -143,10 +144,13 @@ function initialize_fc_lite() {
         const modalArticlesContainer = document.getElementById('modal-articles-container');
         const modalAuthorAvatar = document.getElementById('modal-author-avatar');
         const modalAuthorNameLink = document.getElementById('modal-author-name-link');
+        const modalBgAvatar = document.getElementById('modal-bg-avatar');
 
         modalArticlesContainer.innerHTML = ''; // 清空之前的内容
         modalAuthorAvatar.src = avatar  || UserConfig.error_img; // 使用默认头像
         modalAuthorAvatar.onerror = () => modalAuthorAvatar.src = UserConfig.error_img; // 头像加载失败时使用默认头像
+        modalBgAvatar.src = avatar || UserConfig.error_img; // 使用默认头像
+        modalBgAvatar.onerror = () => modalBgAvatar.src = UserConfig.error_img; // 头像加载失败时使用默认头像
         modalAuthorNameLink.innerText = author;
         modalAuthorNameLink.href = new URL(link).origin;
 
@@ -184,7 +188,7 @@ function initialize_fc_lite() {
         modal.classList.remove('modal-open');
         modal.addEventListener('transitionend', () => {
             modal.style.display = 'none';
-            document.body.removeChild(modal);
+            root.removeChild(modal);
         }, { once: true });
     }
 
