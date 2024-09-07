@@ -134,7 +134,7 @@ function initialize_fc_lite() {
                 <img id="modal-author-avatar" src="" alt="">
                 <a id="modal-author-name-link"></a>
                 <div id="modal-articles-container"></div>
-                <img id="modal-bg-avatar" src="" alt="">
+                <img id="modal-b" src="" alt="">
             </div>
             `;
             root.appendChild(modal);
@@ -144,13 +144,13 @@ function initialize_fc_lite() {
         const modalArticlesContainer = document.getElementById('modal-articles-container');
         const modalAuthorAvatar = document.getElementById('modal-author-avatar');
         const modalAuthorNameLink = document.getElementById('modal-author-name-link');
-        const modalBgAvatar = document.getElementById('modal-bg-avatar');
+        const modalBg = document.getElementById('modal-bg');
 
         modalArticlesContainer.innerHTML = ''; // 清空之前的内容
         modalAuthorAvatar.src = avatar  || UserConfig.error_img; // 使用默认头像
         modalAuthorAvatar.onerror = () => modalAuthorAvatar.src = UserConfig.error_img; // 头像加载失败时使用默认头像
-        modalBgAvatar.src = avatar || UserConfig.error_img; // 使用默认头像
-        modalBgAvatar.onerror = () => modalBgAvatar.src = UserConfig.error_img; // 头像加载失败时使用默认头像
+        modalBg.src = avatar || UserConfig.error_img; // 使用默认头像
+        modalBg.onerror = () => modalBg.src = UserConfig.error_img; // 头像加载失败时使用默认头像
         modalAuthorNameLink.innerText = author;
         modalAuthorNameLink.href = new URL(link).origin;
 
