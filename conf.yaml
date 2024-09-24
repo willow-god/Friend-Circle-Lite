@@ -8,11 +8,11 @@
 #     marge_json_path:  请填写网络地址的json文件，用于合并，不带空格！！！
 spider_settings:
   enable: true
-  json_url: "https://blog.liushen.fun/friend.json"
+  json_url: "https://xingstar.top/friend.json"
   article_count: 5
   merge_result:
     enable: false
-    merge_json_url: "https://fc.liushen.fun"
+    merge_json_url: "https://xingstar.top"
 
 # 邮箱推送功能配置，暂未实现，等待后续开发
 # 解释：每天为指定邮箱推送所有友链文章的更新，仅能指定一个
@@ -21,8 +21,8 @@ spider_settings:
 #   subject:            邮件主题
 #   body_template:      邮件正文的 HTML 模板文件
 email_push:
-  enable: false
-  to_email: recipient@example.com
+  enable: true
+  to_email: 2115438238@qq.com
   subject: "今天的 RSS 订阅更新"
   body_template: "rss_template.html"
 
@@ -36,7 +36,7 @@ rss_subscribe:
   enable: true
   github_username: willow-god
   github_repo: Friend-Circle-Lite
-  your_blog_url: https://blog.qyliu.top/
+  your_blog_url: https://xingstar.top/
   email_template: "./rss_subscribe/email_template.html"
 
 # SMTP 配置
@@ -46,7 +46,7 @@ rss_subscribe:
 #   port：              SMTP 端口号
 #   use_tls：           是否使用 tls 加密
 smtp:
-  email: 3162475700@qq.com
+  email: 2115438238@qq.com
   server: smtp.qq.com
   port: 587
   use_tls: true
