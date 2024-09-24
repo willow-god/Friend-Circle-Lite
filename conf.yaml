@@ -33,7 +33,7 @@ email_push:
 #   github_repo:        GitHub 仓库名，用于构建issue api地址
 #   your_blog_url:      你的博客地址
 rss_subscribe:
-  enable: true
+  enable: false
   github_username: willow-god
   github_repo: Friend-Circle-Lite
   your_blog_url: https://xingstar.top/
