@@ -44,8 +44,9 @@ if config["email_push"]["enable"]:
     
 if config["rss_subscribe"]["enable"]:
     print("RSS通过issue订阅已启用")
-    github_username = config["rss_subscribe"]["github_username"]
-    github_repo = config["rss_subscribe"]["github_repo"]
+    # 获取并强制转换为字符串
+    github_username = str(config["rss_subscribe"]["github_username"]).strip()
+    github_repo = str(config["rss_subscribe"]["github_repo"]).strip()
     your_blog_url = config["rss_subscribe"]["your_blog_url"]
     email_template = config["rss_subscribe"]["email_template"]
     # 获取最近更新的文章
