@@ -1,6 +1,6 @@
 function initialize_fc_lite() {
     const root = document.getElementById('friend-circle-lite-root');
-    
+
     if (!root) return; // 确保根元素存在
 
     // 清除之前的内容
@@ -14,7 +14,7 @@ function initialize_fc_lite() {
     container.className = 'articles-container';
     container.id = 'articles-container';
     root.appendChild(container);
-    
+
     const loadMoreBtn = document.createElement('button');
     loadMoreBtn.id = 'load-more-btn';
     loadMoreBtn.innerText = '再来亿点';
@@ -59,23 +59,16 @@ function initialize_fc_lite() {
         // 处理统计数据
         const stats = data.statistical_data;
         statsContainer.innerHTML = `
-            <div>Powered by: <a href="https://github.com/willow-god/Friend-Circle-Lite" target="_blank">FriendCircleLite</a><br></div>
-            <div>Designed By: <a href="https://www.liushen.fun/" target="_blank">LiuShen</a><br></div>
+            <div>Powered by: <a href="https://github.com/willow-god/Friend-Circle-Lite" target="_blank" rel="nofollow">FriendCircleLite</a><br></div>
+            <div>Designed By: <a href="https://www.liushen.fun/" target="_blank" rel="nofollow">LiuShen</a><br></div>
             <div>订阅:${stats.friends_num}   活跃:${stats.active_num}   总文章数:${stats.article_num}<br></div>
             <div>更新时间:${stats.last_updated_time}</div>
         `;
 
         // 随机友链卡片
-        const randomArticle = allArticles[Math.floor(Math.random() * allArticles.length)];
-        randomArticleContainer.innerHTML = `
-            <div class="random-container">
-                <div class="random-container-title">随机钓鱼</div>
-                <div class="random-title">${randomArticle.title}</div>
-                <div class="random-author">作者: ${randomArticle.author}</div>
-            </div>
-            <button class="random-link-button" onclick="window.open('${randomArticle.link}', '_blank')">过去转转</button>
-        `;
+        updateRandomArticle();
 
+        const fragment = document.createDocumentFragment();
         const articles = allArticles.slice(start, start + UserConfig.page_turning_number);
 
         articles.forEach(article => {
@@ -113,9 +106,10 @@ function initialize_fc_lite() {
             bgImg.onerror = () => bgImg.src = UserConfig.error_img; // 头像加载失败时使用默认头像
             card.appendChild(bgImg);
 
-            container.appendChild(card);
+            fragment.appendChild(card);
         });
 
+        container.appendChild(fragment);
         start += UserConfig.page_turning_number;
 
         if (start >= allArticles.length) {
@@ -123,9 +117,26 @@ function initialize_fc_lite() {
         }
     }
 
+    function updateRandomArticle() {
+        const randomArticle = allArticles[Math.floor(Math.random() * allArticles.length)];
+        randomArticleContainer.innerHTML = `
+            <div class="random-container">
+                <div class="random-container-title">
+                    <span>🎣 钓鱼</span>
+                    <span class="random-refresh" onclick="updateRandomArticle()">
+                        <svg t="1721999754997" class="icon" viewBox="0 0 1024 1024" version="1.1" p-id="1207" width="16" height="16"><path d="M772.6 320H672c-35.4 0-64 28.6-64 64s28.6 64 64 64h256c35.4 0 64-28.6 64-64V128c0-35.4-28.6-64-64-64s-64 28.6-64 64v102.4l-35.2-35.2c-175-175-458.6-175-633.6 0s-175 458.6 0 633.6 458.6 175 633.6 0c25-25 25-65.6 0-90.6s-65.6-25-90.6 0c-125 125-327.6 125-452.6 0s-125-327.6 0-452.6 327.6-125 452.6 0l34.4 34.4z" p-id="1208"></path></svg>
+                    </span>
+                </div>
+                <div class="random-title">${randomArticle.title}</div>
+                <div class="random-author">作者: ${randomArticle.author}</div>
+            </div>
+            <button class="random-link-button" onclick="window.open('${randomArticle.link}', '_blank')">过去转转</button>
+        `;
+    }
+
     function showAuthorArticles(author, avatar, link) {
         // 如果不存在，则创建模态框结构
-        if (!document.getElementById('fclite-modal')) {
+        if (!document.getElementById('modal')) {
             const modal = document.createElement('div');
             modal.id = 'modal';
             modal.className = 'modal';
@@ -134,29 +145,31 @@ function initialize_fc_lite() {
                 <img id="modal-author-avatar" src="" alt="">
                 <a id="modal-author-name-link"></a>
                 <div id="modal-articles-container"></div>
-                <img id="modal-bg" src="" alt="">
+                <img class="modal-background" src="" alt="">
             </div>
             `;
-            root.appendChild(modal);
+            document.body.appendChild(modal);
         }
 
         const modal = document.getElementById('modal');
         const modalArticlesContainer = document.getElementById('modal-articles-container');
         const modalAuthorAvatar = document.getElementById('modal-author-avatar');
         const modalAuthorNameLink = document.getElementById('modal-author-name-link');
-        const modalBg = document.getElementById('modal-bg');
+        const modalBackground = document.querySelector('.modal-background');
 
         modalArticlesContainer.innerHTML = ''; // 清空之前的内容
         modalAuthorAvatar.src = avatar  || UserConfig.error_img; // 使用默认头像
         modalAuthorAvatar.onerror = () => modalAuthorAvatar.src = UserConfig.error_img; // 头像加载失败时使用默认头像
-        modalBg.src = avatar || UserConfig.error_img; // 使用默认头像
-        modalBg.onerror = () => modalBg.src = UserConfig.error_img; // 头像加载失败时使用默认头像
         modalAuthorNameLink.innerText = author;
         modalAuthorNameLink.href = new URL(link).origin;
 
+        // 设置背景图
+        modalBackground.src = avatar || UserConfig.error_img;
+        modalBackground.onerror = () => modalBackground.src = UserConfig.error_img; // 头像加载失败时使用默认头像
+
         const authorArticles = allArticles.filter(article => article.author === author);
         // 仅仅取前五个，防止文章过多导致模态框过长，如果不够五个则全部取出
-        authorArticles.slice(0, 4).forEach(article => {
+        authorArticles.slice(0, 5).forEach(article => {
             const articleDiv = document.createElement('div');
             articleDiv.className = 'modal-article';
 
@@ -188,7 +201,7 @@ function initialize_fc_lite() {
         modal.classList.remove('modal-open');
         modal.addEventListener('transitionend', () => {
             modal.style.display = 'none';
-            root.removeChild(modal);
+            document.body.removeChild(modal);
         }, { once: true });
     }
 
@@ -198,6 +211,9 @@ function initialize_fc_lite() {
     // 加载更多按钮点击事件
     loadMoreBtn.addEventListener('click', loadMoreArticles);
 
+    // 添加刷新按钮点击事件
+    window.updateRandomArticle = updateRandomArticle;
+
     // 点击遮罩层关闭模态框
     window.onclick = function(event) {
         const modal = document.getElementById('modal');
@@ -205,21 +221,14 @@ function initialize_fc_lite() {
             hideModal();
         }
     };
-};
-
-//document.addEventListener("DOMContentLoaded", function() {
-//    setTimeout(initialize_fc_lite, 0);
-//});
-
-//document.addEventListener('pjax:complete', function() {
-//    setTimeout(initialize_fc_lite, 0);
-//});
-
-//setTimeout(initialize_fc_lite, 0);
-
-function whenDOMReady() {
-    initialize_fc_lite();
 }
 
-whenDOMReady();
-document.addEventListener("pjax:complete", whenDOMReady);
+document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(initialize_fc_lite, 0);
+});
+
+document.addEventListener('pjax:complete', function() {
+    setTimeout(initialize_fc_lite, 0);
+});
+
+setTimeout(initialize_fc_lite, 0);

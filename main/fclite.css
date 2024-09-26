@@ -1,6 +1,7 @@
+/* 公共颜色变量 */
 :root {
-    --text-color-light: #000000;
-    --text-color-dark: #F7F7FA;
+    --text-color-light: #111111;
+    --text-color-dark: #ddd;
     --background-color-light: #f4f4f9;
     --background-color-dark: #181818;
     --container-bg-color-light: white;
@@ -13,8 +14,13 @@
     --shadow-color-dark: rgba(255, 255, 255, 0.1);
     --border-color-light: #e3e8f7;
     --border-color-dark: #42444a;
+    --scrollbar-color-dark: #343434;
+    --scrollbar-color-light: #aeaeae;
+    --button-bg-color-light: white;
+    --button-bg-color-dark: #333;
 }
 
+/* 浅色模式颜色 */
 [data-theme=light] {
     --text-color: var(--text-color-light);
     --background-color: var(--background-color-light);
@@ -23,11 +29,13 @@
     --author-color: var(--author-color-light);
     --shadow-color: var(--shadow-color-light);
     --border-color: var(--border-color-light);
-    --modal-bg-color: rgba(255, 255, 255, 0.5);
-    --modal-content-bg-color: rgba(239, 250, 255, 0.5);
+    --modal-bg-color: rgba(255, 255, 255, 0.6);
     --load-more-btn-bg-color: var(--container-bg-color);
+    --scrollbar-color: var(--scrollbar-color-light);
+    --button-bg-color: var(--button-bg-color-light);
 }
 
+/* 深色模式颜色 */
 [data-theme=dark] {
     --text-color: var(--text-color-dark);
     --background-color: var(--background-color-dark);
@@ -36,40 +44,139 @@
     --author-color: var(--author-color-dark);
     --shadow-color: var(--shadow-color-dark);
     --border-color: var(--border-color-dark);
-    --modal-bg-color: rgba(0, 0, 0, 0.3);
-    --modal-content-bg-color: rgba(20, 20, 20, 0.5);
+    --modal-bg-color: rgba(0, 0, 0, 0.6);
     --load-more-btn-bg-color: var(--container-bg-color);
+    --scrollbar-color: var(--scrollbar-color-dark);
+    --button-bg-color: var(--button-bg-color-dark);
+}
+
+
+* {
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-color) transparent;
+}
+html {
+    height: 100%;
 }
 
 body {
+    height: 100%;
     background-color: var(--background-color);
 }
 
-#friend-circle-lite-root {
-    width: 100%;
+span {
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+a {
+    text-decoration: none;
+}
+.container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+p {
+    color: var(--text-color);
+    margin-bottom: 30px;
+}
+.button-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+.button {
+    background-color: var(--button-bg-color);
+    border: 2px solid #007BFF;
+    color: #007BFF;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    display: inline-block;
+    transition: background-color 0.3s, color 0.3s;
 }
 
+.button:hover {
+    background-color: #007BFF;
+    color: white;
+}
+#friend-circle-lite-root {
+    margin-top: 0.5rem;
+    width: 100%;
+    -webkit-animation: fadeIn 0.5s ease-in-out forwards;
+            animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+@-webkit-keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* 随机友链文章卡片 */
 #random-article {
     display: flex;
     position: relative;
     width: 100%;
+    height: 200px;
+    max-height: 170px;
     margin: 8px 0;
     background-color: var(--container-bg-color);
     border-radius: 10px;
-    border:1px solid var(--border-color);
-    height: 210px;
-    transition: border 0.3s;
+    border: 1px solid var(--border-color);
+    transition: border .5s ease-in-out;
+    line-height: normal;
+}
+#random-article:hover {
+    border: 1px solid var(--hover-color);
+}
+.random-refresh {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.random-refresh .icon {
+    height: 16px;
+    width: 16px;
+    fill: var(--author-color);
+    transition: fill 0.5s ease-in-out;
+}
+
+.random-refresh:hover .icon {
+    fill: #ff7400;
 }
 
 .random-container {
     position: relative;
     margin: 20px;
-    width: 90%;
-    height: 170px;
+    white-space: nowrap;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.random-container:hover .random-title {
-    font-size: 32px;
+.random-title:hover{
+    text-indent: 20px;
 }
 
 .random-author {
@@ -82,15 +189,16 @@ body {
     font-size: 20px;
     font-weight: 700;
     margin-bottom: 20px;
+    color: var(--text-color);
 }
 
 .random-title {
-    margin-bottom: 10px;
-    font-size: 30px;
-    transition: font-size 0.3s ease-in-out;
-    white-space: nowrap;
+    margin-bottom: 20px;
+    font-size: 25px;
+    transition: text-indent 0.3s ease-in-out;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: var(--text-color);
 }
 
 .random-link-button {
@@ -107,85 +215,81 @@ body {
     transition: background-color 0.3s ease-in-out;
 }
 
+/* 模态框样式 */
 .modal {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--modal-bg-color);
     backdrop-filter: blur(var(--modal-bg-blur));
     -webkit-backdrop-filter: blur(var(--modal-bg-blur));
     z-index: 999;
     opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s ease-in-out;
 }
 
-.modal-open {
+.modal.modal-open {
     opacity: 1;
-    visibility: visible;
+    transition: opacity 0.3s ease-in-out;
 }
 
 .modal-content {
-    position: relative;
+    position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 350px;
-    background-color: var(--modal-content-bg-color);
+    transform: translate(-50%, -50%) translateY(-50px);
+    width: 80%;
+    max-width: 500px;
+    overflow: hidden;
+    background-color: var(--modal-bg-color);
     padding: 20px;
     border: 1px solid var(--border-color);
     z-index: 1000;
-    max-height: 90%;
-    overflow: hidden;
     border-radius: 20px;
-    transition: opacity 0.3s;
+    opacity: 0;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+.modal.modal-open .modal-content {
+    transform: translate(-50%, -50%) translateY(0);
+    opacity: 1;
 }
 
-.modal-content:hover #modal-bg  {
-    transform: scale(1.1);
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
 }
 
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
 @media screen and (max-width: 440px) {
-    .modal-content {
-        width: 80%;
+    .modal-article .modal-article-title {
+        font-size: 16px;
     }
-}
-
-#modal-bg {
-    position: absolute;
-    filter: blur(5px);
-    opacity: 0.2;
-    z-index: 0;
-    border-radius: 125px 125px 12px 125px !important;
-    margin: 0 !important;
-    width: 250px;
-    height: 250px;
-    right: -20px;
-    bottom: -20px;
-    transition: transform 0.6s ease !important;
 }
 
 #modal-author-avatar {
     display: block;
-    margin: 5px auto !important;
-    border-radius: 50% !important;
-    width: 110px;
-    height: 110px;
+    margin: auto;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    opacity: .7;
+    -o-object-fit: cover;
+       object-fit: cover;
 }
 
 #modal-author-name-link {
     display: block;
     text-align: center;
-    font-size: 15px;
-    margin: 15px 0;
     color: var(--hover-color);
-    text-decoration: none;
-}
-
-#modal-author-name-link:hover {
-    text-decoration: underline;
 }
 
 .modal-content hr {
@@ -193,10 +297,8 @@ body {
 }
 
 #modal-articles-container {
-    position: relative;
-    z-index: 1;
     border-top: var(--hover-color) double 2px;
-    margin-top: 20px;
+    margin-top: 10px;
     padding-top: 10px;
 }
 
@@ -210,35 +312,49 @@ body {
 
 .modal-article .modal-article-title {
     color: var(--text-color);
-    font-size: 18px;
-    line-height: 1.2;
-    cursor: pointer;
-    max-height: 2.5em;
+    line-height: 21px;
     width: 100%;
-    margin-bottom: 5px;
-    text-decoration: none;
     display: -webkit-box;
     -webkit-line-clamp: 2;
-    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+    transition: all 0.3s ease-in-out;
 }
 
 .modal-article .modal-article-title:hover {
     color: var(--hover-color);
-    text-decoration: underline;
 }
 
 .modal-article .modal-article-date {
     font-size: 12px;
     width: 100%;
     color: var(--author-color);
-    padding: 5px;
+    padding-top: 10px;
     cursor: default;
     text-align: right;
 }
+.modal-content .modal-background {
+    position: absolute;
+    right: -20px;
+    bottom: -20px;
+    border-radius: 50%;
+    background-size: 100%;
+    background-position: right bottom;
+    background-repeat: no-repeat;
+    z-index: -3;
+    opacity: .5;
+    width: 180px;
+    height: 180px;
+    -webkit-filter: blur(2px);
+            filter: blur(2px);
+}
 
+.modal-content {
+    position: relative;
+    z-index: 1;
+}
+/* 其他样式... */
 .articles-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -257,12 +373,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     height: 150px;
-    transition: border 0.3s;
-}
-
-.card:hover,
-#random-article:hover {
-    border: 1px solid var(--hover-color);
+    transition: border .5s ease-in-out;
 }
 
 .card-title {
@@ -278,14 +389,12 @@ body {
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 3;
-    line-clamp: 3;
     -webkit-box-orient: vertical;
-    transition: color 0.3s;
+    transition: color 0.3s ease-in-out;
 }
 
 .card-title:hover {
     color: var(--hover-color);
-    text-decoration: underline;
 }
 
 .card-author,
@@ -293,7 +402,7 @@ body {
     font-size: 12px;
     color: var(--author-color);
     padding: 5px;
-    height: 25px;
+    transition: box-shadow 0.3s ease-in-out;
 }
 
 .card-author:hover {
@@ -307,23 +416,26 @@ body {
     border-radius: 15px;
     display: flex;
     padding-right: 10px;
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
     width: fit-content;
+    height: 26px;
     align-items: center;
-    transition: box-shadow 0.2s;
 }
 
 #friend-circle-lite-root .card-author img {
     border-radius: 50%;
     width: 15px;
     height: 15px;
-    margin: 0 2px !important;
-    object-fit: cover;
+    margin: 0 2px;
+    -o-object-fit: cover;
+       object-fit: cover;
 }
 
 .card-date {
     position: absolute;
     z-index: 1;
-    bottom: 10px;
+    bottom: 5px;
     cursor: default;
     right: 10px;
     display: flex;
@@ -331,23 +443,30 @@ body {
 }
 
 #friend-circle-lite-root .card-bg {
-    cursor: default;
     z-index: 0;
     border-radius: 50%;
-    margin: 0;
+    margin: -30px;
     position: absolute;
-    bottom: -20px;
-    right: -16px;
-    width: 140px;
-    height: 140px;
+    bottom: 0;
+    right: 0;
+    width: 150px;
+    height: 150px;
     opacity: 0.4;
-    transition: transform 0.6s ease, bottom 0.3s ease, right 0.3s ease;
+    transform: scale(.9);
+    transition: all 0.3s ease-in-out;
+    -webkit-filter: blur(2px);
+            filter: blur(2px);
+}
+.card:hover {
+    border: 1px solid var(--hover-color);
 }
 
 #friend-circle-lite-root .card:hover .card-bg {
-    transform: scale(1.1);
-    bottom: -10px;
-    right: -8px;
+    -webkit-filter: blur(0);
+            filter: blur(0);
+    transform: scale(.8);
+    margin: 0;
+    opacity: 0.6;
 }
 
 #load-more-btn {
@@ -356,10 +475,10 @@ body {
     background-color: var(--container-bg-color);
     cursor: pointer;
     width: 200px;
-    border-radius: 10px;
+    border-radius: 20px;
     border: 1px solid var(--border-color);
     padding: 3px;
-    transition: all 0.3s;
+    transition: all 0.3s ease-in-out;
     margin: 20px auto;
     display: block;
 }
@@ -378,6 +497,7 @@ body {
 
 #stats-container > * {
     margin-bottom: 3px;
+    color: var(--text-color);
 }
 
 #stats-container a {
