@@ -22,7 +22,7 @@ if config["spider_settings"]["enable"]:
         print("合并数据功能开启，从 {marge_json_url} 中获取境外数据并合并".format(marge_json_url=marge_json_url + "/all.json"))
         result = marge_data_from_json_url(result, marge_json_url + "/all.json")
         lost_friends = marge_errors_from_json_url(lost_friends, marge_json_url + "/errors.json")
-        
+
     sorted_result = sort_articles_by_time(result)
     with open("all.json", "w", encoding="utf-8") as f:
         json.dump(sorted_result, f, ensure_ascii=False, indent=2)
@@ -41,12 +41,11 @@ if config["email_push"]["enable"] or config["rss_subscribe"]["enable"]:
 
 if config["email_push"]["enable"]:
     print("邮件推送已启用")
-    
+
 if config["rss_subscribe"]["enable"]:
     print("RSS通过issue订阅已启用")
-    # 获取并强制转换为字符串
-    github_username = str(config["rss_subscribe"]["github_username"]).strip()
-    github_repo = str(config["rss_subscribe"]["github_repo"]).strip()
+    github_username = config["rss_subscribe"]["github_username"]
+    github_repo = config["rss_subscribe"]["github_repo"]
     your_blog_url = config["rss_subscribe"]["your_blog_url"]
     email_template = config["rss_subscribe"]["email_template"]
     # 获取最近更新的文章
@@ -75,14 +74,14 @@ if config["rss_subscribe"]["enable"]:
                 "published": article["published"],
                 "link": article["link"]
             }
-            
+
             send_emails(
                 emails=email_list["emails"],
                 sender_email=email,
                 smtp_server=server,
                 port=port,
                 password=password,
-                subject="清羽飞扬の最新文章：" + article["title"],
+                subject="梦爱吃鱼の最新文章：" + article["title"],
                 body="文章链接：" + article["link"] + "\n" + "文章内容：" + article["summary"] + "\n" + "发布时间：" + article["published"],
                 template_path=email_template,
                 template_data=template_data,

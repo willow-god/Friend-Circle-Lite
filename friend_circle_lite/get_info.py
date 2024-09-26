@@ -146,6 +146,8 @@ def parse_feed(url, session, count=5):
         }
         
         for i, entry in enumerate(feed.entries):
+            if i >= count:
+                break
             
             if 'published' in entry:
                 published = format_published_time(entry.published)
@@ -165,11 +167,6 @@ def parse_feed(url, session, count=5):
                 'content': entry.content[0].value if 'content' in entry and entry.content else entry.description if 'description' in entry else ''
             }
             result['articles'].append(article)
-        
-        # 对文章按时间排序，并只取前 count 篇文章
-        result['articles'] = sorted(result['articles'], key=lambda x: datetime.strptime(x['published'], '%Y-%m-%d %H:%M'), reverse=True)
-        if count < len(result['articles']):
-            result['articles'] = result['articles'][:count]
         
         return result
     except Exception as e:
