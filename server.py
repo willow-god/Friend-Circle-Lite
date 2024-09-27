@@ -21,13 +21,13 @@ app.add_middleware(
 @app.get("/", response_class=HTMLResponse)
 async def root():
     try:
-        with open('./server/deploy-home.html', 'r', encoding='utf-8') as f:
+        with open('./static/index.html', 'r', encoding='utf-8') as f:
             html_content = f.read()
         return HTMLResponse(content=html_content)
     except FileNotFoundError:
         return HTMLResponse(content="<h1>File not found</h1>", status_code=404)
 
-@app.get('/all')
+@app.get('/all.json')
 async def get_all_articles():
     try:
         with open('./all.json', 'r', encoding='utf-8') as f:
@@ -38,7 +38,7 @@ async def get_all_articles():
     except json.JSONDecodeError:
         return JSONResponse(content={"error": "Failed to decode JSON"}, status_code=500)
 
-@app.get('/errors')
+@app.get('/errors.json')
 async def get_error_friends():
     try:
         with open('./errors.json', 'r', encoding='utf-8') as f:

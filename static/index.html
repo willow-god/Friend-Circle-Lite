@@ -7,16 +7,125 @@
     <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
     <meta name="description" content="🐱一个精简版，无后端，且仅利用github action运行的精简版友链朋友圈程序，兼容fc的json格式信息，同时支持推送友圈更新，支持他人订阅个人站点并在更新时发送邮箱推送。">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frient-Circle-Lite</title>
+    <title>Friend-Circle-Lite</title>
 </head>
 <style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        height: fit-content;
+    }
+    .container {
+        background: linear-gradient(135deg, #ffdaaa, #abc2e7);
+        display: flex;
+        text-align: center;
+        align-items: center;
+        height: 100vh;
+        width: 100%;
+        flex-direction: column;
+        justify-content: center;
+    }
+
     .root-container {
-        margin: 0 auto;
-        padding: 20px;
+        width: 100%;
+        margin-top: 40px;
+    }
+
+    .avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+    }
+    p {
+        color: #666;
+        margin-bottom: 30px;
+    }
+    .button-container {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+    .button {
+        background-color: rgb(255, 255, 255);
+        border: 2px solid #007BFF;
+        color: #007BFF;
+        padding: 10px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: bold;
+        display: inline-block;
+        transition: background-color 0.3s, color 0.3s;
+    }
+    .button:hover {
+        background-color: #007BFF;
+        color: white;
+    }
+
+    .card-author,
+    .card-date {
+        height: fit-content !important;
+    }
+
+    #friend-circle-lite-root {
+        padding: 10px 0;
+        margin: 10px auto;
+        max-width: 1200px;
+    }
+    .scroll-down-icon {
+        position: absolute;
+        bottom: 20px;
+        height: 24px;
+        color: #007BFF;
+        animation: bounce 1.5s infinite;
+    }
+    .scroll-down-icon::before,
+    .scroll-down-icon::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 12px;
+        height: 12px;
+        opacity: .8;
+        border-left: 3px solid #007BFF;
+        border-bottom: 3px solid #007BFF;
+        transform: translate(-50%, -50%) rotate(-45deg);
+    }
+    .scroll-down-icon::after {
+        top: 80%;
+        opacity: .6;
+    }
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+            opacity: .6;
+        }
+        50% {
+            transform: translateY(-10px);
+            opacity: 1;
+        }
     }
 </style>
 
 <body>
+    <div class="container">
+        <img src="./favicon.ico" alt="Avatar" class="avatar">
+        <p>Friend-Circle-Lite<br>服务已运行</p>
+        <div class="button-container">
+            <a href="https://blog.liushen.fun/posts/4dc716ec/" class="button">查看文档</a>
+            <a href="/all.json" class="button">测试接口</a>
+        </div>
+        <a href="#" class="scroll-down-icon" id="scroll-down-button"></a>
+    </div>
     <div class="root-container" style="max-width: 1000px;">
         <div id="friend-circle-lite-root"></div>
     </div>
