@@ -77,7 +77,10 @@
 * [清羽飞扬の友链朋友圈](https://blog.liushen.fun/fcircle/)
 
 * [❖星港◎Star☆ 的友链朋友圈](https://blog.starsharbor.com/fcircle/)
-* 欢迎更多
+
+* [梦爱吃鱼的友链朋友圈](https://blog.bsgun.cn/fcircle/)
+
+* 欢迎在issue中[提交](https://github.com/willow-god/Friend-Circle-Lite/issues/20)以展示你独特的设计！
 
 ## 项目介绍
 
