@@ -11,6 +11,11 @@
 </head>
 <style>
     body {
+        background-image: url('https://i.p-i.vip/30/20240927-66f6cb77cbd1b.webp');
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-position: center;
         font-family: Arial, sans-serif;
         display: flex;
         flex-direction: column;
@@ -23,7 +28,7 @@
         height: fit-content;
     }
     .container {
-        background: linear-gradient(135deg, #ffdaaa, #abc2e7);
+        background: rgba(255, 255, 255, 0.8);
         display: flex;
         text-align: center;
         align-items: center;
@@ -36,6 +41,8 @@
     .root-container {
         width: 100%;
         margin-top: 40px;
+        max-width: 1100px;
+        padding: 40px;
     }
 
     .avatar {
@@ -121,12 +128,12 @@
         <img src="./favicon.ico" alt="Avatar" class="avatar">
         <p>Friend-Circle-Lite<br>服务已运行</p>
         <div class="button-container">
-            <a href="https://blog.liushen.fun/posts/4dc716ec/" class="button">查看文档</a>
+            <a href="https://blog.liushen.fun/posts/4dc716ec/" class="button" target="_blank">查看文档</a>
             <a href="/all.json" class="button">测试接口</a>
         </div>
         <a href="#" class="scroll-down-icon" id="scroll-down-button"></a>
     </div>
-    <div class="root-container" style="max-width: 1000px;">
+    <div class="root-container">
         <div id="friend-circle-lite-root"></div>
     </div>
 <script>
@@ -140,6 +147,14 @@
             error_img: 'https://i.p-i.vip/30/20240815-66bced9226a36.webp', // https://pic.imgdb.cn/item/6695daa4d9c307b7e953ee3d.jpg
         }
     }
+</script>
+<script>
+    const scrollButton = document.getElementById('scroll-down-button');
+    const targetElement = document.getElementById('friend-circle-lite-root');
+    scrollButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+    });
 </script>
 <link rel="stylesheet" href="./main/fclite.css">
 <script src="./main/fclite.js"></script>
