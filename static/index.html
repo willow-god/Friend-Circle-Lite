@@ -11,7 +11,7 @@
 </head>
 <style>
     body {
-        background-image: url('https://i.p-i.vip/30/20240927-66f6cb77cbd1b.webp');
+        background-image: url('./bg-light.webp');
         background-size: cover;
         background-attachment: fixed;
         background-repeat: no-repeat;
@@ -42,7 +42,13 @@
         width: 100%;
         margin-top: 40px;
         max-width: 1100px;
-        padding: 40px;
+    }
+    
+    @media (max-width: 1200px) {
+        .root-container {
+            max-width: 95%;
+            margin-top: 20px;
+        }
     }
 
     .avatar {
@@ -82,11 +88,6 @@
         height: fit-content !important;
     }
 
-    #friend-circle-lite-root {
-        padding: 10px 0;
-        margin: 10px auto;
-        max-width: 1200px;
-    }
     .scroll-down-icon {
         position: absolute;
         bottom: 20px;
@@ -144,7 +145,7 @@
             // 点击加载更多时，一次最多加载几篇文章，默认20
             page_turning_number: 24,
             // 头像加载失败时，默认头像地址
-            error_img: 'https://i.p-i.vip/30/20240815-66bced9226a36.webp', // https://pic.imgdb.cn/item/6695daa4d9c307b7e953ee3d.jpg
+            error_img: './favicon.ico' // 'https://i.p-i.vip/30/20240815-66bced9226a36.webp'
         }
     }
 </script>

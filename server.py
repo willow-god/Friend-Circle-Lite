@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 import json
 import random
@@ -9,6 +10,9 @@ from friend_circle_lite.get_conf import load_config
 
 app = FastAPI()
 
+# 设置静态文件目录
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 # 添加 CORS 中间件
 app.add_middleware(
     CORSMiddleware,
@@ -17,15 +21,19 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# 返回图标图片
+@app.get("/favicon.ico", response_class=HTMLResponse)
+async def favicon():
+    return FileResponse('static/favicon.ico')
+
+# 返回背景图片
+@app.get("/bg-light.webp", response_class=HTMLResponse)
+async def bg_light():
+    return FileResponse('static/bg-light.webp')
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
-    try:
-        with open('./static/index.html', 'r', encoding='utf-8') as f:
-            html_content = f.read()
-        return HTMLResponse(content=html_content)
-    except FileNotFoundError:
-        return HTMLResponse(content="<h1>File not found</h1>", status_code=404)
+    return FileResponse('./static/index.html')
 
 @app.get('/all.json')
 async def get_all_articles():
