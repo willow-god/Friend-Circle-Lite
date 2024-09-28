@@ -30,6 +30,11 @@ async def favicon():
 @app.get("/bg-light.webp", response_class=HTMLResponse)
 async def bg_light():
     return FileResponse('static/bg-light.webp')
+    
+# 返回背景图片
+@app.get("/bg-dark.webp", response_class=HTMLResponse)
+async def bg_dark():
+    return FileResponse('static/bg-dark.webp')
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
