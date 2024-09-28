@@ -12,6 +12,7 @@ app = FastAPI()
 
 # 设置静态文件目录
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/main", StaticFiles(directory="main"), name="main")
 
 # 添加 CORS 中间件
 app.add_middleware(
@@ -35,6 +36,17 @@ async def bg_light():
 @app.get("/bg-dark.webp", response_class=HTMLResponse)
 async def bg_dark():
     return FileResponse('static/bg-dark.webp')
+
+# 返回资源文件
+# 返回 CSS 文件
+@app.get("/fclite.css", response_class=HTMLResponse)
+async def get_fclite_css():
+    return FileResponse('./main/fclite.css')
+
+# 返回 JS 文件
+@app.get("/fclite.js", response_class=HTMLResponse)
+async def get_fclite_js():
+    return FileResponse('./main/fclite.js')
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
