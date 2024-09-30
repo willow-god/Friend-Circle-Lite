@@ -17,7 +17,7 @@ def format_published_time(time_str):
     """
     try:
         # 尝试自动解析
-        parsed_time = parser.parse(time_str) + timedelta(hours=8)
+        parsed_time = parser.parse(time_str)
         return parsed_time.strftime('%Y-%m-%d %H:%M')
     except (ValueError, parser.ParserError):
         pass
