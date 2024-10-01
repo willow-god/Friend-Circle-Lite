@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dateutil import parser
 import requests
 import feedparser
@@ -14,32 +14,52 @@ timeout = (10, 15) # 连接超时和读取超时，防止requests接受时间过
 def format_published_time(time_str):
     """
     格式化发布时间为统一格式 YYYY-MM-DD HH:MM
+
+    参数:
+    time_str (str): 输入的时间字符串，可能是多种格式。
+
+    返回:
+    str: 格式化后的时间字符串，若解析失败返回空字符串。
     """
+    # 尝试自动解析输入时间字符串
     try:
-        # 尝试自动解析
         parsed_time = parser.parse(time_str)
-        return parsed_time.strftime('%Y-%m-%d %H:%M')
+        # 如果没有时区信息，则将其视为 UTC
+        if parsed_time.tzinfo is None:
+            parsed_time = parsed_time.replace(tzinfo=timezone.utc)
+        
+        # 转换为上海时区（UTC+8）
+        shanghai_time = parsed_time.astimezone(timezone(timedelta(hours=8)))
+        return shanghai_time.strftime('%Y-%m-%d %H:%M')
+    
     except (ValueError, parser.ParserError):
         pass
-    
+
+    # 定义支持的时间格式
     time_formats = [
-        '%a, %d %b %Y %H:%M:%S %z',       # Mon, 11 Mar 2024 14:08:32 +0000
-        '%a, %d %b %Y %H:%M:%S GMT',      # Wed, 19 Jun 2024 09:43:53 GMT
-        '%Y-%m-%dT%H:%M:%S%z',            # 2024-03-11T14:08:32+00:00
-        '%Y-%m-%dT%H:%M:%SZ',             # 2024-03-11T14:08:32Z
-        '%Y-%m-%d %H:%M:%S',              # 2024-03-11 14:08:32
-        '%Y-%m-%d'                        # 2024-03-11
+        '%a, %d %b %Y %H:%M:%S %z',  # Mon, 11 Mar 2024 14:08:32 +0000
+        '%a, %d %b %Y %H:%M:%S GMT',   # Wed, 19 Jun 2024 09:43:53 GMT
+        '%Y-%m-%dT%H:%M:%S%z',         # 2024-03-11T14:08:32+00:00
+        '%Y-%m-%dT%H:%M:%SZ',          # 2024-03-11T14:08:32Z
+        '%Y-%m-%d %H:%M:%S',           # 2024-03-11 14:08:32
+        '%Y-%m-%d'                     # 2024-03-11
     ]
 
+    # 遍历所有支持的时间格式进行解析
     for fmt in time_formats:
         try:
-            parsed_time = datetime.strptime(time_str, fmt) + timedelta(hours=8)
-            return parsed_time.strftime('%Y-%m-%d %H:%M')
+            parsed_time = datetime.strptime(time_str, fmt)
+            # 将解析的时间视为 UTC
+            parsed_time = parsed_time.replace(tzinfo=timezone.utc)
+            # 转换为上海时区
+            shanghai_time = parsed_time.astimezone(timezone(timedelta(hours=8)))
+            return shanghai_time.strftime('%Y-%m-%d %H:%M')
         except ValueError:
             continue
 
-    # 如果所有格式都无法匹配，返回原字符串或一个默认值
+    # 如果所有格式都无法匹配，返回空字符串
     return ''
+
 
 def check_feed(blog_url, session):
     """
