@@ -89,10 +89,24 @@
     text-overflow: ellipsis;
 }
 
-.random-link-button {
+.random-button-container {
     position: absolute;
     bottom: 20px;
     right: 20px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+#refresh-random-article {
+    margin-right: 10px;
+    color: #aaaaaa;
+    text-decoration: none;
+}
+
+.random-link-button {
     padding: 10px 20px;
     border: none;
     border-radius: 20px;

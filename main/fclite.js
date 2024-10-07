@@ -65,16 +65,7 @@ function initialize_fc_lite() {
             <div>更新时间:${stats.last_updated_time}</div>
         `;
 
-        // 随机友链卡片
-        const randomArticle = allArticles[Math.floor(Math.random() * allArticles.length)];
-        randomArticleContainer.innerHTML = `
-            <div class="random-container">
-                <div class="random-container-title">随机钓鱼</div>
-                <div class="random-title">${randomArticle.title}</div>
-                <div class="random-author">作者: ${randomArticle.author}</div>
-            </div>
-            <button class="random-link-button" onclick="window.open('${randomArticle.link}', '_blank')">过去转转</button>
-        `;
+        displayRandomArticle(); // 显示随机友链卡片
 
         const articles = allArticles.slice(start, start + UserConfig.page_turning_number);
 
@@ -121,6 +112,29 @@ function initialize_fc_lite() {
         if (start >= allArticles.length) {
             loadMoreBtn.style.display = 'none'; // 隐藏按钮
         }
+    }
+
+    // 显示随机文章的逻辑
+    function displayRandomArticle() {
+        const randomArticle = allArticles[Math.floor(Math.random() * allArticles.length)];
+        randomArticleContainer.innerHTML = `
+            <div class="random-container">
+                <div class="random-container-title">随机钓鱼</div>
+                <div class="random-title">${randomArticle.title}</div>
+                <div class="random-author">作者: ${randomArticle.author}</div>
+            </div>
+            <div class="random-button-container">
+                <a href="#" id="refresh-random-article">刷新</a>
+                <button class="random-link-button" onclick="window.open('${randomArticle.link}', '_blank')">过去转转</button>
+            </div>
+        `;
+
+        // 为刷新按钮添加事件监听器
+        const refreshBtn = document.getElementById('refresh-random-article');
+        refreshBtn.addEventListener('click', function (event) {
+            event.preventDefault(); // 阻止默认的跳转行为
+            displayRandomArticle(); // 调用显示随机文章的逻辑
+        });
     }
 
     function showAuthorArticles(author, avatar, link) {
@@ -207,19 +221,9 @@ function initialize_fc_lite() {
     };
 };
 
-//document.addEventListener("DOMContentLoaded", function() {
-//    setTimeout(initialize_fc_lite, 0);
-//});
-
-//document.addEventListener('pjax:complete', function() {
-//    setTimeout(initialize_fc_lite, 0);
-//});
-
-//setTimeout(initialize_fc_lite, 0);
-
 function whenDOMReady() {
     initialize_fc_lite();
 }
 
 whenDOMReady();
-document.addEventListener("pjax:complete", whenDOMReady);
+document.addEventListener("pjax:complete", initialize_fc_lite);

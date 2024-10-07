@@ -49,6 +49,8 @@ if config["rss_subscribe"]["enable"]:
     github_repo = str(config["rss_subscribe"]["github_repo"]).strip()
     your_blog_url = config["rss_subscribe"]["your_blog_url"]
     email_template = config["rss_subscribe"]["email_template"]
+    # 获取网站信息
+    website_title = config["rss_subscribe"]["website_info"]["title"]
     # 获取最近更新的文章
     latest_articles = get_latest_articles_from_link(
         url=your_blog_url,
@@ -73,7 +75,9 @@ if config["rss_subscribe"]["enable"]:
                 "title": article["title"],
                 "summary": article["summary"],
                 "published": article["published"],
-                "link": article["link"]
+                "link": article["link"],
+                "website_title": website_title,
+                "github_issue_url": f"https://github.com/{github_username}/{github_repo}/issues/new",
             }
             
             send_emails(
@@ -82,7 +86,7 @@ if config["rss_subscribe"]["enable"]:
                 smtp_server=server,
                 port=port,
                 password=password,
-                subject="清羽飞扬の最新文章：" + article["title"],
+                subject= website_title + "の最新文章：" + article["title"],
                 body="文章链接：" + article["link"] + "\n" + "文章内容：" + article["summary"] + "\n" + "发布时间：" + article["published"],
                 template_path=email_template,
                 template_data=template_data,
