@@ -77,7 +77,7 @@ if config["rss_subscribe"]["enable"]:
                 "published": article["published"],
                 "link": article["link"],
                 "website_title": website_title,
-                "github_issue_url": f"https://github.com/{github_username}/{github_repo}/issues/new",
+                "github_issue_url": f"https://github.com/{github_username}/{github_repo}/issues?q=is%3Aissue+is%3Aclosed",
             }
             
             send_emails(
