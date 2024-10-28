@@ -14,9 +14,10 @@ if config["spider_settings"]["enable"]:
     print("爬虫已启用")
     json_url = config['spider_settings']['json_url']
     article_count = config['spider_settings']['article_count']
+    expire_date = config['spider_settings']['expire_date'] 
     specific_RSS = config['specific_RSS']
     print("正在从 {json_url} 中获取，每个博客获取 {article_count} 篇文章".format(json_url=json_url, article_count=article_count))
-    result, lost_friends = fetch_and_process_data(json_url=json_url, specific_RSS=specific_RSS, count=article_count)
+    result, lost_friends = fetch_and_process_data(json_url=json_url, specific_RSS=specific_RSS, count=article_count, expire_date=expire_date)
     if config["spider_settings"]["merge_result"]["enable"]:
         marge_json_url = config['spider_settings']["merge_result"]['merge_json_url']
         print("合并数据功能开启，从 {marge_json_url} 中获取境外数据并合并".format(marge_json_url=marge_json_url + "/all.json"))
