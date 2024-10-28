@@ -55,12 +55,12 @@ smtp:
   port: 587
   use_tls: true
 
-# 特殊RSS地址指定
+# 特殊RSS地址指定，可以置空但是不要删除！
 # 解释：用于指定特殊RSS地址，如B站专栏等不常见RSS地址后缀，可以添加多个
 #   name:               友链名称
 #   url:                指定的RSS地址
 specific_RSS:
-  - name: "Redish101"
-    url: "https://reblog.redish101.top/api/feed"
+  # - name: "Redish101"
+  #   url: "https://reblog.redish101.top/api/feed"
   # - name: "無名小栈"
   #   url: "https://blog.imsyy.top/rss.xml"
