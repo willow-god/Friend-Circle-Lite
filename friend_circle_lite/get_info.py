@@ -193,7 +193,7 @@ def parse_feed(url, session, count=5):
         
         return result
     except Exception as e:
-        print(f"不可链接的FEED地址：{url}: {e}")
+        print(f"不可链接的FEED地址：{url} : {e}")
         return {
             'website_name': '',
             'author': '',
@@ -223,10 +223,10 @@ def process_friend(friend, session, count, specific_RSS=[]):
     if rss_feed:
         feed_url = rss_feed
         feed_type = 'specific'
-        print(f"========“{name}”的博客“{blog_url}”为特定RSS源“{feed_url}”========")
+        print(f"========“{name}”的博客“{blog_url} ”为特定RSS源“{feed_url}”========")
     else:
         feed_type, feed_url = check_feed(blog_url, session)
-        print(f"========“{name}”的博客“{blog_url}”的feed类型为“{feed_type}”========")
+        print(f"========“{name}”的博客“{blog_url} ”的feed类型为“{feed_type}”========")
 
     if feed_type != 'none':
         feed_info = parse_feed(feed_url, session, count)
@@ -275,7 +275,7 @@ def fetch_and_process_data(json_url, specific_RSS=[], count=5):
         response = session.get(json_url, headers=headers, timeout=timeout)
         friends_data = response.json()
     except Exception as e:
-        print(f"无法获取该链接：{json_url}, 出现的问题为：{e}")
+        print(f"无法获取该链接：{json_url} , 出现的问题为：{e}")
         return None
 
     total_friends = len(friends_data['friends'])
@@ -364,7 +364,7 @@ def marge_data_from_json_url(data, marge_json_url):
         response = requests.get(marge_json_url, headers=headers, timeout=timeout)
         marge_data = response.json()
     except Exception as e:
-        print(f"无法获取该链接：{marge_json_url}, 出现的问题为：{e}")
+        print(f"无法获取该链接：{marge_json_url} , 出现的问题为：{e}")
         return data
     
     if 'article_data' in marge_data:
@@ -389,7 +389,7 @@ def marge_errors_from_json_url(errors, marge_json_url):
         response = requests.get(marge_json_url, headers=headers, timeout=timeout)
         marge_errors = response.json()
     except Exception as e:
-        print(f"无法获取该链接：{marge_json_url}, 出现的问题为：{e}")
+        print(f"无法获取该链接：{marge_json_url} , 出现的问题为：{e}")
         return errors
 
     print("开始合并错误信息，原错误信息共有 %d 位朋友，境外错误信息共有 %d 位朋友" % (len(errors), len(marge_errors)))

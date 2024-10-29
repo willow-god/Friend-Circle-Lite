@@ -46,7 +46,9 @@ jobs:
     - name: Check RSS feeds
       env:
         SMTP_PWD: ${{ secrets.SMTP_PWD }}
+        FCL_REPO: ${{ github.repository }}
       run: |
+        echo "Checking RSS feeds..."
         python run.py
 
     - name: Upload last_articles.json as artifact

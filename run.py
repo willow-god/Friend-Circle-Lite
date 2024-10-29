@@ -45,8 +45,20 @@ if config["email_push"]["enable"]:
 if config["rss_subscribe"]["enable"]:
     print("RSS通过issue订阅已启用")
     # 获取并强制转换为字符串
-    github_username = str(config["rss_subscribe"]["github_username"]).strip()
-    github_repo = str(config["rss_subscribe"]["github_repo"]).strip()
+    # 尝试从环境变量获取 FCL_REPO
+    fcl_repo = os.getenv('FCL_REPO')
+
+    # 提取 github_username 和 github_repo
+    if fcl_repo:
+        github_username, github_repo = fcl_repo.split('/')
+        print(f"从环境变量获取到的 GitHub Username: {github_username}")
+        print(f"从环境变量获取到的 GitHub Repo: {github_repo}")
+    else:
+        github_username = str(config["rss_subscribe"]["github_username"]).strip()
+        github_repo = str(config["rss_subscribe"]["github_repo"]).strip()
+        print(f"从配置文件获取到的 GitHub Username: {github_username}")
+        print(f"从配置文件获取到的 GitHub Repo: {github_repo}")
+    
     your_blog_url = config["rss_subscribe"]["your_blog_url"]
     email_template = config["rss_subscribe"]["email_template"]
     # 获取网站信息
