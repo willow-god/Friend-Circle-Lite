@@ -23,9 +23,9 @@ if config["spider_settings"]["enable"]:
         result = marge_data_from_json_url(result, marge_json_url + "/all.json")
         lost_friends = marge_errors_from_json_url(lost_friends, marge_json_url + "/errors.json")
     result = deal_with_large_data(result)
-    sorted_result = sort_articles_by_time(result)
+
     with open("all.json", "w", encoding="utf-8") as f:
-        json.dump(sorted_result, f, ensure_ascii=False, indent=2)
+        json.dump(result, f, ensure_ascii=False, indent=2)
     with open("errors.json", "w", encoding="utf-8") as f:
         json.dump(lost_friends, f, ensure_ascii=False, indent=2)
 

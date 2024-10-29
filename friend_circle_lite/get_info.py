@@ -406,7 +406,7 @@ def marge_errors_from_json_url(errors, marge_json_url):
 
 def deal_with_large_data(result):
     """
-    处理文章数据，保留前200篇及其作者在后续文章中的出现。
+    处理文章数据，保留前150篇及其作者在后续文章中的出现。
     
     参数：
     result (dict): 包含统计数据和文章数据的字典。
@@ -414,17 +414,18 @@ def deal_with_large_data(result):
     返回：
     dict: 处理后的数据，只包含需要的文章。
     """
+    result = sort_articles_by_time(result)
     article_data = result.get("article_data", [])
     
-    # 检查文章数量是否大于 200
-    if len(article_data) > 200:
+    # 检查文章数量是否大于 150
+    if len(article_data) > 150:
         print("数据量较大，开始进行处理···")
         # 获取前 200 篇文章的作者集合
         first_200_authors = {article["author"] for article in article_data[:200]}
         
-        # 从第201篇开始过滤，只保留前200篇出现过的作者的文章
-        filtered_articles = article_data[:200] + [
-            article for article in article_data[200:]
+        # 从第151篇开始过滤，只保留前150篇出现过的作者的文章
+        filtered_articles = article_data[:150] + [
+            article for article in article_data[150:]
             if article["author"] in first_200_authors
         ]
         
