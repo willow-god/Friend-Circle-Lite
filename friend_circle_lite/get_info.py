@@ -418,7 +418,7 @@ def deal_with_large_data(result):
     
     # 检查文章数量是否大于 200
     if len(article_data) > 200:
-        print("数据量较大，开始进行处理")
+        print("数据量较大，开始进行处理···")
         # 获取前 200 篇文章的作者集合
         first_200_authors = {article["author"] for article in article_data[:200]}
         
