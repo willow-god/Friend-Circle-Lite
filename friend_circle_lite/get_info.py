@@ -374,9 +374,12 @@ def marge_data_from_json_url(data, marge_json_url):
         print("合并数据完成，现在共有 %d 篇文章" % len(data['article_data']))
     return data
 
+import requests
+
 def marge_errors_from_json_url(errors, marge_json_url):
     """
-    从另一个网络 JSON 文件中获取错误信息并遍历，删除在errors中，不存在于marge_errors中的友链信息。
+    从另一个网络 JSON 文件中获取错误信息并遍历，删除在errors中，
+    不存在于marge_errors中的友链信息。
 
     参数：
     errors (list): 包含错误信息的列表
@@ -386,15 +389,49 @@ def marge_errors_from_json_url(errors, marge_json_url):
     list: 合并后的错误信息列表
     """
     try:
-        response = requests.get(marge_json_url, headers=headers, timeout=timeout)
+        response = requests.get(marge_json_url, timeout=10)  # 设置请求超时时间
         marge_errors = response.json()
     except Exception as e:
-        print(f"无法获取该链接：{marge_json_url} , 出现的问题为：{e}")
+        print(f"无法获取该链接：{marge_json_url}，出现的问题为：{e}")
         return errors
 
-    print("开始合并错误信息，原错误信息共有 %d 位朋友，境外错误信息共有 %d 位朋友" % (len(errors), len(marge_errors)))
-    for error in errors:
-        if error not in marge_errors:
-            errors.remove(error)
-    print("合并错误信息完成，现在共有 %d 位朋友" % len(errors))
-    return errors
+    # 提取 marge_errors 中的 URL
+    marge_urls = {item[1] for item in marge_errors}
+
+    # 使用过滤器保留 errors 中在 marge_errors 中出现的 URL
+    filtered_errors = [error for error in errors if error[1] in marge_urls]
+
+    print("合并错误信息完成，保留了 %d 位朋友" % len(filtered_errors))
+    return filtered_errors
+
+def deal_with_large_data(result):
+    """
+    处理文章数据，保留前200篇及其作者在后续文章中的出现。
+    
+    参数：
+    result (dict): 包含统计数据和文章数据的字典。
+    
+    返回：
+    dict: 处理后的数据，只包含需要的文章。
+    """
+    article_data = result.get("article_data", [])
+    
+    # 检查文章数量是否大于 200
+    if len(article_data) > 200:
+        print("数据量较大，开始进行处理")
+        # 获取前 200 篇文章的作者集合
+        first_200_authors = {article["author"] for article in article_data[:200]}
+        
+        # 从第201篇开始过滤，只保留前200篇出现过的作者的文章
+        filtered_articles = article_data[:200] + [
+            article for article in article_data[200:]
+            if article["author"] in first_200_authors
+        ]
+        
+        # 更新结果中的 article_data
+        result["article_data"] = filtered_articles
+        # 更新结果中的统计数据
+        result["statistical_data"]["article_num"] = len(filtered_articles)
+        print("数据处理完成，保留 %d 篇文章" % len(filtered_articles))
+
+    return result
