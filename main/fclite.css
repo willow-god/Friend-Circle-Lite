@@ -100,10 +100,10 @@
     transition: background-color 0.3s ease-in-out;
 }
 
-#refresh-random-article {
+.random-button-container a {
     margin-right: 10px;
-    color: #aaaaaa;
-    text-decoration: none;
+    color: #aaaaaa !important;
+    text-decoration: none !important;
 }
 
 .random-link-button {
