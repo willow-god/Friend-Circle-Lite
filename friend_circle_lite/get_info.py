@@ -420,8 +420,8 @@ def deal_with_large_data(result):
     # 检查文章数量是否大于 150
     if len(article_data) > 150:
         print("数据量较大，开始进行处理···")
-        # 获取前 200 篇文章的作者集合
-        first_200_authors = {article["author"] for article in article_data[:200]}
+        # 获取前 150 篇文章的作者集合
+        first_200_authors = {article["author"] for article in article_data[:150]}
         
         # 从第151篇开始过滤，只保留前150篇出现过的作者的文章
         filtered_articles = article_data[:150] + [
