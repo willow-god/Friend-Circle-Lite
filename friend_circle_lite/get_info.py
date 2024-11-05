@@ -271,6 +271,10 @@ def fetch_and_process_data(json_url, specific_RSS=[], count=5):
     """
     session = requests.Session()
     
+    # 检查是否是 GitHub 仓库路径
+    if '/' in json_url and not json_url.startswith('http'):
+        json_url = f"https://raw.githubusercontent.com/{json_url}/output/v2/data.json"
+
     try:
         response = session.get(json_url, headers=headers, timeout=timeout)
         friends_data = response.json()
@@ -278,7 +282,19 @@ def fetch_and_process_data(json_url, specific_RSS=[], count=5):
         print(f"无法获取该链接：{json_url} , 出现的问题为：{e}")
         return None
 
-    total_friends = len(friends_data['friends'])
+    # 处理两种数据格式
+    if 'friends' in friends_data:
+        friends = friends_data['friends']
+    elif 'content' in friends_data:
+        friends = [
+            [friend['title'], friend['url'], friend.get('avatar', '')]
+            for friend in friends_data['content']
+        ]
+    else:
+        print("未知的数据格式")
+        return None
+
+    total_friends = len(friends)
     active_friends = 0
     error_friends = 0
     total_articles = 0
@@ -288,7 +304,7 @@ def fetch_and_process_data(json_url, specific_RSS=[], count=5):
     with ThreadPoolExecutor(max_workers=10) as executor:
         future_to_friend = {
             executor.submit(process_friend, friend, session, count, specific_RSS): friend
-            for friend in friends_data['friends']
+            for friend in friends
         }
         
         for future in as_completed(future_to_friend):
