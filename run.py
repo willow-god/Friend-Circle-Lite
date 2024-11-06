@@ -13,6 +13,13 @@ config = load_config("./conf.yaml")
 if config["spider_settings"]["enable"]:
     print("爬虫已启用")
     json_url = config['spider_settings']['json_url']
+    if json_url.startswith('http'):
+        pass
+    elif '/' in json_url:
+        # json_url 为 GitHub 仓库路径字符串时
+        json_url = f"https://raw.githubusercontent.com/{json_url}/output/v2/data.json"
+    else:
+        print("错误：未提供有效的 json_url ")
     article_count = config['spider_settings']['article_count']
     specific_RSS = config['specific_RSS']
     print("正在从 {json_url} 中获取，每个博客获取 {article_count} 篇文章".format(json_url=json_url, article_count=article_count))

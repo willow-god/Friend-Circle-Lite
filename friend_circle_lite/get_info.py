@@ -271,10 +271,6 @@ def fetch_and_process_data(json_url, specific_RSS=[], count=5):
     """
     session = requests.Session()
     
-    # 检查是否是 GitHub 仓库路径
-    if '/' in json_url and not json_url.startswith('http'):
-        json_url = f"https://raw.githubusercontent.com/{json_url}/output/v2/data.json"
-
     try:
         response = session.get(json_url, headers=headers, timeout=timeout)
         friends_data = response.json()
