@@ -1,8 +1,13 @@
+import logging
 import requests
 import re
 from friend_circle_lite.get_info import check_feed, parse_feed
 import json
 import os
+
+# 日志配置
+logging.basicConfig(level=logging.INFO, format='⭐%(levelname)s: %(message)s')
+
 
 # 标准化的请求头
 headers = {
@@ -29,7 +34,7 @@ def extract_emails_from_issues(api_url):
         response.raise_for_status()
         issues = response.json()
     except Exception as e:
-        print(f"无法获取该链接：{api_url}\n出现的问题为：{e}")
+        logging.error(f"无法获取 GitHub issues 数据，错误信息: {e}")
         return None
 
     email_pattern = re.compile(r'^\[邮箱订阅\](.+)$')
@@ -62,7 +67,7 @@ def get_latest_articles_from_link(url, count=5, last_articles_path="./rss_subscr
     session = requests.Session()
     feed_type, feed_url = check_feed(url, session)
     if feed_type == 'none':
-        print(f"无法访问 {url} 的 feed")
+        logging.error(f"无法获取 {url} 的文章数据")
         return None
 
     # 获取最新的文章数据
@@ -86,7 +91,7 @@ def get_latest_articles_from_link(url, count=5, last_articles_path="./rss_subscr
         if article['link'] not in last_titles:
             updated_articles.append(article)
     
-    print(f"从 {url} 获取到 {len(latest_articles)} 篇文章，其中 {len(updated_articles)} 篇为新文章")
+    logging.info(f"从 {url} 获取到 {len(latest_articles)} 篇文章，其中 {len(updated_articles)} 篇为新文章")
 
     # 更新本地存储的文章数据
     with open(local_file, 'w', encoding='utf-8') as file:
