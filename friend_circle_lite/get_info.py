@@ -57,15 +57,16 @@ def format_published_time(time_str):
 
 
 
-def check_feed(blog_url, session, headers=None, timeout=10):
+def check_feed(blog_url, session):
     """
-    检查博客的 RSS 或 Atom 订阅链接，使用多线程提高效率，禁止重定向。
+    检查博客的 RSS 或 Atom 订阅链接。
+
+    此函数接受一个博客地址，尝试在其后拼接 '/atom.xml', '/rss2.xml' 和 '/feed'，并检查这些链接是否可访问。
+    Atom 优先，如果都不能访问，则返回 ['none', 源地址]。
 
     参数：
     blog_url (str): 博客的基础 URL。
     session (requests.Session): 用于请求的会话对象。
-    headers (dict, 可选): 自定义请求头。
-    timeout (int, 可选): 请求的超时限制，默认为 10 秒。
 
     返回：
     list: 包含类型和拼接后的链接的列表。如果 atom 链接可访问，则返回 ['atom', atom_url]；
@@ -76,35 +77,22 @@ def check_feed(blog_url, session, headers=None, timeout=10):
     
     possible_feeds = [
         ('atom', '/atom.xml'),
-        ('rss', '/rss.xml'),
+        ('rss', '/rss.xml'), # 2024-07-26 添加 /rss.xml内容的支持
         ('rss2', '/rss2.xml'),
         ('feed', '/feed'),
-        ('feed2', '/feed.xml'),
+        ('feed2', '/feed.xml'), # 2024-07-26 添加 /feed.xml内容的支持
         ('feed3', '/feed/'),
-        ('index', '/index.xml')
+        ('index', '/index.xml') # 2024-07-25 添加 /index.xml内容的支持
     ]
 
-    def fetch_feed(feed_type, path):
+    for feed_type, path in possible_feeds:
         feed_url = blog_url.rstrip('/') + path
         try:
-            response = session.get(feed_url, headers=headers, timeout=timeout, allow_redirects=False)
+            response = session.get(feed_url, headers=headers, timeout=timeout)
             if response.status_code == 200:
                 return [feed_type, feed_url]
-            elif response.status_code in [301, 302, 303]:
-                return None  # 重定向，不处理
         except requests.RequestException:
-            return None  # 请求异常，不处理
-
-    # 使用 ThreadPoolExecutor 执行多个线程
-    with ThreadPoolExecutor() as executor:
-        futures = [executor.submit(fetch_feed, feed_type, path) for feed_type, path in possible_feeds]
-
-        # 等待线程完成并获取结果
-        for future in as_completed(futures):
-            result = future.result()
-            if result:
-                return result  # 如果找到有效的订阅链接，返回
-
+            continue
     logging.warning(f"无法找到 {blog_url} 的订阅链接")
     return ['none', blog_url]
 
