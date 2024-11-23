@@ -5,9 +5,6 @@ from email.mime.text import MIMEText
 from jinja2 import Environment, FileSystemLoader
 import os
 
-logging.basicConfig(level=logging.INFO, format='😬%(levelname)s: %(message)s')
-
-
 def email_sender(
     target_email, 
     sender_email, 

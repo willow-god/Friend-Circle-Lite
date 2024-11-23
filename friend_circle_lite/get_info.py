@@ -6,9 +6,6 @@ import re
 import feedparser
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# 设置日志配置
-logging.basicConfig(level=logging.INFO, format='🤪%(levelname)s: %(message)s')
-
 # 标准化的请求头
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50'

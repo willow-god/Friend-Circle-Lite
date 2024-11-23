@@ -5,10 +5,6 @@ from friend_circle_lite.get_info import check_feed, parse_feed
 import json
 import os
 
-# 日志配置
-logging.basicConfig(level=logging.INFO, format='⭐%(levelname)s: %(message)s')
-
-
 # 标准化的请求头
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'

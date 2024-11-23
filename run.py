@@ -10,7 +10,7 @@ import sys
 import os
 
 # 日志记录
-logging.basicConfig(level=logging.INFO, format='😋%(levelname)s: %(message)s')
+logging.basicConfig(level=logging.INFO, format='😋 %(levelname)s: %(message)s')
 
 
 # 爬虫部分内容
