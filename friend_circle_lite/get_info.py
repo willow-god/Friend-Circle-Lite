@@ -76,6 +76,7 @@ def check_feed(blog_url, session):
         ('atom', '/atom.xml'),
         ('rss', '/rss.xml'), # 2024-07-26 添加 /rss.xml内容的支持
         ('rss2', '/rss2.xml'),
+        ('rss3', '/rss.php'), # 2024-12-07 添加 /rss.php内容的支持
         ('feed', '/feed'),
         ('feed2', '/feed.xml'), # 2024-07-26 添加 /feed.xml内容的支持
         ('feed3', '/feed/'),
