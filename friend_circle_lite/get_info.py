@@ -112,7 +112,7 @@ def parse_feed(url, session, count=5, blog_url=''):
     """
     try:
         response = session.get(url, headers=headers, timeout=timeout)
-        response.encoding = 'utf-8'
+        response.encoding = response.apparent_encoding or 'utf-8'
         feed = feedparser.parse(response.text)
         
         result = {
