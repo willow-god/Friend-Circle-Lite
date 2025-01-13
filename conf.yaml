@@ -12,7 +12,7 @@ spider_settings:
   article_count: 5
   merge_result:
     enable: false
-    merge_json_url: "https://suus.me"
+    merge_json_url: "https://fc.suuus.top"
 
 # 邮箱推送功能配置，暂未实现，等待后续开发
 # 解释：每天为指定邮箱推送所有友链文章的更新，仅能指定一个
