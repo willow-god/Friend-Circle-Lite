@@ -8,7 +8,7 @@
 #     marge_json_path:  请填写网络地址的json文件，用于合并，不带空格！！！
 spider_settings:
   enable: true
-  json_url: "https://sus.me/friend.json"
+  json_url: "https://suus.me/friend.json"
   article_count: 5
   merge_result:
     enable: false
