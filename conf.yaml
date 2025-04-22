@@ -60,7 +60,7 @@ smtp:
 #   name:               友链名称
 #   url:                指定的RSS地址
 specific_RSS:
-  # - name: "Redish101"
-  #   url: "https://reblog.redish101.top/api/feed"
+   - name: "阮一峰"
+     url: "http://feeds.feedburner.com/ruanyifeng"
   # - name: "無名小栈"
   #   url: "https://blog.imsyy.top/rss.xml"
