@@ -81,7 +81,7 @@ jobs:
 
   keepalive-workflow:
     name: Keepalive Workflow
-    if: github.event_name == 'schedule'
+    if: ${{ always() }}
     needs: friend-circle-lite
     runs-on: ubuntu-latest
     permissions:
