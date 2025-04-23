@@ -11,6 +11,11 @@ env:
 jobs:
   friend-circle-lite:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      actions: read
+      packages: read
+      artifacts: write
 
     steps:
     - name: Pull Latest Repository
@@ -38,6 +43,7 @@ jobs:
       uses: dawidd6/action-download-artifact@v6
       with:
         github_token: ${{secrets.GITHUB_TOKEN}}
+        workflow: main.yml  # 明确指定工作流文件
         branch: main
         name: 'last_articles'
         path: './rss_subscribe'
@@ -56,37 +62,22 @@ jobs:
         path: './rss_subscribe/last_articles.json'
         retention-days: 90
 
-    - name: git config
+    - name: Safe Git Push
       run: |
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-
-    - name: Commit changes
-      run: |
-        mkdir pages
+        mkdir -p pages
         cp -r main ./static/index.html ./static/readme.md ./static/favicon.ico all.json errors.json pages/
         cd pages
         git init
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         git add .
-        git commit -m "⏱️ $(date +"%Y年%m月%d日-%H时%M分") GitHub Actions定时更新"
-        git push --force https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:page
+        git commit -m "⏱️ $(date +"%Y年%m月%d日-%H时%M分") GitHub Actions定时更新" || exit 0
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:page
 
-    - name: Delete Workflow Runs
+    - name: Cleanup old runs
       uses: Mattraks/delete-workflow-runs@v2
       with:
         retain_days: 30
         keep_minimum_runs: 6
-
-  keepalive-workflow:
-    name: Keepalive Workflow
-    if: ${{ always() }}
-    needs: friend-circle-lite
-    runs-on: ubuntu-latest
-    permissions:
-      actions: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: gautamkrishnar/keepalive-workflow@v2
-        with:
-          committer_username: "github-actions[bot]"
-          committer_email: "github-actions[bot]@users.noreply.github.com"
+        # 添加排除当前工作流的条件
+        exclude_workflows: "Friend Circle Lite"
