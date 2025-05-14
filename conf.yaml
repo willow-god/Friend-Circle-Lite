@@ -53,7 +53,7 @@ smtp:
   email: hello@suus.me
   server: smtp.qq.com
   port: 465
-  use_tls: true
+  use_tls: false
 
 # 特殊RSS地址指定，可以置空但是不要删除！
 # 解释：用于指定特殊RSS地址，如B站专栏等不常见RSS地址后缀，可以添加多个
