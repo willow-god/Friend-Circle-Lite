@@ -58,7 +58,7 @@ if config["spider_settings"]["enable"]:
     with open("errors.json", "w", encoding="utf-8") as f:
         json.dump(lost_friends, f, ensure_ascii=False, indent=2)
 
-# ========== 推送准备 ==========
+# ========== 邮箱推送准备 ==========
 SMTP_isReady = False
 
 sender_email = ""
