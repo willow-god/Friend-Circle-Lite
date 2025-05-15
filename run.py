@@ -59,6 +59,14 @@ if config["spider_settings"]["enable"]:
         json.dump(lost_friends, f, ensure_ascii=False, indent=2)
 
 # ========== 推送准备 ==========
+SMTP_isReady = False
+
+sender_email = ""
+server = ""
+port = 0
+use_tls = False
+password = ""
+
 if config["email_push"]["enable"] or config["rss_subscribe"]["enable"]:
     logging.info("📨 推送功能已启用，正在准备中...")
 
@@ -70,30 +78,23 @@ if config["email_push"]["enable"] or config["rss_subscribe"]["enable"]:
     password = os.getenv("SMTP_PWD")
 
     logging.info(f"📡 SMTP 服务器：{server}:{port}")
-    if not password:
+    if not password or not sender_email or not server or not port:
         logging.error("❌ 环境变量 SMTP_PWD 未设置，无法发送邮件")
-        sys.exit(1)
     else:
         logging.info(f"🔐 密码(部分)：{password[:3]}*****")
+        SMTP_isReady = True
 
 # ========== 邮件推送（待实现）==========
-if config["email_push"]["enable"]:
+if config["email_push"]["enable"] and SMTP_isReady:
     logging.info("📧 邮件推送已启用")
     logging.info("⚠️ 抱歉，目前尚未实现邮件推送功能")
 
 # ========== RSS 订阅推送 ==========
-if config["rss_subscribe"]["enable"]:
+if config["rss_subscribe"]["enable"] and SMTP_isReady:
     logging.info("📰 RSS 订阅推送已启用")
 
-    smtp_conf = config["smtp"]
-    sender_email = smtp_conf["email"]
-    server = smtp_conf["server"]
-    port = smtp_conf["port"]
-    use_tls = smtp_conf["use_tls"]
-    password = os.getenv("SMTP_PWD")
-
     # 获取 GitHub 仓库信息
-    fcl_repo = os.getenv('FCL_REPO')
+    fcl_repo = os.getenv('FCL_REPO') # 仓库内置
     if fcl_repo:
         github_username, github_repo = fcl_repo.split('/')
     else:
@@ -110,7 +111,7 @@ if config["rss_subscribe"]["enable"]:
     latest_articles = get_latest_articles_from_link(
         url=your_blog_url,
         count=5,
-        last_articles_path="./rss_subscribe/last_articles.json"
+        last_articles_path="./rss_subscribe/last_articles.json" # 存储上一次的文章
     )
 
     if not latest_articles:
