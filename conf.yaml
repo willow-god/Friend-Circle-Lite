@@ -8,7 +8,7 @@
 #     marge_json_path:  请填写网络地址的json文件，用于合并，不带空格！！！
 spider_settings:
   enable: true
-  json_url: "https://blog.liushen.fun/friend.json"
+  json_url: "https://blog.gbfun.cc/friend.json"
   article_count: 5
   merge_result:
     enable: false
@@ -29,19 +29,19 @@ email_push:
 # 邮箱issue订阅功能配置
 # 解释：向在issue中提取的所有邮箱推送您网站中的更新，添加邮箱和删除邮箱均通过添加issue对应格式实现
 #   enable:             是否启用邮箱推送功能
-#   github_username:    GitHub 用户名，用于构建issue api地址
-#   github_repo:        GitHub 仓库名，用于构建issue api地址
+#   github_username:     GitHub 用户名，用于构建issue api地址
+#   github_repo:    GitHub 仓库名，用于构建issue api地址
 #   your_blog_url:      你的博客地址
 #   website_info:       你的博客信息
 #     title:            你的博客标题，如果启用了推送，用于生成邮件主题
 rss_subscribe:
-  enable: true
-  github_username: willow-god
+  enable: false
+  github_username: LixdHappy
   github_repo: Friend-Circle-Lite
-  your_blog_url: https://blog.liushen.fun/
+  your_blog_url: https://blog.gbfun.cc/
   email_template: "./rss_subscribe/email_template.html"
-  website_info:
-    title: "清羽飞扬"
+  website_info: 
+    title: "GB_blog"
 
 # SMTP 配置
 # 解释：使用其中的相关配置实现上面两种功能，若无推送要求可以不配置，请将以上两个配置置为false
@@ -50,7 +50,7 @@ rss_subscribe:
 #   port：              SMTP 端口号
 #   use_tls：           是否使用 tls 加密
 smtp:
-  email: 3162475700@qq.com
+  email: 2521564831@qq.com
   server: smtp.qq.com
   port: 587
   use_tls: true
