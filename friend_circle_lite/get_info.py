@@ -102,6 +102,7 @@ def check_feed(blog_url, session):
         ('feed', '/feed'),
         ('feed2', '/feed.xml'), # 2024-07-26 添加 /feed.xml内容的支持
         ('feed3', '/feed/'),
+        ('feed4', '/feed.php'), # 2025-07-22 添加 /feed.php内容的支持
         ('index', '/index.xml') # 2024-07-25 添加 /index.xml内容的支持
     ]
 
