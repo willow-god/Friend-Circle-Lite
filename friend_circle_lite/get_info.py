@@ -268,7 +268,7 @@ def process_friend(friend, session, count, specific_and_cache=None):
         feed_url = entry['url']
         feed_type = 'specific'
         source_used = entry.get('source', 'unknown')
-        logging.info(f"“{name}” 使用预设 RSS 源：{feed_url}（source={source_used}）。")
+        logging.info(f"“{name}” 使用预设 RSS 源：{feed_url} （source={source_used}）。")
     else:
         # ---- 2. 自动探测 ----
         feed_type, feed_url = check_feed(blog_url, session)
