@@ -146,20 +146,20 @@ if config["rss_subscribe"]["enable"] and SMTP_isReady:
                 ),
             }
 
-            send_emails(
-                emails=email_list["emails"],
-                sender_email=sender_email,
-                smtp_server=server,
-                port=port,
-                password=password,
-                subject=f"{website_title} の最新文章：{article['title']}",
-                body=(
-                    f"📄 文章标题：{article['title']}\n"
-                    f"🔗 链接：{article['link']}\n"
-                    f"📝 简介：{article['summary']}\n"
-                    f"🕒 发布时间：{article['published']}"
-                ),
-                template_path=email_template,
-                template_data=template_data,
-                use_tls=use_tls
-            )
+            # send_emails(
+            #     emails=email_list["emails"],
+            #     sender_email=sender_email,
+            #     smtp_server=server,
+            #     port=port,
+            #     password=password,
+            #     subject=f"{website_title} の最新文章：{article['title']}",
+            #     body=(
+            #         f"📄 文章标题：{article['title']}\n"
+            #         f"🔗 链接：{article['link']}\n"
+            #         f"📝 简介：{article['summary']}\n"
+            #         f"🕒 发布时间：{article['published']}"
+            #     ),
+            #     template_path=email_template,
+            #     template_data=template_data,
+            #     use_tls=use_tls
+            # )
