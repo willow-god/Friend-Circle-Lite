@@ -33,14 +33,19 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+    
+    - name: Ensure temp folder is not empty
+      run: |
+        mkdir -p ./temp
+        echo "placeholder" > ./temp/.keep
 
-    - name: Download last_articles.json artifact
+    - name: Download temp file artifact
       uses: dawidd6/action-download-artifact@v6
       with:
         github_token: ${{secrets.GITHUB_TOKEN}}
         branch: main
-        name: 'last_articles'
-        path: './rss_subscribe'
+        name: 'temp'
+        path: './temp'
         if_no_artifact_found: warn
 
     - name: Check RSS feeds
@@ -50,13 +55,14 @@ jobs:
       run: |
         echo "Checking RSS feeds..."
         python run.py
-
-    - name: Upload last_articles.json as artifact
+        ls ./temp
+    
+    - name: Upload temp file as artifact
       uses: actions/upload-artifact@v4
       with:
-        name: 'last_articles'
-        path: './rss_subscribe/last_articles.json'
-        retention-days: 90
+        name: 'temp'
+        path: './temp'
+        retention-days: 30
 
     - name: git config
       run: |

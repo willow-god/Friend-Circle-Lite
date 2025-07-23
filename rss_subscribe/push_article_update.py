@@ -52,7 +52,7 @@ def extract_emails_from_issues(api_url):
 
     return {"emails": emails}
 
-def get_latest_articles_from_link(url, count=5, last_articles_path="./rss_subscribe/last_articles.json"):
+def get_latest_articles_from_link(url, count=5, last_articles_path="./temp/newest_posts.json"):
     """
     从指定链接获取最新的文章数据并与本地存储的上次的文章数据进行对比。
 

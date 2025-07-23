@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime, timedelta, timezone
 import re
+import os
+import json
 from urllib.parse import urljoin, urlparse
 from dateutil import parser
 from zoneinfo import ZoneInfo
@@ -74,36 +76,25 @@ def format_published_time(time_str):
     shanghai_time = parsed_time.astimezone(timezone(timedelta(hours=8)))
     return shanghai_time.strftime('%Y-%m-%d %H:%M')
 
-
-
 def check_feed(blog_url, session):
     """
     检查博客的 RSS 或 Atom 订阅链接。
 
-    此函数接受一个博客地址，尝试在其后拼接 '/atom.xml', '/rss2.xml' 和 '/feed'，并检查这些链接是否可访问。
-    Atom 优先，如果都不能访问，则返回 ['none', 源地址]。
-
-    参数：
-    blog_url (str): 博客的基础 URL。
-    session (requests.Session): 用于请求的会话对象。
-
-    返回：
-    list: 包含类型和拼接后的链接的列表。如果 atom 链接可访问，则返回 ['atom', atom_url]；
-            如果 rss2 链接可访问，则返回 ['rss2', rss_url]；
-            如果 feed 链接可访问，则返回 ['feed', feed_url]；
-            如果都不可访问，则返回 ['none', blog_url]。
+    优化点：
+    - 检查 HTTP 状态码。
+    - 检查 Content-Type 是否包含 xml / rss / atom。
+    - 检查响应内容前几百字节内是否有 RSS/Atom 的特征标签。
     """
-    
     possible_feeds = [
         ('atom', '/atom.xml'),
-        ('rss', '/rss.xml'), # 2024-07-26 添加 /rss.xml内容的支持
+        ('rss', '/rss.xml'),  # 2024-07-26 添加 /rss.xml内容的支持
         ('rss2', '/rss2.xml'),
-        ('rss3', '/rss.php'), # 2024-12-07 添加 /rss.php内容的支持
+        ('rss3', '/rss.php'),  # 2024-12-07 添加 /rss.php内容的支持
         ('feed', '/feed'),
-        ('feed2', '/feed.xml'), # 2024-07-26 添加 /feed.xml内容的支持
+        ('feed2', '/feed.xml'),  # 2024-07-26 添加 /feed.xml内容的支持
         ('feed3', '/feed/'),
-        ('feed4', '/feed.php'), # 2025-07-22 添加 /feed.php内容的支持
-        ('index', '/index.xml') # 2024-07-25 添加 /index.xml内容的支持
+        ('feed4', '/feed.php'),  # 2025-07-22 添加 /feed.php内容的支持
+        ('index', '/index.xml')  # 2024-07-25 添加 /index.xml内容的支持
     ]
 
     for feed_type, path in possible_feeds:
@@ -111,9 +102,18 @@ def check_feed(blog_url, session):
         try:
             response = session.get(feed_url, headers=HEADERS_XML, timeout=timeout)
             if response.status_code == 200:
-                return [feed_type, feed_url]
+                # 检查 Content-Type
+                content_type = response.headers.get('Content-Type', '').lower()
+                if 'xml' in content_type or 'rss' in content_type or 'atom' in content_type:
+                    return [feed_type, feed_url]
+                
+                # 如果 Content-Type 是 text/html 或未明确，但内容本身是 RSS
+                text_head = response.text[:1000].lower()  # 读取前1000字符
+                if ('<rss' in text_head or '<feed' in text_head or '<rdf:rdf' in text_head):
+                    return [feed_type, feed_url]
         except requests.RequestException:
             continue
+
     logging.warning(f"无法找到 {blog_url} 的订阅链接")
     return ['none', blog_url]
 
@@ -214,76 +214,226 @@ def replace_non_domain(link: str, blog_url: str) -> str:
         logging.warning(f"替换链接时出错：{link}, error: {e}")
         return link
 
-def process_friend(friend, session, count, specific_RSS=[]):
+def process_friend(friend, session, count, specific_and_cache=None):
     """
     处理单个朋友的博客信息。
-
-    参数：
-    friend (list): 包含朋友信息的列表 [name, blog_url, avatar]。
-    session (requests.Session): 用于请求的会话对象。
-    count (int): 获取每个博客的最大文章数。
-    specific_RSS (list): 包含特定 RSS 源的字典列表 [{name, url}]
-
-    返回：
-    dict: 包含朋友博客信息的字典。
-    """
-    name, blog_url, avatar = friend
     
-    # 如果 specific_RSS 中有对应的 name，则直接返回 feed_url
-    if specific_RSS is None:
-        specific_RSS = []
-    rss_feed = next((rss['url'] for rss in specific_RSS if rss['name'] == name), None)
-    if rss_feed:
-        feed_url = rss_feed
-        feed_type = 'specific'
-        logging.info(f"“{name}”的博客“ {blog_url} ”为特定RSS源“ {feed_url} ”")
-    else:
-        feed_type, feed_url = check_feed(blog_url, session)
-        logging.info(f"“{name}”的博客“ {blog_url} ”的feed类型为“{feed_type}”, feed地址为“ {feed_url} ”")
-
-    if feed_type != 'none':
-        feed_info = parse_feed(feed_url, session, count, blog_url)
-        articles = [
-            {
-                'title': article['title'],
-                'created': article['published'],
-                'link': article['link'],
-                'author': name,
-                'avatar': avatar
-            }
-            for article in feed_info['articles']
-        ]
-        
-        for article in articles:
-            logging.info(f"{name} 发布了新文章：{article['title']}，时间：{article['created']}，链接：{article['link']}")
-        
-        return {
+    参数：
+        friend (list/tuple): [name, blog_url, avatar]
+        session (requests.Session): 请求会话
+        count (int): 每个博客最大文章数
+        specific_and_cache (list[dict]): [{name, url, source?}]，合并后的特殊 + 缓存列表
+    
+    返回：
+        {
             'name': name,
-            'status': 'active',
-            'articles': articles
+            'status': 'active' | 'error',
+            'articles': [...],
+            'feed_url': str | None,
+            'feed_type': str,
+            'cache_update': {
+                'action': 'set' | 'delete' | 'none',
+                'name': name,
+                'url': feed_url_or_None,
+                'reason': 'auto_discovered' | 'repair_cache' | 'remove_invalid',
+            },
+            'source_used': 'manual' | 'cache' | 'auto' | 'none'
         }
-    else:
-        logging.warning(f"{name} 的博客 {blog_url} 无法访问")
+    """
+    if specific_and_cache is None:
+        specific_and_cache = []
+
+    # 解包 friend
+    try:
+        name, blog_url, avatar = friend
+    except Exception:
+        logging.error(f"friend 数据格式不正确: {friend!r}")
         return {
-            'name': name,
+            'name': None,
             'status': 'error',
-            'articles': []
+            'articles': [],
+            'feed_url': None,
+            'feed_type': 'none',
+            'cache_update': {'action': 'none', 'name': None, 'url': None, 'reason': 'bad_friend_data'},
+            'source_used': 'none',
         }
 
-def fetch_and_process_data(json_url, specific_RSS=[], count=5):
+    rss_lookup = {e['name']: e for e in specific_and_cache if 'name' in e and 'url' in e}
+    cache_update = {'action': 'none', 'name': name, 'url': None, 'reason': ''}
+    feed_url, feed_type, source_used = None, 'none', 'none'
+
+    # ---- 1. 优先使用 specific 或 cache ----
+    entry = rss_lookup.get(name)
+    if entry:
+        feed_url = entry['url']
+        feed_type = 'specific'
+        source_used = entry.get('source', 'unknown')
+        logging.info(f"“{name}” 使用预设 RSS 源：{feed_url}（source={source_used}）。")
+    else:
+        # ---- 2. 自动探测 ----
+        feed_type, feed_url = check_feed(blog_url, session)
+        source_used = 'auto'
+        logging.info(f"“{name}” 自动探测 RSS：type：{feed_type}, url：{feed_url} 。")
+
+        if feed_type != 'none' and feed_url:
+            cache_update = {'action': 'set', 'name': name, 'url': feed_url, 'reason': 'auto_discovered'}
+
+    # ---- 3. 尝试解析 RSS ----
+    articles, parse_error = [], False
+    if feed_type != 'none' and feed_url:
+        try:
+            feed_info = parse_feed(feed_url, session, count, blog_url)
+            if isinstance(feed_info, dict) and 'articles' in feed_info:
+                articles = [
+                    {
+                        'title': a['title'],
+                        'created': a['published'],
+                        'link': a['link'],
+                        'author': name,
+                        'avatar': avatar,
+                    }
+                    for a in feed_info['articles']
+                ]
+
+                for a in articles:
+                    logging.info(f"{name} 发布了新文章：{a['title']}，时间：{a['created']}，链接：{a['link']}")
+            else:
+                parse_error = True
+        except Exception as e:
+            logging.warning(f"解析 RSS 失败（{name} -> {feed_url}）：{e}")
+            parse_error = True
+
+    # ---- 4. 如果缓存 RSS 无效则重新探测 ----
+    if parse_error and source_used in ('cache', 'unknown'):
+        logging.info(f"缓存 RSS 无效，重新探测：{name} ({blog_url})。")
+        new_type, new_url = check_feed(blog_url, session)
+        if new_type != 'none' and new_url:
+            try:
+                feed_info = parse_feed(new_url, session, count, blog_url)
+                if isinstance(feed_info, dict) and 'articles' in feed_info:
+                    articles = [
+                        {
+                            'title': a['title'],
+                            'created': a['published'],
+                            'link': a['link'],
+                            'author': name,
+                            'avatar': avatar,
+                        }
+                        for a in feed_info['articles']
+                    ]
+
+                    for a in articles:
+                        logging.info(f"{name} 发布了新文章：{a['title']}，时间：{a['created']}，链接：{a['link']}")
+
+                    feed_type, feed_url, source_used = new_type, new_url, 'auto'
+                    cache_update = {'action': 'set', 'name': name, 'url': new_url, 'reason': 'repair_cache'}
+                    parse_error = False
+            except Exception as e:
+                logging.warning(f"重新探测解析仍失败：{name} ({new_url})：{e}")
+                cache_update = {'action': 'delete', 'name': name, 'url': None, 'reason': 'remove_invalid'}
+                feed_type, feed_url = 'none', None
+        else:
+            cache_update = {'action': 'delete', 'name': name, 'url': None, 'reason': 'remove_invalid'}
+            feed_type, feed_url = 'none', None
+
+    # ---- 5. 最终状态 ----
+    status = 'active' if articles else 'error'
+    if not articles:
+        if feed_type == 'none':
+            logging.warning(f"{name} 的博客 {blog_url} 未找到有效 RSS。")
+        else:
+            logging.warning(f"{name} 的 RSS {feed_url} 未解析出文章。")
+
+    return {
+        'name': name,
+        'status': status,
+        'articles': articles,
+        'feed_url': feed_url,
+        'feed_type': feed_type,
+        'cache_update': cache_update,
+        'source_used': source_used,
+    }
+
+def _load_cache(cache_file):
+    if not cache_file:
+        return []
+    if not os.path.exists(cache_file):
+        logging.info(f"缓存文件 {cache_file} 不存在，将自动创建。")
+        return []
+    try:
+        with open(cache_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        if not isinstance(data, list):
+            logging.warning(f"缓存文件 {cache_file} 格式异常（应为列表）。将忽略。")
+            return []
+        # 标准化
+        norm = []
+        for item in data:
+            if not isinstance(item, dict):
+                continue
+            name = item.get('name')
+            url = item.get('url')
+            if name and url:
+                norm.append({'name': name, 'url': url, 'source': 'cache'})
+        return norm
+    except Exception as e:
+        logging.warning(f"读取缓存文件 {cache_file} 失败: {e}")
+        return []
+
+def _atomic_write_json(path, data) -> None:
+    """原子写，减少写坏文件风险。"""
+    tmp = f"{path}.tmp"
+    with open(tmp, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, path)
+
+def _save_cache(cache_file, cache_items):
+    if not cache_file:
+        return
+    try:
+        # 丢弃 source 字段以保持文件简洁
+        out = [{'name': i['name'], 'url': i['url']} for i in cache_items]
+        _atomic_write_json(cache_file, out)
+        logging.info(f"缓存已保存到 {cache_file}（{len(out)} 条）。")
+    except Exception as e:
+        logging.error(f"保存缓存文件 {cache_file} 失败: {e}")
+
+def fetch_and_process_data(json_url, specific_RSS=None, count=5, cache_file=None):
     """
     读取 JSON 数据并处理订阅信息，返回统计数据和文章信息。
 
     参数：
-    json_url (str): 包含朋友信息的 JSON 文件的 URL。
-    count (int): 获取每个博客的最大文章数。
-    specific_RSS (list): 包含特定 RSS 源的字典列表 [{name, url}]
+        json_url (str): 包含朋友信息的 JSON 文件的 URL。
+        count (int): 获取每个博客的最大文章数。
+        specific_RSS (list): 包含特定 RSS 源的字典列表 [{name, url}]（来自 YAML）。
+        cache_file (str): 缓存文件路径。
 
     返回：
-    dict: 包含统计数据和文章信息的字典。
+        (result_dict, error_friends_info_list)
     """
+    if specific_RSS is None:
+        specific_RSS = []
+
+    # 1. 加载缓存
+    cache_list = _load_cache(cache_file)
+
+    # 2. 标记 YAML 条目
+    manual_list = []
+    for item in specific_RSS:
+        if isinstance(item, dict) and 'name' in item and 'url' in item:
+            manual_list.append({'name': item['name'], 'url': item['url'], 'source': 'manual'})
+
+    # 3. 合并（缓存先，YAML 后覆盖）
+    combined_map = {e['name']: e for e in cache_list}
+    for e in manual_list:  # 手动优先
+        combined_map[e['name']] = e
+    specific_and_cache = list(combined_map.values())
+
+    # 4. 建立方便判断的集合：手动源名称集合
+    manual_name_set = {e['name'] for e in manual_list}
+
+    # 5. 获取朋友列表
     session = requests.Session()
-    
     try:
         response = session.get(json_url, headers=HEADERS_JSON, timeout=timeout)
         friends_data = response.json()
@@ -291,23 +441,32 @@ def fetch_and_process_data(json_url, specific_RSS=[], count=5):
         logging.error(f"无法获取链接：{json_url} ：{e}", exc_info=True)
         return None
 
-    total_friends = len(friends_data['friends'])
+    friends = friends_data.get('friends', [])
+    total_friends = len(friends)
     active_friends = 0
     error_friends = 0
     total_articles = 0
     article_data = []
     error_friends_info = []
+    cache_updates = []  # 用于收集缓存更新（线程安全：用局部列表 + 合并）
 
+    # 6. 并发处理
     with ThreadPoolExecutor(max_workers=10) as executor:
         future_to_friend = {
-            executor.submit(process_friend, friend, session, count, specific_RSS): friend
-            for friend in friends_data['friends']
+            executor.submit(process_friend, friend, session, count, specific_and_cache): friend
+            for friend in friends
         }
-        
+
         for future in as_completed(future_to_friend):
             friend = future_to_friend[future]
             try:
                 result = future.result()
+
+                # 拿回缓存更新意图
+                upd = result.get('cache_update', {})
+                if upd and upd.get('action') != 'none':
+                    cache_updates.append(upd)
+
                 if result['status'] == 'active':
                     active_friends += 1
                     article_data.extend(result['articles'])
@@ -315,23 +474,64 @@ def fetch_and_process_data(json_url, specific_RSS=[], count=5):
                 else:
                     error_friends += 1
                     error_friends_info.append(friend)
+
             except Exception as e:
                 logging.error(f"处理 {friend} 时发生错误: {e}", exc_info=True)
                 error_friends += 1
                 error_friends_info.append(friend)
 
+    # 7. 处理缓存更新
+    cache_map = {e['name']: e for e in cache_list}
+
+    # 去重 & 过滤无效条目
+    unique_updates = {}
+    for upd in cache_updates:
+        name = upd.get('name')
+        action = upd.get('action')
+        url = upd.get('url')
+        if not name:
+            continue
+
+        # 过滤手动 YAML 的条目（不允许覆盖）
+        if name in manual_name_set:
+            continue
+
+        # 只缓存有效 RSS 地址
+        if action == 'set':
+            if url and url != 'none' and url != '':
+                unique_updates[name] = {'action': 'set', 'url': url, 'reason': upd.get('reason', '')}
+        elif action == 'delete':
+            unique_updates[name] = {'action': 'delete', 'url': None, 'reason': upd.get('reason', '')}
+
+    # 应用缓存更新
+    for name, upd in unique_updates.items():
+        if upd['action'] == 'set':
+            cache_map[name] = {'name': name, 'url': upd['url'], 'source': 'cache'}
+            logging.info(f"缓存更新：SET {name} -> {upd['url']} ({upd['reason']})")
+        elif upd['action'] == 'delete':
+            if name in cache_map:
+                cache_map.pop(name)
+                logging.info(f"缓存更新：DELETE {name} ({upd['reason']})")
+
+    # 8. 保存缓存
+    _save_cache(cache_file, list(cache_map.values()))
+
+    # 9. 汇总统计
     result = {
         'statistical_data': {
             'friends_num': total_friends,
             'active_num': active_friends,
             'error_num': error_friends,
             'article_num': total_articles,
-            'last_updated_time': datetime.now(ZoneInfo("Asia/Shanghai")).strftime('%Y-%m-%d %H:%M:%S')
+            'last_updated_time': datetime.now(ZoneInfo("Asia/Shanghai")).strftime('%Y-%m-%d %H:%M:%S'),
         },
-        'article_data': article_data
+        'article_data': article_data,
     }
-    
-    logging.info(f"数据处理完成，总共有 {total_friends} 位朋友，其中 {active_friends} 位博客可访问，{error_friends} 位博客无法访问")
+
+    logging.info(
+        f"数据处理完成，总共有 {total_friends} 位朋友，其中 {active_friends} 位博客可访问，"
+        f"{error_friends} 位博客无法访问。缓存更新 {len(unique_updates)} 条。"
+    )
 
     return result, error_friends_info
 

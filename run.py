@@ -37,7 +37,8 @@ if config["spider_settings"]["enable"]:
     result, lost_friends = fetch_and_process_data(
         json_url=json_url,
         specific_RSS=specific_rss,
-        count=article_count
+        count=article_count,
+        cache_file="./temp/cache.json"
     ) # type: ignore
 
     if config["spider_settings"]["merge_result"]["enable"]:
@@ -111,7 +112,7 @@ if config["rss_subscribe"]["enable"] and SMTP_isReady:
     latest_articles = get_latest_articles_from_link(
         url=your_blog_url,
         count=5,
-        last_articles_path="./rss_subscribe/last_articles.json" # 存储上一次的文章
+        last_articles_path="./temp/newest_posts.json" # 存储上一次的文章
     )
 
     if not latest_articles:

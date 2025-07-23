@@ -50,9 +50,9 @@ rss_subscribe:
 #   port：              SMTP 端口号
 #   use_tls：           是否使用 tls 加密
 smtp:
-  email: 3162475700@qq.com
-  server: smtp.qq.com
-  port: 587
+  email: notify@liushen.fun
+  server: smtp.exmail.qq.com
+  port: 465
   use_tls: true
 
 # 特殊RSS地址指定，可以置空但是不要删除！
