@@ -16,9 +16,9 @@ logging.basicConfig(
 )
 
 # ========== 加载环境变量 ==========
-if os.getenv("GITHUB_TOKEN") is None:
-    from dotenv import load_dotenv
-    load_dotenv()
+# if os.getenv("GITHUB_TOKEN") is None:
+#     from dotenv import load_dotenv
+#     load_dotenv()
 
 # ========== 加载配置 ==========
 config = load_config("./conf.yaml")
