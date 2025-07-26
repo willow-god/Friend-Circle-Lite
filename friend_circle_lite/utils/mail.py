@@ -1,6 +1,5 @@
 import logging
 import smtplib
-import socket
 import time
 import os
 from email.mime.multipart import MIMEMultipart

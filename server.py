@@ -5,9 +5,6 @@ from starlette.middleware.cors import CORSMiddleware
 import json
 import random
 
-from friend_circle_lite.get_info import fetch_and_process_data, sort_articles_by_time
-from friend_circle_lite.get_conf import load_config
-
 app = FastAPI()
 
 # 设置静态文件目录

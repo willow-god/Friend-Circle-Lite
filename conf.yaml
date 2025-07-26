@@ -39,7 +39,7 @@ rss_subscribe:
   github_username: willow-god
   github_repo: Friend-Circle-Lite
   your_blog_url: https://blog.liushen.fun/
-  email_template: "./rss_subscribe/email_template.html"
+  email_template: "./push_templates/default.html"
   website_info:
     title: "清羽飞扬"
 

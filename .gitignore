@@ -13,3 +13,7 @@
 *.json
 
 *.bat
+
+.env
+
+temp/
