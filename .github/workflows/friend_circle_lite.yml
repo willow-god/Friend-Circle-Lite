@@ -72,7 +72,7 @@ jobs:
     - name: Commit changes
       run: |
         mkdir pages
-        cp -r main ./static/index.html ./static/readme.md ./static/favicon.ico ./static/bg-light.webp ./static/bg-dark.webp all.json errors.json pages/
+        cp -r main ./static/index.html ./static/readme.md ./static/favicon.ico ./static/bg-light.webp ./temp/cache.json ./static/bg-dark.webp all.json errors.json pages/
         cd pages
         git init
         git add .
