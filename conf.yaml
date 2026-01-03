@@ -8,11 +8,11 @@
 #     marge_json_path:  请填写网络地址的json文件，用于合并，不带空格！！！
 spider_settings:
   enable: true
-  json_url: "https://blog.liushen.fun/friend.json"
+  json_url: "https://tang-blog.leleosd.top/friend.json"
   article_count: 5
   merge_result:
     enable: false
-    merge_json_url: "https://fc.liushen.fun"
+    merge_json_url: "https://fcircle.leleosd.top"
 
 # 邮箱推送功能配置，暂未实现，等待后续开发
 # 解释：每天为指定邮箱推送所有友链文章的更新，仅能指定一个
@@ -37,11 +37,11 @@ email_push:
 rss_subscribe:
   enable: true
   github_username: willow-god
-  github_repo: Friend-Circle-Lite
-  your_blog_url: https://blog.liushen.fun/
+  github_repo: 朋友圈精简版
+  your_blog_url: https://tang-blog.leleosd.top
   email_template: "./push_templates/default.html"
   website_info:
-    title: "清羽飞扬"
+    title: "TangShiMei"
 
 # SMTP 配置
 # 解释：使用其中的相关配置实现上面两种功能，若无推送要求可以不配置，请将以上两个配置置为false
