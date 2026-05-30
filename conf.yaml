@@ -8,7 +8,7 @@
 #     marge_json_path:  请填写网络地址的json文件，用于合并，不带空格！！！
 spider_settings:
   enable: true
-  json_url: "https://blog.liushen.fun/friend.json"
+  json_url: "https://blog.rusin.lol/friend.json"
   article_count: 5
   merge_result:
     enable: false
@@ -38,7 +38,7 @@ rss_subscribe:
   enable: true
   github_username: ruying-suixing
   github_repo: Friend-Circle-Lite
-  your_blog_url: https://blog.rusin.dpdns.org/
+  your_blog_url: https://blog.rusin.lol/
   email_template: "./push_templates/default.html"
   website_info:
     title: "如形の博客"
@@ -61,6 +61,6 @@ smtp:
 #   url:                指定的RSS地址
 specific_RSS:
    - name: "如形の博客"
-     url: "https://blog.rusin.dpdns.org/atom.xsl"
+     url: "https://blog.rusin.lol/atom.xsl"
   # - name: "無名小栈"
   #   url: "https://blog.imsyy.top/rss.xml"
