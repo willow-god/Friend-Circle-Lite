@@ -16,14 +16,17 @@ from dataclasses import dataclass, field
 DEFAULT_CACHE_FILE = "./temp/cache.sqlite3"
 DEFAULT_ALL_JSON = "./all.json"
 DEFAULT_ERRORS_JSON = "./errors.json"
+DEFAULT_LINK_JSON = "./link.json"
 
 
 @dataclass(slots=True)
-class MergeResultConfig:
-    """Options for merging local crawl results with a remote Friend-Circle feed."""
+class MergeSettings:
+    """Options for merging local crawl results with remote data sources."""
 
     enable: bool = False
-    merge_json_url: str = ""
+    remote_base_url: str = ""
+    merge_article_data: bool = True
+    merge_link_check_data: bool = True
 
 
 @dataclass(slots=True)
@@ -33,7 +36,20 @@ class SpiderSettings:
     enable: bool = True
     json_url: str = ""
     article_count: int = 5
-    merge_result: MergeResultConfig = field(default_factory=MergeResultConfig)
+
+
+@dataclass(slots=True)
+class LinkCheckConfig:
+    """Settings for friend link reachability checks."""
+
+    enable: bool = True
+    max_age_hours: int = 24
+    timeout: int = 15
+    max_workers: int = 10
+    proxy_url: str = ""
+    status_api_url: str = "https://v2.xxapi.cn/api/status?url={url}"
+    enable_backlink_check: bool = False
+    author_url: str = ""
 
 
 @dataclass(slots=True)
@@ -82,6 +98,7 @@ class RuntimePaths:
     cache_file: str = DEFAULT_CACHE_FILE
     all_json_file: str = DEFAULT_ALL_JSON
     errors_json_file: str = DEFAULT_ERRORS_JSON
+    link_json_file: str = DEFAULT_LINK_JSON
 
 
 @dataclass(slots=True)
@@ -89,6 +106,8 @@ class ApplicationConfig:
     """Root application configuration assembled from the YAML file."""
 
     spider_settings: SpiderSettings
+    merge_settings: MergeSettings
+    link_check: LinkCheckConfig
     email_push: EmailPushConfig
     rss_subscribe: RssSubscribeConfig
     smtp: SmtpConfig
@@ -100,21 +119,35 @@ class ApplicationConfig:
     def from_dict(cls, data: dict) -> "ApplicationConfig":
         """Create a typed config object from the raw YAML dictionary."""
         spider_raw = data.get("spider_settings", {})
-        merge_raw = spider_raw.get("merge_result", {})
+        merge_raw = data.get("merge_settings", {})
+        link_check_raw = data.get("link_check", {})
         email_push_raw = data.get("email_push", {})
         rss_subscribe_raw = data.get("rss_subscribe", {})
         website_info_raw = rss_subscribe_raw.get("website_info", {})
         smtp_raw = data.get("smtp", {})
+        runtime_raw = data.get("runtime_paths", {})
 
         return cls(
             spider_settings=SpiderSettings(
                 enable=bool(spider_raw.get("enable", True)),
                 json_url=str(spider_raw.get("json_url", "")).strip(),
                 article_count=int(spider_raw.get("article_count", 5)),
-                merge_result=MergeResultConfig(
-                    enable=bool(merge_raw.get("enable", False)),
-                    merge_json_url=str(merge_raw.get("merge_json_url", "")).strip(),
-                ),
+            ),
+            merge_settings=MergeSettings(
+                enable=bool(merge_raw.get("enable", False)),
+                remote_base_url=str(merge_raw.get("remote_base_url", "")).strip(),
+                merge_article_data=bool(merge_raw.get("merge_article_data", True)),
+                merge_link_check_data=bool(merge_raw.get("merge_link_check_data", True)),
+            ),
+            link_check=LinkCheckConfig(
+                enable=bool(link_check_raw.get("enable", True)),
+                max_age_hours=int(link_check_raw.get("max_age_hours", 24)),
+                timeout=int(link_check_raw.get("timeout", 15)),
+                max_workers=int(link_check_raw.get("max_workers", 10)),
+                proxy_url=str(link_check_raw.get("proxy_url", "")).strip(),
+                status_api_url=str(link_check_raw.get("status_api_url", "https://v2.xxapi.cn/api/status?url={url}")).strip(),
+                enable_backlink_check=bool(link_check_raw.get("enable_backlink_check", False)),
+                author_url=str(link_check_raw.get("author_url", "")).strip(),
             ),
             email_push=EmailPushConfig(
                 enable=bool(email_push_raw.get("enable", False)),
@@ -139,6 +172,12 @@ class ApplicationConfig:
                 use_tls=bool(smtp_raw.get("use_tls", True)),
             ),
             specific_rss=list(data.get("specific_RSS", []) or []),
+            runtime_paths=RuntimePaths(
+                cache_file=str(runtime_raw.get("cache_file", DEFAULT_CACHE_FILE)).strip() or DEFAULT_CACHE_FILE,
+                all_json_file=str(runtime_raw.get("all_json_file", DEFAULT_ALL_JSON)).strip() or DEFAULT_ALL_JSON,
+                errors_json_file=str(runtime_raw.get("errors_json_file", DEFAULT_ERRORS_JSON)).strip() or DEFAULT_ERRORS_JSON,
+                link_json_file=str(runtime_raw.get("link_json_file", DEFAULT_LINK_JSON)).strip() or DEFAULT_LINK_JSON,
+            ),
         )
 
 

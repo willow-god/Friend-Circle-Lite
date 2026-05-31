@@ -15,9 +15,11 @@ from zoneinfo import ZoneInfo
 import requests
 
 from friend_circle_lite import HEADERS_JSON, timeout
-from friend_circle_lite.cache_store import FeedCacheStore
+from friend_circle_lite.app_config import LinkCheckConfig
+from friend_circle_lite.cache_store import FeedCacheStore, LinkCheckStore
 from friend_circle_lite.feed_service import FeedDiscoveryService, FeedParserService
-from friend_circle_lite.models import Article, CacheRecord, CacheUpdate, CrawlResult, CrawlStatistics, FeedEndpoint, Website
+from friend_circle_lite.link_check_service import LinkCheckService
+from friend_circle_lite.models import Article, CacheRecord, CacheUpdate, CrawlResult, CrawlStatistics, FeedEndpoint, LinkCheckRecord, Website
 
 
 class WebsiteFeedResolver:
@@ -116,11 +118,20 @@ class WebsiteCrawler:
 class FriendCircleCrawler:
     """System-level orchestrator for crawling all configured websites."""
 
-    def __init__(self, json_url: str, count: int, specific_rss: list[dict] | None = None, cache_file: str | None = None):
+    def __init__(
+        self,
+        json_url: str,
+        count: int,
+        specific_rss: list[dict] | None = None,
+        cache_file: str | None = None,
+        link_check_config: LinkCheckConfig | None = None,
+    ):
         self.json_url = json_url
         self.count = count
         self.specific_rss = specific_rss or []
         self.cache_store = FeedCacheStore(cache_file)
+        self.link_check_config = link_check_config or LinkCheckConfig(enable=False)
+        self.link_check_store = LinkCheckStore(cache_file)
 
     def run(self) -> tuple[dict, list[list[str]]] | None:
         """Fetch website list, crawl all websites, and build public outputs."""
@@ -128,6 +139,13 @@ class FriendCircleCrawler:
         websites = self._load_websites(session)
         if websites is None:
             return None
+
+        link_check_records = self._check_links(websites)
+        link_check_map = {record.url: record for record in link_check_records}
+        crawlable_websites = [website for website in websites if link_check_map.get(website.url, LinkCheckRecord.unchecked(website)).crawl_allowed]
+        skipped_count = len(websites) - len(crawlable_websites)
+        if skipped_count:
+            logging.info(f"🔎 根据友链可达性检测跳过 {skipped_count} 个不可抓取站点")
 
         cache_records = self.cache_store.load_records()
         manual_records = self._build_manual_records()
@@ -143,7 +161,7 @@ class FriendCircleCrawler:
         with ThreadPoolExecutor(max_workers=10) as executor:
             future_to_website = {
                 executor.submit(crawler.crawl, website, self.count): website
-                for website in websites
+                for website in crawlable_websites
             }
             for future in as_completed(future_to_website):
                 website = future_to_website[future]
@@ -156,24 +174,88 @@ class FriendCircleCrawler:
         self._apply_cache_updates(cache_records, crawl_results, manual_names)
 
         active_results = [result for result in crawl_results if result.status == "active"]
-        error_results = [result.website.to_error_payload() for result in crawl_results if result.status != "active"]
+        unreachable_results = [record for record in link_check_records if not record.reachable]
+        crawl_error_results = [result.website.to_error_payload() for result in crawl_results if result.status != "active"]
+        error_results = [[record.name, record.url, record.avatar] for record in unreachable_results]
         all_articles = [article.to_public_dict() for result in active_results for article in result.articles]
 
         statistics = CrawlStatistics.create(
             friends_num=len(websites),
             active_num=len(active_results),
-            error_num=len(error_results),
+            error_num=len(websites) - len(active_results),
             article_num=len(all_articles),
         )
+        stats_payload = statistics.to_dict()
+        stats_payload.update(self._build_link_statistics(link_check_records))
         result = {
-            "statistical_data": statistics.to_dict(),
+            "statistical_data": stats_payload,
             "article_data": all_articles,
         }
+        link_payload = self._build_link_payload(link_check_records)
         logging.info(
-            f"数据处理完成，总共有 {len(websites)} 位朋友，其中 {len(active_results)} 位博客可访问，"
-            f"{len(error_results)} 位博客无法访问。"
+            f"数据处理完成，总共有 {len(websites)} 位朋友，其中 {len(active_results)} 位博客可抓取到文章，"
+            f"{len(crawl_error_results)} 位博客 RSS 抓取失败，{len(unreachable_results)} 位友链不可达。"
         )
-        return result, error_results
+        return result, error_results, link_payload
+
+    def _check_links(self, websites: list[Website]) -> list[LinkCheckRecord]:
+        service = LinkCheckService(config=self.link_check_config, store=self.link_check_store)
+        return service.check_websites(websites)
+
+    @staticmethod
+    def _build_link_statistics(records: list[LinkCheckRecord]) -> dict[str, int | str]:
+        reachable = [record for record in records if record.reachable]
+        crawl_allowed = [record for record in records if record.crawl_allowed]
+        api_only = [record for record in records if record.best_method == "api"]
+        has_author_link = [record for record in records if record.has_author_link]
+        checked_times = [record.checked_at for record in records if record.checked_at]
+        return {
+            "link_total_num": len(records),
+            "link_reachable_num": len(reachable),
+            "link_unreachable_num": len(records) - len(reachable),
+            "crawl_allowed_num": len(crawl_allowed),
+            "api_only_num": len(api_only),
+            "has_author_link_num": len(has_author_link),
+            "link_last_checked_time": max(checked_times) if checked_times else "",
+        }
+
+    @staticmethod
+    def _build_link_payload(records: list[LinkCheckRecord]) -> dict[str, object]:
+        return {
+            "statistical_data": FriendCircleCrawler._build_link_statistics(records),
+            "link_data": [record.to_link_dict() for record in records],
+        }
+
+    @staticmethod
+    def _build_friend_data(
+        websites: list[Website],
+        crawl_results: list[CrawlResult],
+        link_check_map: dict[str, LinkCheckRecord],
+    ) -> list[dict[str, object]]:
+        crawl_result_map = {result.website.url: result for result in crawl_results}
+        friend_data: list[dict[str, object]] = []
+        for website in websites:
+            link_record = link_check_map.get(website.url) or LinkCheckRecord.unchecked(website)
+            crawl_result = crawl_result_map.get(website.url)
+            friend_data.append({
+                "name": website.name,
+                "url": website.url,
+                "avatar": website.avatar,
+                "linkpage": website.linkpage,
+                "reachable": link_record.reachable,
+                "crawl_allowed": link_record.crawl_allowed,
+                "best_method": link_record.best_method,
+                "best_latency": link_record.best_latency,
+                "fail_count": link_record.fail_count,
+                "backlink_checked": link_record.backlink_checked,
+                "has_author_link": link_record.has_author_link,
+                "rss_crawl_reason": link_record.rss_crawl_reason,
+                "feed_status": crawl_result.status if crawl_result else "skipped",
+                "feed_url": crawl_result.feed_url if crawl_result else None,
+                "feed_type": crawl_result.feed_type if crawl_result else "none",
+                "article_count": len(crawl_result.articles) if crawl_result else 0,
+            })
+        return friend_data
 
     def _load_websites(self, session: requests.Session) -> list[Website] | None:
         try:

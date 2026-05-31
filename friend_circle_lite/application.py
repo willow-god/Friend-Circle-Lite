@@ -53,13 +53,14 @@ class FriendCircleLiteApplication:
             specific_RSS=self.config.specific_rss,
             count=spider_settings.article_count,
             cache_file=self.config.runtime_paths.cache_file,
+            link_check_config=self.config.link_check,
         )
         if crawl_result is None:
             logging.error("❌ 抓取流程失败，未生成任何输出文件")
             return
 
-        result, lost_friends = crawl_result
-        result, lost_friends = self._merge_remote_results_if_enabled(result, lost_friends)
+        result, lost_friends, link_payload = crawl_result
+        result, lost_friends, link_payload = self._merge_remote_results_if_enabled(result, lost_friends, link_payload)
 
         article_count = len(result.get("article_data", []))
         logging.info(f"📦 数据获取完毕，共有 {article_count} 篇文章，正在处理数据")
@@ -70,6 +71,7 @@ class FriendCircleLiteApplication:
         )
         write_json(self.config.runtime_paths.all_json_file, result)
         write_json(self.config.runtime_paths.errors_json_file, lost_friends)
+        write_json(self.config.runtime_paths.link_json_file, link_payload)
 
     def prepare_mail_runtime(self) -> MailRuntime:
         """Build SMTP runtime credentials from config and environment variables."""
@@ -143,17 +145,26 @@ class FriendCircleLiteApplication:
                 use_tls=mail_runtime.use_tls,
             )
 
-    def _merge_remote_results_if_enabled(self, result: dict, lost_friends: list[list[str]]) -> tuple[dict, list[list[str]]]:
-        """Merge remote outputs when the self-hosted merge option is enabled."""
-        merge_result = self.config.spider_settings.merge_result
-        if not merge_result.enable:
-            return result, lost_friends
+    def _merge_remote_results_if_enabled(
+        self, result: dict, lost_friends: list[list[str]], link_payload: dict
+    ) -> tuple[dict, list[list[str]], dict]:
+        """Merge remote outputs when the merge option is enabled."""
+        merge_settings = self.config.merge_settings
+        if not merge_settings.enable:
+            return result, lost_friends, link_payload
 
-        merge_url = merge_result.merge_json_url
-        logging.info(f"🔀 合并功能开启，从 {merge_url} 获取外部数据")
-        result = marge_data_from_json_url(result, f"{merge_url}/all.json")
-        lost_friends = marge_errors_from_json_url(lost_friends, f"{merge_url}/errors.json")
-        return result, lost_friends
+        remote_url = merge_settings.remote_base_url
+        logging.info(f"🔀 合并功能开启，从 {remote_url} 获取外部数据")
+
+        if merge_settings.merge_article_data:
+            result = marge_data_from_json_url(result, f"{remote_url}/all.json")
+            lost_friends = marge_errors_from_json_url(lost_friends, f"{remote_url}/errors.json")
+
+        if merge_settings.merge_link_check_data:
+            from friend_circle_lite.all_friends import merge_link_data_from_json_url
+            link_payload = merge_link_data_from_json_url(link_payload, f"{remote_url}/link.json")
+
+        return result, lost_friends, link_payload
 
     def _resolve_github_repo(self) -> tuple[str, str]:
         """Resolve repository coordinates from env override or config."""

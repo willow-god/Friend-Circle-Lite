@@ -1,265 +1,763 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="googlebot" content="noindex" />
+    <title>友链朋友圈状态</title>
+    <link rel="icon" href="./favicon.ico" type="image/x-icon" />
+    <link
+      rel="stylesheet"
+      href="https://chinese-fonts-cdn.deno.dev/packages/jhlst/dist/京華老宋体v1_007/result.css"
+    />
+    <link
+      href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #3498db;
+        --accent-color: #e74c3c;
+        --text-color: #34495e;
+        --background-color: #e7f3ff;
+        --code-background-color: #efefef;
+      }
 
-<head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="./favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
-    <meta name="description" content="🐱一个精简版，无后端，且仅利用github action运行的精简版友链朋友圈程序，兼容fc的json格式信息，同时支持推送友圈更新，支持他人订阅个人站点并在更新时发送邮箱推送。">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Friend-Circle-Lite</title>
-</head>
-<style>
-    body {
-        background-image: url('./bg-light.webp');
-        background-size: cover;
-        background-attachment: fixed;
-        background-repeat: no-repeat;
-        background-position: center;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-        overflow-y: scroll;
-        overflow-x: hidden;
-        height: fit-content;
-    }
-    #theme-toggle {
-        z-index: 1000;
+      .poem-background {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 100px;
-        height: 40px;
-        background: linear-gradient(135deg, #007BFF, #0056b3);
-        color: white;
-        border: none;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
+        bottom: calc(50% - 300px);
+        left: 50%;
+        z-index: -1;
+        opacity: 0.15;
+        width: 2000px;
+        text-align: left;
+        color: #93a1a9;
+        pointer-events: none;
+        line-height: 1.8;
+      }
+
+      .poem-background p {
+        margin: 0;
+        font-size: 4rem;
+      }
+
+      body {
+        font-family: "KingHwa_OldSong", "Noto Serif SC", serif;
+        margin: 0;
+        padding: 40px 20px;
+        background-color: var(--background-color);
+        color: var(--text-color);
         display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-        transition: all 0.3s ease;
-    }
-    
-    #theme-toggle:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
-    }
-    .container {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        display: flex;
-        text-align: center;
-        align-items: center;
-        height: 100vh;
-        width: 100%;
         flex-direction: column;
-        justify-content: center;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    }
+        align-items: center;
+      }
 
-    .root-container {
+      .container {
+        max-width: 900px;
         width: 100%;
-        margin-top: 40px;
-        max-width: 1100px;
-    }
-    
-    @media (max-width: 1200px) {
-        .root-container {
-            max-width: 95%;
-            margin-top: 20px;
-        }
-    }
+        padding: 0 20px;
+      }
 
-    .avatar {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        box-shadow: 0 8px 24px rgba(0, 123, 255, 0.2);
-        transition: all 0.3s ease;
-        animation: float 3s ease-in-out infinite;
-    }
-    
-    .avatar:hover {
-        transform: scale(1.05);
-        box-shadow: 0 12px 32px rgba(0, 123, 255, 0.3);
-    }
-    
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
-    }
-    
-    p {
-        color: #666;
-        margin-bottom: 30px;
-        font-size: 18px;
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+        position: relative;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        color: var(--primary-color);
+        margin: 20px 0;
+        position: relative;
+      }
+
+      h1::after {
+        content: "";
+        display: block;
+        width: 60%;
+        height: 3px;
+        background: var(--secondary-color);
+        margin: 10px auto 0;
+      }
+
+      .subtitle {
+        font-size: 1.1rem;
+        color: #7f8c8d;
+        max-width: 600px;
+        margin: 0 auto;
         line-height: 1.6;
-    }
-    .button-container {
-        margin-top: 20px;
+      }
+
+      .quick-links {
         display: flex;
         justify-content: center;
         gap: 10px;
-    }
-    .button {
-        background-color: rgb(255, 255, 255);
-        border: 2px solid #007BFF;
-        color: #007BFF;
-        padding: 12px 28px;
-        border-radius: 25px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+
+      .quick-links a,
+      .filter-btn {
+        color: var(--primary-color);
+        background: #fff;
+        border: 1px solid #00000018;
+        border-radius: 999px;
+        padding: 8px 14px;
         text-decoration: none;
-        font-size: 16px;
-        font-weight: 600;
-        display: inline-block;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
-    }
-    .button:hover {
-        background-color: #007BFF;
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
-    }
-
-    .card-author,
-    .card-date {
-        height: fit-content !important;
-    }
-
-    .scroll-down-icon {
-        position: absolute;
-        bottom: 30px;
-        height: 24px;
-        color: #007BFF;
-        animation: bounce 1.5s infinite;
         cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    
-    .scroll-down-icon:hover {
-        transform: scale(1.1);
-        opacity: 1 !important;
-    }
-    
-    .scroll-down-icon::before,
-    .scroll-down-icon::after {
-        content: '';
+        transition: all 0.2s ease-in-out;
+        font-family: inherit;
+        font-size: 1rem;
+      }
+
+      .quick-links a:hover,
+      .filter-btn:hover,
+      .filter-btn.active {
+        color: #fff;
+        background: var(--secondary-color);
+      }
+
+      .total-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 30px;
+      }
+
+      @media (min-width: 1200px) {
+        .total-info {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      @media (max-width: 380px) {
+        .total-info {
+          grid-template-columns: repeat(1, 1fr);
+        }
+      }
+
+      .total-status-card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        font-size: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .total-status-card span {
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .total-status-card:hover,
+      .status-card:hover,
+      .article-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+        background: #fff;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .search-input {
+        flex: 1;
+        min-width: min(260px, 100%);
+        max-width: 360px;
+        border: 1px solid #00000018;
+        border-radius: 999px;
+        padding: 9px 14px;
+        color: var(--text-color);
+        font-family: inherit;
+        font-size: 1rem;
+        outline: none;
+      }
+
+      .status-grid {
+        display: grid;
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .status-grid.other {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+
+      .status-grid.error {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      }
+
+      .fail_counts {
+        margin-right: 10px;
+        color: #000000a5;
+        white-space: nowrap;
+      }
+
+      .status-card {
+        display: flex;
+        background: #fff;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        font-size: 1rem;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.2s ease-in-out;
+        min-width: 0;
+      }
+
+      .status-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.2s ease-in-out;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+        margin-right: 10px;
+      }
+
+      .status-link:hover {
+        color: var(--secondary-color);
+      }
+
+      .status-dot {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 6px;
+        position: relative;
+      }
+
+      .status-dot::before {
+        content: "";
         position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 14px;
-        height: 14px;
-        opacity: .8;
-        border-left: 3px solid #007BFF;
-        border-bottom: 3px solid #007BFF;
-        transform: translate(-50%, -50%) rotate(-45deg);
-    }
-    .scroll-down-icon::after {
-        top: 80%;
-        opacity: .6;
-    }
-    @keyframes bounce {
-        0%, 100% {
-            transform: translateY(0);
-            opacity: .6;
+        top: -4px;
+        left: -4px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          opacity: 1;
         }
+
         50% {
-            transform: translateY(-10px);
-            opacity: 1;
+          transform: scale(1.5);
+          opacity: 0.5;
         }
-    }
 
-    /* 暗色模式样式 */
-[data-theme="dark"] body {
-    background-image: url('./bg-dark.webp');
-    color: #ffffff;
-}
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
 
-[data-theme="dark"] .container {
-    background: rgba(30, 30, 30, 0.9);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-}
+      .status-normal {
+        background: green;
+      }
 
-[data-theme="dark"] p {
-    color: #cccccc;
-}
+      .status-normal::before {
+        background-color: rgba(0, 128, 0, 0.2);
+      }
 
-[data-theme="dark"] .button {
-    background-color: #333333;
-    border: 2px solid #007BFF;
-    color: #007BFF;
-}
+      .status-slow {
+        background: rgb(255, 200, 0);
+      }
 
-[data-theme="dark"] .button:hover {
-    background-color: #007BFF;
-    color: white;
-}
+      .status-slow::before {
+        background-color: rgba(255, 174, 0, 0.2);
+      }
 
-[data-theme="dark"] .scroll-down-icon::before,
-[data-theme="dark"] .scroll-down-icon::after {
-    border-left-color: #007BFF;
-    border-bottom-color: #007BFF;
-}
+      .status-api {
+        background: #3498db;
+      }
 
-[data-theme="dark"] .avatar {
-    box-shadow: 0 8px 24px rgba(0, 123, 255, 0.3);
-}
-</style>
+      .status-api::before {
+        background-color: rgba(52, 152, 219, 0.2);
+      }
 
-<body>
+      .status-error {
+        background: red;
+      }
+
+      .status-error::before {
+        background-color: rgba(255, 0, 0, 0.2);
+      }
+
+      .backlink-status {
+        display: inline-flex;
+        align-items: center;
+        margin: 0 8px;
+        text-decoration: none;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .backlink-status:hover {
+        transform: scale(1.1);
+      }
+
+      .backlink-icon {
+        font-size: 16px;
+      }
+
+      .backlink-true {
+        color: #27ae60;
+      }
+
+      .backlink-false {
+        color: #e74c3c;
+      }
+
+      .status-indicators {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
+      .method-text,
+      .time-text {
+        color: #000000a5;
+        white-space: nowrap;
+      }
+
+      .article-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .article-card {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        min-width: 0;
+        background: #fff;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        font-size: 1rem;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .article-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: bold;
+        line-height: 1.5;
+        min-height: 3em;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .article-link:hover {
+        color: var(--secondary-color);
+      }
+
+      .article-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        color: #000000a5;
+        font-size: 0.95rem;
+      }
+
+      .article-author {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .empty-state {
+        grid-column: 1 / -1;
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        color: #7f8c8d;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      footer {
+        margin-top: 50px;
+        padding-top: 30px;
+        border-top: 1px solid #ecf0f1;
+        width: 100%;
+        text-align: center;
+        color: #95a5a6;
+        line-height: 1.8;
+      }
+
+      footer a {
+        color: #95a5a6;
+        text-decoration: none;
+        transition: all 0.2s ease-in-out;
+      }
+
+      footer a:hover {
+        color: var(--secondary-color);
+      }
+
+      .github-icon {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        width: 45px;
+        height: 45px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .github-icon:hover {
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      .github-icon svg {
+        margin-top: 7px;
+        fill: #2c3e50;
+        width: 25px;
+        height: 25px;
+      }
+
+      @media (max-width: 560px) {
+        body {
+          padding: 28px 12px;
+        }
+
+        .container {
+          padding: 0;
+        }
+
+        h1 {
+          font-size: 2.3rem;
+        }
+
+        .toolbar {
+          align-items: stretch;
+        }
+
+        .search-input {
+          max-width: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="poem-background">
+      <p>凤凰台上凤凰游，凤去台空江自流。</p>
+      <p>吴宫花草埋幽径，晋代衣冠成古丘。</p>
+      <p>三山半落青天外，二水中分白鹭洲。</p>
+      <p>总为浮云能蔽日，长安不见使人愁。</p>
+      <p>- —— 节选自 李白《登金陵凤凰台》</p>
+    </div>
+
+    <div class="github-icon">
+      <a
+        href="https://github.com/willow-god/Friend-Circle-Lite"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="Friend-Circle-Lite"
+      >
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <path d="M850.346667 155.008a42.666667 42.666667 0 0 0-22.741334-23.509333c-8.704-3.754667-85.717333-33.322667-200.32 39.168H396.714667c-114.773333-72.618667-191.701333-42.922667-200.32-39.168a42.88 42.88 0 0 0-22.741334 23.466666c-26.197333 66.218667-18.048 136.448-7.850666 176.896C134.272 374.016 128 413.098667 128 469.333333c0 177.877333 127.104 227.882667 226.730667 246.272a189.568 189.568 0 0 0-13.013334 46.549334A44.373333 44.373333 0 0 0 341.333333 768v38.613333c-19.498667-4.138667-41.002667-11.946667-55.168-26.112C238.08 732.416 188.330667 682.666667 128 682.666667v85.333333c25.002667 0 65.365333 40.362667 97.834667 72.832 51.029333 51.029333 129.066667 55.253333 153.386666 55.253333 3.114667 0 5.376-0.085333 6.528-0.128A42.666667 42.666667 0 0 0 426.666667 853.333333v-82.090666c4.266667-24.746667 20.224-49.621333 27.946666-56.362667a42.666667 42.666667 0 0 0-23.125333-74.581333C293.333333 624.554667 213.333333 591.488 213.333333 469.333333c0-53.12 5.632-70.741333 31.573334-99.285333 11.008-12.117333 14.08-29.568 7.978666-44.8-4.821333-11.904-18.773333-65.450667-6.485333-117.546667 20.650667-1.578667 59.904 4.565333 113.706667 40.96C367.104 253.44 375.466667 256 384 256h256a42.666667 42.666667 0 0 0 23.936-7.338667c54.016-36.522667 92.970667-41.770667 113.664-41.130666 12.330667 52.224-1.578667 105.770667-6.4 117.674666a42.666667 42.666667 0 0 0 8.021333 44.928C805.077333 398.464 810.666667 416.085333 810.666667 469.333333c0 122.581333-79.957333 155.52-218.069334 170.922667a42.666667 42.666667 0 0 0-23.125333 74.709333c19.797333 17.066667 27.861333 32.469333 27.861333 53.034667v128h85.333334v-128c0-20.437333-3.925333-38.101333-9.770667-53.12C769.92 695.765333 896 643.712 896 469.333333c0-56.362667-6.272-95.530667-37.76-137.514666 10.197333-40.405333 18.261333-110.506667-7.893333-176.810667z"></path>
+        </svg>
+      </a>
+    </div>
+
     <div class="container">
-        <img src="./favicon.ico" alt="Avatar" class="avatar">
-        <p>Friend-Circle-Lite<br>服务已运行</p>
-        <div class="button-container">
-            <a href="https://blog.liushen.fun/posts/4dc716ec/" class="button" target="_blank">查看文档</a>
-            <a href="/all.json" class="button">测试接口</a>
+      <header class="header">
+        <h1>友链朋友圈状态</h1>
+        <p class="subtitle">
+          基于 Friend-Circle-Lite 生成的纯静态数据，展示友链可达性与友圈文章。
+        </p>
+        <p class="subtitle">更新时间：<span id="update-time">加载中...</span></p>
+        <div class="quick-links">
+          <a href="/all.json" target="_blank">all.json</a>
+          <a href="/link.json" target="_blank">link.json</a>
         </div>
-        <a href="#" class="scroll-down-icon" id="scroll-down-button"></a>
+      </header>
+
+      <section class="total-info" id="total-info">
+        <div class="total-status-card">
+          <div class="total-status-card-title">
+            <i class="fa-solid fa-users"></i>
+            <span>友链总数</span>
+          </div>
+          <span id="total-links">加载中...</span>
+        </div>
+        <div class="total-status-card">
+          <div class="total-status-card-title">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>可抓取友链</span>
+          </div>
+          <span id="crawlable-links">加载中...</span>
+        </div>
+        <div class="total-status-card">
+          <div class="total-status-card-title">
+            <i class="fa-solid fa-circle-xmark"></i>
+            <span>错误友链</span>
+          </div>
+          <span id="error-links">加载中...</span>
+        </div>
+        <div class="total-status-card">
+          <div class="total-status-card-title">
+            <i class="fa-solid fa-newspaper"></i>
+            <span>友圈文章</span>
+          </div>
+          <span id="article-count">加载中...</span>
+        </div>
+      </section>
+
+      <section class="toolbar">
+        <div class="filters">
+          <button class="filter-btn active" data-filter="all">全部</button>
+          <button class="filter-btn" data-filter="error">错误</button>
+          <button class="filter-btn" data-filter="crawlable">可抓取</button>
+        </div>
+        <input class="search-input" id="search-input" placeholder="搜索友链、文章或作者" />
+      </section>
+
+      <hr style="width: 100%; margin: 15px 0; border: 0; border-top: 2px solid #00000021" />
+
+      <h2 class="error-link-h2">失效友链</h2>
+      <section class="status-grid error" id="status-container-error"></section>
+
+      <hr class="error-link-hr" style="width: 100%; margin: 15px 0; border: 0; border-top: 2px solid #00000021" />
+
+      <h2 class="other-link-h2">其他友链</h2>
+      <section class="status-grid other" id="status-container-other"></section>
+
+      <hr style="width: 100%; margin: 25px 0 15px; border: 0; border-top: 2px solid #00000021" />
+
+      <h2>友圈文章</h2>
+      <section class="article-grid" id="article-container"></section>
+
+      <footer>
+        <div style="margin-bottom: 0.5em">
+          数据来源：<a href="/link.json" target="_blank">link.json</a> |
+          <a href="/all.json" target="_blank">all.json</a>
+        </div>
+        <div>
+          项目地址:
+          <a href="https://github.com/willow-god/Friend-Circle-Lite" target="_blank" rel="nofollow noopener noreferrer">Friend-Circle-Lite</a>
+          | MIT License © <span id="year"></span> |
+          <a href="https://www.liushen.fun/" target="_blank" rel="nofollow noopener noreferrer">LiuShen</a>
+        </div>
+      </footer>
     </div>
-    <div class="root-container">
-        <div id="friend-circle-lite-root"></div>
-    </div>
-    <button id="theme-toggle">暗色模式</button>
-<script>
-    if (typeof UserConfig === 'undefined') {
-        var UserConfig = {
-            // 填写你的fc Lite地址
-            private_api_url: './',
-            // 点击加载更多时，一次最多加载几篇文章，默认20
-            page_turning_number: 24,
-            // 头像加载失败时，默认头像地址
-            error_img: './favicon.ico' // 'https://i.p-i.vip/30/20240815-66bced9226a36.webp'
+
+    <script>
+      const state = {
+        links: [],
+        articles: [],
+        linkStats: {},
+        articleStats: {},
+        filter: "all",
+        keyword: "",
+      };
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      Promise.allSettled([
+        fetch("/link.json").then((response) => response.json()),
+        fetch("/all.json").then((response) => response.json()),
+      ]).then(([linkResult, articleResult]) => {
+        if (linkResult.status === "fulfilled") {
+          state.links = linkResult.value.link_data || [];
+          state.linkStats = linkResult.value.statistical_data || {};
         }
-    }
-</script>
-<script>
-    const scrollButton = document.getElementById('scroll-down-button');
-    const targetElement = document.getElementById('friend-circle-lite-root');
-    scrollButton.addEventListener('click', function(event) {
-        event.preventDefault();
-        targetElement.scrollIntoView({ behavior: 'smooth' });
-    });
+        if (articleResult.status === "fulfilled") {
+          state.articles = articleResult.value.article_data || [];
+          state.articleStats = articleResult.value.statistical_data || {};
+        }
+        renderAll();
+      });
 
-    const button = document.getElementById('theme-toggle');
-    button.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        button.textContent = newTheme === 'light' ? '暗色模式' : '亮色模式';
-    });
-</script>
-<link rel="stylesheet" href="/main/fclite.css">
-<script src="/main/fclite.js"></script>
-</body>
+      document.querySelectorAll("[data-filter]").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll("[data-filter]").forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+          state.filter = button.dataset.filter;
+          renderLinks();
+        });
+      });
 
+      document.getElementById("search-input").addEventListener("input", (event) => {
+        state.keyword = event.target.value.trim().toLowerCase();
+        renderLinks();
+        renderArticles();
+      });
+
+      function renderAll() {
+        document.getElementById("update-time").textContent =
+          state.linkStats.link_last_checked_time || state.articleStats.last_updated_time || "暂无";
+        document.getElementById("total-links").textContent =
+          state.linkStats.link_total_num ?? state.links.length;
+        document.getElementById("crawlable-links").textContent =
+          state.linkStats.crawl_allowed_num ?? state.links.filter((link) => link.crawlable).length;
+        document.getElementById("error-links").textContent =
+          state.linkStats.link_unreachable_num ?? state.links.filter((link) => !link.reachable).length;
+        document.getElementById("article-count").textContent =
+          state.articleStats.article_num ?? state.articles.length;
+        renderLinks();
+        renderArticles();
+      }
+
+      function renderLinks() {
+        const containerError = document.getElementById("status-container-error");
+        const containerOther = document.getElementById("status-container-other");
+        const sortedLinks = state.links
+          .filter(matchKeywordForLink)
+          .filter(matchFilter)
+          .sort((a, b) => linkPriority(a) - linkPriority(b) || (b.latency ?? -1) - (a.latency ?? -1));
+
+        let errorLinksHTML = "";
+        let otherLinksHTML = "";
+
+        sortedLinks.forEach((link) => {
+          const card = buildLinkCard(link);
+          if (!link.reachable) {
+            errorLinksHTML += card;
+          } else {
+            otherLinksHTML += card;
+          }
+        });
+
+        containerError.innerHTML = errorLinksHTML || `<div class="empty-state">当前没有失效友链</div>`;
+        containerOther.innerHTML = otherLinksHTML || `<div class="empty-state">当前筛选下没有其他友链</div>`;
+      }
+
+      function buildLinkCard(link) {
+        const status = getLinkStatus(link);
+        const backlinkIcon = buildBacklinkIcon(link);
+        const failCount = !link.reachable
+          ? `<span class="fail_counts">已持续${link.fail_count || 0}次</span>`
+          : "";
+        return `<div class="status-card">
+          <a class="status-link" href="${escapeAttr(link.link)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(link.name)}">${escapeHTML(link.name)}</a>
+          <div class="status-indicators">
+            ${failCount}
+            ${backlinkIcon}
+            <span class="status-dot ${status.className}" title="${escapeAttr(status.title)}"></span>
+          </div>
+        </div>`;
+      }
+
+      function buildBacklinkIcon(link) {
+        if (!link.link_page) return "";
+        if (link.has_backlink === true) {
+          return `<a href="${escapeAttr(link.link_page)}" target="_blank" rel="noopener noreferrer" class="backlink-status" title="查看友链页面"><i class="fa-solid fa-heart-circle-check backlink-icon backlink-true"></i></a>`;
+        }
+        if (link.has_backlink === false) {
+          return `<a href="${escapeAttr(link.link_page)}" target="_blank" rel="noopener noreferrer" class="backlink-status" title="查看友链页面"><i class="fa-solid fa-heart-circle-xmark backlink-icon backlink-false"></i></a>`;
+        }
+        return "";
+      }
+
+      function renderArticles() {
+        const container = document.getElementById("article-container");
+        const articles = state.articles.filter(matchKeywordForArticle).slice(0, 120);
+        container.innerHTML = articles.map((article) => `<article class="article-card">
+          <a class="article-link" href="${escapeAttr(article.link)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(article.title)}">${escapeHTML(article.title || "无标题")}</a>
+          <div class="article-meta">
+            <span class="article-author"><i class="fa-solid fa-feather-pointed"></i> ${escapeHTML(article.author || "未知作者")}</span>
+            <span><i class="fa-regular fa-clock"></i> ${escapeHTML((article.created || "").slice(0, 10))}</span>
+          </div>
+        </article>`).join("") || `<div class="empty-state">当前没有匹配文章</div>`;
+      }
+
+      function getLinkStatus(link) {
+        if (!link.reachable) return { className: "status-error", title: "不可达" };
+        if (link.method === "api") return { className: "status-api", title: "仅 API 可达" };
+        if (link.latency > 4) return { className: "status-slow", title: "响应较慢" };
+        if (link.method === "proxy") return { className: "status-api", title: "代理可达" };
+        return { className: "status-normal", title: "直连可达" };
+      }
+
+      function matchFilter(link) {
+        if (state.filter === "error") return !link.reachable;
+        if (state.filter === "crawlable") return link.crawlable;
+        return true;
+      }
+
+      function matchKeywordForLink(link) {
+        if (!state.keyword) return true;
+        return [link.name, link.link, link.link_page, link.reason]
+          .some((value) => String(value || "").toLowerCase().includes(state.keyword));
+      }
+
+      function matchKeywordForArticle(article) {
+        if (!state.keyword) return true;
+        return [article.title, article.author, article.link]
+          .some((value) => String(value || "").toLowerCase().includes(state.keyword));
+      }
+
+      function linkPriority(link) {
+        if (!link.reachable) return 0;
+        if (link.method === "api") return 1;
+        if (link.latency > 4) return 2;
+        return 3;
+      }
+
+      function formatLatency(latency) {
+        return latency >= 0 ? `${latency}s` : "--";
+      }
+
+      function escapeHTML(value) {
+        return String(value || "").replace(/[&<>'"]/g, (char) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          "'": "&#39;",
+          "\"": "&quot;",
+        }[char]));
+      }
+
+      function escapeAttr(value) {
+        return escapeHTML(value);
+      }
+    </script>
+  </body>
 </html>

@@ -22,7 +22,7 @@ from pathlib import Path
 
 import yaml
 
-from friend_circle_lite.models import Article, CacheRecord
+from friend_circle_lite.models import Article, CacheRecord, LinkCheckRecord, LinkMethodStatus
 
 
 class FeedCacheStore:
@@ -306,3 +306,181 @@ class ArticleTrackingStore:
                 )
             )
         return articles
+
+
+class LinkCheckStore:
+    """Persist friend link reachability checks using SQLite."""
+
+    def __init__(self, cache_path: str | Path | None):
+        self.cache_path = Path(cache_path) if cache_path else None
+
+    def load_records(self, urls: list[str] | None = None) -> dict[str, LinkCheckRecord]:
+        if not self.cache_path or not self.cache_path.exists():
+            return {}
+
+        try:
+            with sqlite3.connect(self.cache_path) as connection:
+                self._ensure_schema(connection)
+                rows = connection.execute(
+                    """
+                    SELECT url, name, avatar, linkpage, checked_at, reachable, crawl_allowed,
+                           best_method, best_latency, fail_count, backlink_checked, has_author_link,
+                           rss_crawl_reason, direct_success, direct_status_code, direct_latency,
+                           proxy_success, proxy_status_code, proxy_latency, api_success,
+                           api_status_code, api_latency
+                    FROM link_check_state
+                    """
+                ).fetchall()
+        except Exception as exc:
+            logging.warning(f"读取友链检测缓存失败: {exc}")
+            return {}
+
+        allowed_urls = set(urls or [])
+        records: dict[str, LinkCheckRecord] = {}
+        for row in rows:
+            (
+                url, name, avatar, linkpage, checked_at, reachable, crawl_allowed,
+                best_method, best_latency, fail_count, backlink_checked, has_author_link,
+                rss_crawl_reason, direct_success, direct_status_code, direct_latency,
+                proxy_success, proxy_status_code, proxy_latency, api_success,
+                api_status_code, api_latency,
+            ) = row
+            if allowed_urls and url not in allowed_urls:
+                continue
+            records[url] = LinkCheckRecord(
+                name=name or "",
+                url=url or "",
+                avatar=avatar or "",
+                linkpage=linkpage or "",
+                checked_at=checked_at or "",
+                reachable=bool(reachable),
+                crawl_allowed=bool(crawl_allowed),
+                best_method=best_method or "none",
+                best_latency=best_latency if best_latency is not None else -1,
+                fail_count=fail_count or 0,
+                backlink_checked=bool(backlink_checked),
+                has_author_link=bool(has_author_link),
+                rss_crawl_reason=rss_crawl_reason or "blocked_unreachable",
+                direct=LinkMethodStatus(bool(direct_success), direct_status_code, direct_latency if direct_latency is not None else -1),
+                proxy=LinkMethodStatus(bool(proxy_success), proxy_status_code, proxy_latency if proxy_latency is not None else -1),
+                api=LinkMethodStatus(bool(api_success), api_status_code, api_latency if api_latency is not None else -1),
+            )
+        return records
+
+    def save_records(self, records: list[LinkCheckRecord]) -> bool:
+        if not self.cache_path:
+            return True
+
+        try:
+            self.cache_path.parent.mkdir(parents=True, exist_ok=True)
+            with sqlite3.connect(self.cache_path) as connection:
+                self._ensure_schema(connection)
+                connection.executemany(
+                    """
+                    INSERT INTO link_check_state(
+                        url, name, avatar, linkpage, checked_at, reachable, crawl_allowed,
+                        best_method, best_latency, fail_count, backlink_checked, has_author_link,
+                        rss_crawl_reason, direct_success, direct_status_code, direct_latency,
+                        proxy_success, proxy_status_code, proxy_latency, api_success,
+                        api_status_code, api_latency
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(url) DO UPDATE SET
+                        name = excluded.name,
+                        avatar = excluded.avatar,
+                        linkpage = excluded.linkpage,
+                        checked_at = excluded.checked_at,
+                        reachable = excluded.reachable,
+                        crawl_allowed = excluded.crawl_allowed,
+                        best_method = excluded.best_method,
+                        best_latency = excluded.best_latency,
+                        fail_count = excluded.fail_count,
+                        backlink_checked = excluded.backlink_checked,
+                        has_author_link = excluded.has_author_link,
+                        rss_crawl_reason = excluded.rss_crawl_reason,
+                        direct_success = excluded.direct_success,
+                        direct_status_code = excluded.direct_status_code,
+                        direct_latency = excluded.direct_latency,
+                        proxy_success = excluded.proxy_success,
+                        proxy_status_code = excluded.proxy_status_code,
+                        proxy_latency = excluded.proxy_latency,
+                        api_success = excluded.api_success,
+                        api_status_code = excluded.api_status_code,
+                        api_latency = excluded.api_latency
+                    """,
+                    [self._record_to_row(record) for record in records],
+                )
+                connection.commit()
+            logging.info(f"友链检测缓存已保存（{len(records)} 条）")
+            return True
+        except Exception as exc:
+            logging.error(f"保存友链检测缓存失败: {exc}")
+            return False
+
+    @staticmethod
+    def is_fresh(record: LinkCheckRecord, max_age_hours: int) -> bool:
+        if not record.checked_at:
+            return False
+        try:
+            checked_at = datetime.strptime(record.checked_at, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            return False
+        age_seconds = (datetime.now() - checked_at).total_seconds()
+        return age_seconds < max_age_hours * 3600
+
+    @staticmethod
+    def _record_to_row(record: LinkCheckRecord) -> tuple:
+        return (
+            record.url,
+            record.name,
+            record.avatar,
+            record.linkpage,
+            record.checked_at,
+            int(record.reachable),
+            int(record.crawl_allowed),
+            record.best_method,
+            record.best_latency,
+            record.fail_count,
+            int(record.backlink_checked),
+            int(record.has_author_link),
+            record.rss_crawl_reason,
+            int(record.direct.success),
+            record.direct.status_code,
+            record.direct.latency,
+            int(record.proxy.success),
+            record.proxy.status_code,
+            record.proxy.latency,
+            int(record.api.success),
+            record.api.status_code,
+            record.api.latency,
+        )
+
+    @staticmethod
+    def _ensure_schema(connection: sqlite3.Connection) -> None:
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS link_check_state (
+                url TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                avatar TEXT DEFAULT '',
+                linkpage TEXT DEFAULT '',
+                checked_at TEXT NOT NULL,
+                reachable INTEGER NOT NULL DEFAULT 0,
+                crawl_allowed INTEGER NOT NULL DEFAULT 0,
+                best_method TEXT NOT NULL DEFAULT 'none',
+                best_latency REAL DEFAULT -1,
+                fail_count INTEGER NOT NULL DEFAULT 0,
+                backlink_checked INTEGER NOT NULL DEFAULT 0,
+                has_author_link INTEGER NOT NULL DEFAULT 0,
+                rss_crawl_reason TEXT NOT NULL DEFAULT '',
+                direct_success INTEGER NOT NULL DEFAULT 0,
+                direct_status_code INTEGER,
+                direct_latency REAL DEFAULT -1,
+                proxy_success INTEGER NOT NULL DEFAULT 0,
+                proxy_status_code INTEGER,
+                proxy_latency REAL DEFAULT -1,
+                api_success INTEGER NOT NULL DEFAULT 0,
+                api_status_code INTEGER,
+                api_latency REAL DEFAULT -1
+            )
+            """
+        )

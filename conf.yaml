@@ -3,16 +3,42 @@
 #   enable:             是否启用爬虫
 #   json_url:           请填写对应格式json的地址，仅支持网络地址
 #   article_count:      请填写每个博客需要获取的最大文章数量
-#   marge_result:       是否合并多个json文件，若为true则会合并指定网络地址和本地地址的json文件
-#     enable:           是否启用合并功能，该功能提供与自部署的友链合并功能，可以解决服务器部分国外网站无法访问的问题
-#     marge_json_path:  请填写网络地址的json文件，用于合并，不带空格！！！
 spider_settings:
   enable: true
   json_url: "https://blog.liushen.fun/friend.json"
   article_count: 5
-  merge_result:
-    enable: false
-    merge_json_url: "https://fc.liushen.fun"
+
+# 数据合并配置
+# 解释：合并多个数据源的结果，比如国内和国外执行结果，解决部分网站访问受限问题
+#   enable:                 是否启用数据合并功能
+#   remote_base_url:        远程数据源的基础 URL，会自动拼接 /all.json、/link.json、/errors.json
+#   merge_article_data:     是否合并友圈文章数据（all.json）
+#   merge_link_check_data:  是否合并友链可达性数据（link.json），如果远程没有此文件会自动跳过
+merge_settings:
+  enable: false
+  remote_base_url: "https://fc.liushen.fun"
+  merge_article_data: true
+  merge_link_check_data: true
+
+# 友链可达性检测配置
+# 解释：先检查友链站点是否可达，再决定是否继续抓取该站点 RSS，检测结果会写入 all.json 供前端展示
+#   enable:                是否启用友链可达性检测
+#   max_age_hours:         同一友链检测结果缓存时间，默认 24 小时
+#   timeout:               单次请求超时时间
+#   max_workers:           并发检测数量
+#   proxy_url:             可选代理前缀，比如 Cloudflare Worker 转发地址，留空则不启用
+#   status_api_url:        兜底状态码 API，API-only 结果只用于可达性展示，不参与 RSS 抓取
+#   enable_backlink_check: 是否检测友链页是否包含你的站点链接
+#   author_url:            你的站点域名，用于反链检测，建议只填写域名
+link_check:
+  enable: true
+  max_age_hours: 24
+  timeout: 15
+  max_workers: 10
+  proxy_url: ""
+  status_api_url: "https://v2.xxapi.cn/api/status?url={url}"
+  enable_backlink_check: true
+  author_url: "blog.liushen.fun"
 
 # 邮箱推送功能配置，暂未实现，等待后续开发
 # 解释：每天为指定邮箱推送所有友链文章的更新，仅能指定一个
