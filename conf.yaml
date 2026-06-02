@@ -5,7 +5,7 @@
 #   article_count:      请填写每个博客需要获取的最大文章数量
 spider_settings:
   enable: true
-  json_url: "https://blog.liushen.fun/friend.json"
+  json_url: "https://tjqaq.com/friend.json"
   article_count: 5
 
 # 数据合并配置
@@ -16,7 +16,7 @@ spider_settings:
 #   merge_link_check_data:  是否合并友链可达性数据（link.json），如果远程没有此文件会自动跳过
 merge_settings:
   enable: false
-  remote_base_url: "https://fc.liushen.fun"
+  remote_base_url: https://tjqaq.com"
   merge_article_data: true
   merge_link_check_data: true
 
@@ -38,7 +38,7 @@ link_check:
   proxy_url: ""
   status_api_url: "https://v2.xxapi.cn/api/status?url={url}"
   enable_backlink_check: true
-  author_url: "blog.liushen.fun"
+  author_url: "blog.tjqaq.com"
 
 # 邮箱推送功能配置，暂未实现，等待后续开发
 # 解释：每天为指定邮箱推送所有友链文章的更新，仅能指定一个
@@ -64,7 +64,7 @@ rss_subscribe:
   enable: true
   github_username: willow-god
   github_repo: Friend-Circle-Lite
-  your_blog_url: https://blog.liushen.fun/
+  your_blog_url: https://tjqaq.com/
   email_template: "./push_templates/default.html"
   website_info:
     title: "清羽飞扬"
@@ -76,7 +76,7 @@ rss_subscribe:
 #   port：              SMTP 端口号
 #   use_tls：           是否使用 tls 加密
 smtp:
-  email: notify@liushen.fun
+  email: 2115438238@qq.com
   server: smtp.exmail.qq.com
   port: 465
   use_tls: true
