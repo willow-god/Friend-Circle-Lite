@@ -15,7 +15,7 @@ from zoneinfo import ZoneInfo
 import requests
 
 from friend_circle_lite import HEADERS_JSON, timeout
-from friend_circle_lite.app_config import LinkCheckConfig
+from friend_circle_lite.app_config import LinkCheckConfig, ProxySettings
 from friend_circle_lite.cache_store import FeedCacheStore, LinkCheckStore
 from friend_circle_lite.feed_service import FeedDiscoveryService, FeedParserService
 from friend_circle_lite.link_check_service import LinkCheckService
@@ -89,9 +89,9 @@ class WebsiteCrawler:
         status = "active" if articles else "error"
         if not articles:
             if endpoint is None:
-                logging.warning(f"'{website.name}' 的博客 {website.url} 未找到有效 RSS。")
+                logging.warning(f"'{website.name}' 的博客 {website.url} 未找到有效 RSS ")
             else:
-                logging.warning(f"'{website.name}' 的 RSS {endpoint.url} 未解析出文章。")
+                logging.warning(f"'{website.name}' 的 RSS {endpoint.url} 未解析出文章 ")
 
         return CrawlResult(
             website=website,
@@ -125,12 +125,14 @@ class FriendCircleCrawler:
         specific_rss: list[dict] | None = None,
         cache_file: str | None = None,
         link_check_config: LinkCheckConfig | None = None,
+        proxy_settings: ProxySettings | None = None,
     ):
         self.json_url = json_url
         self.count = count
         self.specific_rss = specific_rss or []
         self.cache_store = FeedCacheStore(cache_file)
         self.link_check_config = link_check_config or LinkCheckConfig(enable=False)
+        self.proxy_settings = proxy_settings or ProxySettings()
         self.link_check_store = LinkCheckStore(cache_file)
 
     def run(self) -> tuple[dict, list[list[str]]] | None:
@@ -199,7 +201,7 @@ class FriendCircleCrawler:
         return result, error_results, link_payload
 
     def _check_links(self, websites: list[Website]) -> list[LinkCheckRecord]:
-        service = LinkCheckService(config=self.link_check_config, store=self.link_check_store)
+        service = LinkCheckService(config=self.link_check_config, proxy_settings=self.proxy_settings, store=self.link_check_store)
         return service.check_websites(websites)
 
     @staticmethod

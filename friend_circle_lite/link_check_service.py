@@ -10,7 +10,7 @@ from urllib.parse import quote, urlparse
 
 import requests
 
-from friend_circle_lite.app_config import LinkCheckConfig
+from friend_circle_lite.app_config import LinkCheckConfig, ProxySettings
 from friend_circle_lite.cache_store import LinkCheckStore
 from friend_circle_lite.models import LinkCheckRecord, LinkMethodStatus, Website
 
@@ -37,8 +37,9 @@ RAW_HEADERS = {
 class LinkCheckService:
     """Check friend homepage reachability and cache results."""
 
-    def __init__(self, config: LinkCheckConfig, store: LinkCheckStore):
+    def __init__(self, config: LinkCheckConfig, proxy_settings: ProxySettings, store: LinkCheckStore):
         self.config = config
+        self.proxy_settings = proxy_settings
         self.store = store
 
     def check_websites(self, websites: list[Website]) -> list[LinkCheckRecord]:
@@ -266,13 +267,13 @@ class LinkCheckService:
         )
 
     def _build_proxy_url(self, url: str) -> str:
-        if not self.config.proxy_url:
+        if not self.proxy_settings.proxy_url:
             return ""
-        if "{}" in self.config.proxy_url:
-            return self.config.proxy_url.format(url)
-        if "{url}" in self.config.proxy_url:
-            return self.config.proxy_url.format(url=url)
-        return f"{self.config.proxy_url}{url}"
+        if "{}" in self.proxy_settings.proxy_url:
+            return self.proxy_settings.proxy_url.format(url)
+        if "{url}" in self.proxy_settings.proxy_url:
+            return self.proxy_settings.proxy_url.format(url=url)
+        return f"{self.proxy_settings.proxy_url}{url}"
 
     @staticmethod
     def _is_url(path: str) -> bool:

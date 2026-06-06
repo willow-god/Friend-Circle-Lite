@@ -8,6 +8,16 @@ spider_settings:
   json_url: "https://blog.liushen.fun/friend.json"
   article_count: 5
 
+# 代理配置
+# 解释：用于友链检测和 RSS 抓取的代理服务，可以访问被墙站点并获取完整页面内容
+#   proxy_url:          代理前缀，比如 Nginx 反向代理或 Cloudflare Worker
+#                       示例：https://nginx.430070.xyz/{url} 或 https://proxy.example.com?url={url}
+#                       ⚠️ 注意：代理服务可能违反某些服务条款，请谨慎使用，建议仅用于调试
+#                       支持环境变量 PROXY_URL 覆盖此配置（优先级更高）
+#                       留空则不使用代理
+proxy_settings:
+  proxy_url: ""
+
 # 数据合并配置
 # 解释：合并多个数据源的结果，比如国内和国外执行结果，解决部分网站访问受限问题
 #   enable:                 是否启用数据合并功能
@@ -21,12 +31,11 @@ merge_settings:
   merge_link_check_data: true
 
 # 友链可达性检测配置
-# 解释：先检查友链站点是否可达，再决定是否继续抓取该站点 RSS，检测结果会写入 all.json 供前端展示
+# 解释：先检查友链站点是否可达，再决定是否继续抓取该站点 RSS，检测结果会写入 link.json 供前端展示
 #   enable:                是否启用友链可达性检测
 #   max_age_hours:         同一友链检测结果缓存时间，默认 24 小时
 #   timeout:               单次请求超时时间
 #   max_workers:           并发检测数量
-#   proxy_url:             可选代理前缀，比如 Cloudflare Worker 转发地址，留空则不启用
 #   status_api_url:        兜底状态码 API，API-only 结果只用于可达性展示，不参与 RSS 抓取
 #   enable_backlink_check: 是否检测友链页是否包含你的站点链接
 #   author_url:            你的站点域名，用于反链检测，建议只填写域名
@@ -35,7 +44,6 @@ link_check:
   max_age_hours: 24
   timeout: 15
   max_workers: 10
-  proxy_url: ""
   status_api_url: "https://v2.xxapi.cn/api/status?url={url}"
   enable_backlink_check: true
   author_url: "blog.liushen.fun"

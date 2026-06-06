@@ -174,6 +174,8 @@ link_check:
   timeout: 15                       # 请求超时时间（秒）
   max_workers: 10                   # 并发检测数量
   proxy_url: ""                     # 代理前缀（如 Cloudflare Worker）
+                                    # ⚠️ 代理服务可能违反某些服务条款，请谨慎使用
+                                    # 支持环境变量 LINK_CHECK_PROXY_URL 覆盖（优先级更高）
   status_api_url: "https://v2.xxapi.cn/api/status?url={url}"  # 兜底 API
   enable_backlink_check: true       # 是否检测反链
   author_url: "blog.liushen.fun"    # 你的站点域名

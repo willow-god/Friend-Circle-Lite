@@ -21,6 +21,7 @@ def fetch_and_process_data(
     count: int = 5,
     cache_file: str = None,
     link_check_config=None,
+    proxy_settings=None,
 ):
     """Legacy wrapper around the new crawler orchestration service."""
     return FriendCircleCrawler(
@@ -29,6 +30,7 @@ def fetch_and_process_data(
         specific_rss=specific_RSS,
         cache_file=cache_file,
         link_check_config=link_check_config,
+        proxy_settings=proxy_settings,
     ).run()
 
 def sort_articles_by_time(data, future_tolerance_days=2):
@@ -50,7 +52,7 @@ def marge_data_from_json_url(data, marge_json_url):
         response = requests.get(marge_json_url, headers=HEADERS_JSON, timeout=timeout)
         marge_data = response.json()
     except Exception as e:
-        logging.error(f"无法获取链接：{marge_json_url}，出现的问题为：{e}", exc_info=True)
+        logging.error(f"无法获取链接：{marge_json_url} ，出现的问题为：{e}", exc_info=True)
         return data
 
     if 'article_data' in marge_data:
@@ -82,7 +84,7 @@ def merge_link_data_from_json_url(link_data, merge_json_url):
         response = requests.get(merge_json_url, headers=HEADERS_JSON, timeout=timeout)
         remote_data = response.json()
     except Exception as e:
-        logging.warning(f"无法获取友链数据：{merge_json_url}，跳过友链数据合并。错误：{e}")
+        logging.warning(f"无法获取友链数据：{merge_json_url} ，跳过友链数据合并。错误：{e}")
         return link_data
 
     if 'link_data' not in remote_data:
@@ -210,7 +212,7 @@ def marge_errors_from_json_url(errors, marge_json_url):
         response = requests.get(marge_json_url, timeout=10)  # 设置请求超时时间
         marge_errors = response.json()
     except Exception as e:
-        logging.error(f"无法获取链接：{marge_json_url}，出现的问题为：{e}", exc_info=True)
+        logging.error(f"无法获取链接：{marge_json_url} ，出现的问题为：{e}", exc_info=True)
         return errors
 
     # 提取 marge_errors 中的 URL

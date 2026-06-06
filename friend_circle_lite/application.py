@@ -17,6 +17,7 @@ from friend_circle_lite.all_friends import (
     marge_errors_from_json_url,
 )
 from friend_circle_lite.app_config import ApplicationConfig, MailRuntime
+from friend_circle_lite.config_printer import print_startup_config
 from friend_circle_lite.single_friend import get_latest_articles_from_link
 from friend_circle_lite.utils.github import extract_emails_from_issues
 from friend_circle_lite.utils.json import write_json
@@ -31,6 +32,7 @@ class FriendCircleLiteApplication:
 
     def run(self) -> None:
         """Execute the enabled application features in a stable order."""
+        print_startup_config(self.config)
         self.run_crawler_if_enabled()
         mail_runtime = self.prepare_mail_runtime()
         self.run_email_push_if_enabled(mail_runtime)
@@ -54,6 +56,7 @@ class FriendCircleLiteApplication:
             count=spider_settings.article_count,
             cache_file=self.config.runtime_paths.cache_file,
             link_check_config=self.config.link_check,
+            proxy_settings=self.config.proxy_settings,
         )
         if crawl_result is None:
             logging.error("❌ 抓取流程失败，未生成任何输出文件")

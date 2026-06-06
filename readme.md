@@ -228,7 +228,7 @@
 
      `max_age_hours`：检测结果缓存时间，默认 24 小时，同一友链一天内不会重复检测；
 
-     `proxy_url`：可选代理前缀，适合使用 Cloudflare Worker 等方式转发检测；
+     `proxy_url`：可选代理前缀，适合使用 Cloudflare Worker 等方式转发检测；⚠️ 代理服务可能违反某些服务条款，请谨慎使用，建议仅用于调试。支持环境变量 `LINK_CHECK_PROXY_URL` 覆盖此配置（优先级更高）。
 
      `status_api_url`：兜底状态码 API。注意 API 只能确认状态码，无法提供页面内容，所以仅 API 可达的友链会展示为可达，但不会参与 RSS 抓取；
 

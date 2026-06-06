@@ -10,6 +10,7 @@ snake_case names are used consistently.
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 
 
@@ -30,6 +31,13 @@ class MergeSettings:
 
 
 @dataclass(slots=True)
+class ProxySettings:
+    """Proxy configuration for both link checking and RSS crawling."""
+
+    proxy_url: str = ""
+
+
+@dataclass(slots=True)
 class SpiderSettings:
     """Crawler settings controlling source list and output density."""
 
@@ -46,7 +54,6 @@ class LinkCheckConfig:
     max_age_hours: int = 24
     timeout: int = 15
     max_workers: int = 10
-    proxy_url: str = ""
     status_api_url: str = "https://v2.xxapi.cn/api/status?url={url}"
     enable_backlink_check: bool = False
     author_url: str = ""
@@ -106,6 +113,7 @@ class ApplicationConfig:
     """Root application configuration assembled from the YAML file."""
 
     spider_settings: SpiderSettings
+    proxy_settings: ProxySettings
     merge_settings: MergeSettings
     link_check: LinkCheckConfig
     email_push: EmailPushConfig
@@ -119,6 +127,7 @@ class ApplicationConfig:
     def from_dict(cls, data: dict) -> "ApplicationConfig":
         """Create a typed config object from the raw YAML dictionary."""
         spider_raw = data.get("spider_settings", {})
+        proxy_raw = data.get("proxy_settings", {})
         merge_raw = data.get("merge_settings", {})
         link_check_raw = data.get("link_check", {})
         email_push_raw = data.get("email_push", {})
@@ -133,6 +142,9 @@ class ApplicationConfig:
                 json_url=str(spider_raw.get("json_url", "")).strip(),
                 article_count=int(spider_raw.get("article_count", 5)),
             ),
+            proxy_settings=ProxySettings(
+                proxy_url=os.getenv("PROXY_URL") or str(proxy_raw.get("proxy_url", "")).strip(),
+            ),
             merge_settings=MergeSettings(
                 enable=bool(merge_raw.get("enable", False)),
                 remote_base_url=str(merge_raw.get("remote_base_url", "")).strip(),
@@ -144,7 +156,6 @@ class ApplicationConfig:
                 max_age_hours=int(link_check_raw.get("max_age_hours", 24)),
                 timeout=int(link_check_raw.get("timeout", 15)),
                 max_workers=int(link_check_raw.get("max_workers", 10)),
-                proxy_url=str(link_check_raw.get("proxy_url", "")).strip(),
                 status_api_url=str(link_check_raw.get("status_api_url", "https://v2.xxapi.cn/api/status?url={url}")).strip(),
                 enable_backlink_check=bool(link_check_raw.get("enable_backlink_check", False)),
                 author_url=str(link_check_raw.get("author_url", "")).strip(),
