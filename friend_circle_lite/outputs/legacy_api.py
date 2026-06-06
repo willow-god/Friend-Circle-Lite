@@ -9,6 +9,7 @@ import logging
 import requests
 
 from friend_circle_lite import HEADERS_JSON, timeout
+from friend_circle_lite.domain.models import normalize_latency
 from friend_circle_lite.crawler.service import (
     FriendCircleCrawlService,
     limit_large_dataset as _limit_large_dataset,
@@ -109,11 +110,17 @@ def merge_link_data_from_json_url(link_data, merge_json_url):
             local_link = link_map[url]
             link_map[url] = _merge_single_link(local_link, remote_link)
 
-    merged_links = list(link_map.values())
+    merged_links = [_to_public_link(link) for link in link_map.values()]
     logging.info(f"合并友链数据完成，共有 {len(merged_links)} 条友链")
 
     # 重新计算统计数据
     merged_stats = _recalculate_link_statistics(merged_links)
+    checked_times = [
+        link_data.get("statistical_data", {}).get("link_last_checked_time", ""),
+        remote_data.get("statistical_data", {}).get("link_last_checked_time", ""),
+        merged_stats.get("link_last_checked_time", ""),
+    ]
+    merged_stats["link_last_checked_time"] = max([item for item in checked_times if item] or [""])
 
     return {
         'statistical_data': merged_stats,
@@ -133,8 +140,8 @@ def _merge_single_link(local, remote):
     """
     method_priority = {'direct': 4, 'proxy': 3, 'api': 2, 'disabled': 1, 'none': 0, '': 0}
 
-    local_priority = method_priority.get(local.get('method', ''), 0)
-    remote_priority = method_priority.get(remote.get('method', ''), 0)
+    local_priority = _link_priority(local, method_priority)
+    remote_priority = _link_priority(remote, method_priority)
 
     # 选择优先级更高的作为基础
     if remote_priority > local_priority:
@@ -175,6 +182,31 @@ def _merge_single_link(local, remote):
         base['checked_at'] = remote_checked
 
     return base
+
+
+def _link_priority(link, method_priority):
+    """计算友链合并优先级，兼容新旧 link.json 字段。"""
+    if link.get("crawlable"):
+        return 10 + method_priority.get(link.get("method", ""), 0)
+    if link.get("reachable"):
+        return 5 + method_priority.get(link.get("method", ""), 0)
+    return method_priority.get(link.get("method", ""), 0)
+
+
+def _to_public_link(link):
+    """转换为前端需要的精简友链状态结构。"""
+    latency = normalize_latency(link.get("latency", link.get("best_latency")))
+    return {
+        "name": link.get("name", ""),
+        "link": link.get("link") or link.get("url", ""),
+        "link_page": link.get("link_page") or link.get("linkpage", ""),
+        "avatar": link.get("avatar", ""),
+        "reachable": bool(link.get("reachable")),
+        "crawlable": bool(link.get("crawlable") if "crawlable" in link else link.get("crawl_allowed")),
+        "latency": latency,
+        "fail_count": int(link.get("fail_count", 0) or 0),
+        "has_backlink": link.get("has_backlink"),
+    }
 
 
 def _recalculate_link_statistics(links):

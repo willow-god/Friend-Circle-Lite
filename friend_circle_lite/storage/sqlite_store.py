@@ -17,12 +17,13 @@ from __future__ import annotations
 import json
 import logging
 import sqlite3
+from contextlib import closing
 from datetime import datetime
 from pathlib import Path
 
 import yaml
 
-from friend_circle_lite.domain.models import Article, CacheRecord, LinkCheckRecord, LinkMethodStatus
+from friend_circle_lite.domain.models import Article, CacheRecord, LinkCheckRecord, LinkMethodStatus, normalize_homepage_url
 
 
 class FeedCacheStore:
@@ -55,7 +56,7 @@ class FeedCacheStore:
 
         try:
             self.cache_path.parent.mkdir(parents=True, exist_ok=True)
-            with sqlite3.connect(self.cache_path) as connection:
+            with closing(sqlite3.connect(self.cache_path)) as connection:
                 self._ensure_schema(connection)
                 connection.execute("DELETE FROM feed_cache")
                 connection.executemany(
@@ -72,8 +73,9 @@ class FeedCacheStore:
     def _load_from_sqlite(self) -> list[CacheRecord]:
         """Load records from the current SQLite cache file."""
         try:
-            with sqlite3.connect(self.cache_path) as connection:
+            with closing(sqlite3.connect(self.cache_path)) as connection:
                 self._ensure_schema(connection)
+                connection.commit()
                 rows = connection.execute(
                     "SELECT name, url, source FROM feed_cache ORDER BY name"
                 ).fetchall()
@@ -207,7 +209,7 @@ class ArticleTrackingStore:
             articles_to_save = valid_articles[:self.max_tracked_articles]
 
             self.storage_path.parent.mkdir(parents=True, exist_ok=True)
-            with sqlite3.connect(self.storage_path) as connection:
+            with closing(sqlite3.connect(self.storage_path)) as connection:
                 self._ensure_schema(connection)
                 connection.execute("DELETE FROM article_tracking")
                 connection.executemany(
@@ -234,8 +236,9 @@ class ArticleTrackingStore:
     def _load_from_sqlite(self) -> list[Article]:
         """Load articles from the SQLite database."""
         try:
-            with sqlite3.connect(self.storage_path) as connection:
+            with closing(sqlite3.connect(self.storage_path)) as connection:
                 self._ensure_schema(connection)
+                connection.commit()
                 rows = connection.execute(
                     """SELECT title, author, link, published, summary, content
                        FROM article_tracking
@@ -319,8 +322,9 @@ class LinkCheckStore:
             return {}
 
         try:
-            with sqlite3.connect(self.cache_path) as connection:
+            with closing(sqlite3.connect(self.cache_path)) as connection:
                 self._ensure_schema(connection)
+                connection.commit()
                 rows = connection.execute(
                     """
                     SELECT url, name, avatar, linkpage, checked_at, reachable, crawl_allowed,
@@ -335,7 +339,7 @@ class LinkCheckStore:
             logging.warning(f"读取友链检测缓存失败: {exc}")
             return {}
 
-        allowed_urls = set(urls or [])
+        allowed_urls = {normalize_homepage_url(url) for url in (urls or [])}
         records: dict[str, LinkCheckRecord] = {}
         for row in rows:
             (
@@ -345,11 +349,12 @@ class LinkCheckStore:
                 proxy_success, proxy_status_code, proxy_latency, api_success,
                 api_status_code, api_latency,
             ) = row
-            if allowed_urls and url not in allowed_urls:
+            normalized_url = normalize_homepage_url(url or "")
+            if allowed_urls and normalized_url not in allowed_urls:
                 continue
-            records[url] = LinkCheckRecord(
+            records[normalized_url] = LinkCheckRecord(
                 name=name or "",
-                url=url or "",
+                url=normalized_url,
                 avatar=avatar or "",
                 linkpage=linkpage or "",
                 checked_at=checked_at or "",
@@ -373,7 +378,7 @@ class LinkCheckStore:
 
         try:
             self.cache_path.parent.mkdir(parents=True, exist_ok=True)
-            with sqlite3.connect(self.cache_path) as connection:
+            with closing(sqlite3.connect(self.cache_path)) as connection:
                 self._ensure_schema(connection)
                 connection.executemany(
                     """
@@ -430,7 +435,7 @@ class LinkCheckStore:
     @staticmethod
     def _record_to_row(record: LinkCheckRecord) -> tuple:
         return (
-            record.url,
+            normalize_homepage_url(record.url),
             record.name,
             record.avatar,
             record.linkpage,

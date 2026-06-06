@@ -1,4 +1,12 @@
-"""Friend link reachability checks used before RSS crawling."""
+"""友链可达性与 RSS 可抓取性检测。
+
+检测策略：
+1. 优先检查手动 RSS 或缓存 RSS，能解析文章则认为站点可达且可抓取。
+2. RSS 不可用时自动探测常见 RSS 地址。
+3. 仍找不到 RSS 时检查主页，主页可访问则只标记可达，不参与朋友圈抓取。
+4. 主页不可访问时保留 API 兜底，用于判断站点是否可能可达。
+5. 反链检测只在站点可达时执行。
+"""
 
 from __future__ import annotations
 
@@ -6,12 +14,14 @@ import logging
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
-from urllib.parse import quote, urlparse
+from urllib.parse import quote, urlparse, urlsplit, urlunsplit
 
 import requests
 
 from friend_circle_lite.config.models import LinkCheckConfig, ProxySettings
-from friend_circle_lite.domain.models import LinkCheckRecord, LinkMethodStatus, Website
+from friend_circle_lite.crawler.feed_service import FeedDiscoveryService, FeedParserService
+from friend_circle_lite.crawler.http_client import WebFetchClient
+from friend_circle_lite.domain.models import CacheRecord, FeedEndpoint, LinkCheckRecord, LinkMethodStatus, Website, normalize_latency
 from friend_circle_lite.storage.sqlite_store import LinkCheckStore
 
 
@@ -35,43 +45,65 @@ RAW_HEADERS = {
 
 
 class LinkReachabilityService:
-    """Check friend homepage reachability and cache results."""
+    """检查友链是否可达，以及是否可参与 RSS 抓取。"""
 
-    def __init__(self, config: LinkCheckConfig, proxy_settings: ProxySettings, store: LinkCheckStore):
+    def __init__(
+        self,
+        config: LinkCheckConfig,
+        proxy_settings: ProxySettings,
+        store: LinkCheckStore,
+        feed_records: list[CacheRecord] | None = None,
+        feed_parser=None,
+        feed_discovery=None,
+        fetcher: WebFetchClient | None = None,
+    ):
         self.config = config
         self.proxy_settings = proxy_settings
         self.store = store
+        self.feed_lookup = {record.name: record for record in (feed_records or [])}
+        self.feed_parser = feed_parser
+        self.feed_discovery = feed_discovery
+        self.fetcher = fetcher
+        self.feed_updates: dict[str, CacheRecord | None] = {}
 
     def check_websites(self, websites: list[Website]) -> list[LinkCheckRecord]:
-        if not self.config.enable:
-            now = self._now_text()
-            return [self._build_disabled_record(website, now) for website in websites]
-
+        """检查一组友链，优先复用未过期缓存。"""
         cached_records = self.store.load_records([website.url for website in websites])
         records_by_url: dict[str, LinkCheckRecord] = {}
         websites_to_check: list[Website] = []
+        backlink_refresh_records: list[tuple[Website, LinkCheckRecord]] = []
 
         for website in websites:
             cached = cached_records.get(website.url)
             if cached and self._can_reuse_cached_record(cached, website):
-                records_by_url[website.url] = self._refresh_cached_metadata(cached, website)
+                linkpage_changed = not self._same_linkpage(cached.linkpage, website.linkpage)
+                refreshed = self._refresh_cached_metadata(cached, website)
+                records_by_url[website.url] = refreshed
+                if self._should_refresh_backlink(refreshed, website, linkpage_changed):
+                    backlink_refresh_records.append((website, refreshed))
             else:
                 websites_to_check.append(website)
 
         if websites_to_check:
-            logging.info(f"🔎 开始检测 {len(websites_to_check)} 个友链可达性")
+            logging.info(f"🔎 开始检测 {len(websites_to_check)} 个友链状态")
             checked_records = self._check_fresh_websites(websites_to_check, cached_records)
             self.store.save_records(checked_records)
             for record in checked_records:
                 records_by_url[record.url] = record
         else:
-            logging.info("🔎 友链可达性检测缓存仍有效，本次复用缓存结果")
+            logging.info("🔎 友链状态缓存仍有效，本次复用缓存结果")
+
+        if backlink_refresh_records:
+            self._refresh_backlinks_only(backlink_refresh_records)
 
         return [records_by_url.get(website.url) or LinkCheckRecord.unchecked(website) for website in websites]
 
     def _check_fresh_websites(self, websites: list[Website], cached_records: dict[str, LinkCheckRecord]) -> list[LinkCheckRecord]:
         records: list[LinkCheckRecord] = []
         with requests.Session() as session:
+            self.feed_parser = self.feed_parser or FeedParserService(session, self.proxy_settings)
+            self.feed_discovery = self.feed_discovery or FeedDiscoveryService(session, self.proxy_settings)
+            self.fetcher = self.fetcher or WebFetchClient(session, self.proxy_settings)
             with ThreadPoolExecutor(max_workers=max(1, self.config.max_workers)) as executor:
                 future_to_website = {
                     executor.submit(self._check_website, session, website, cached_records.get(website.url)): website
@@ -87,86 +119,115 @@ class LinkReachabilityService:
         return records
 
     def _check_website(self, session: requests.Session, website: Website, cached: LinkCheckRecord | None) -> LinkCheckRecord:
-        direct = self._request_method(session, website.url, "直接访问")
-        proxy = LinkMethodStatus()
-        api = LinkMethodStatus()
+        record = self._check_rss_first(website, cached)
+        if record is None:
+            homepage = self._request_homepage(website.url)
+            api = LinkMethodStatus()
+            if not homepage.success:
+                api = self._request_api(session, website.url)
+                time.sleep(0.2)
+            record = self._compose_non_rss_record(website, cached, homepage, api)
 
-        if not direct.success:
-            proxy_url = self._build_proxy_url(website.url)
-            if proxy_url:
-                proxy = self._request_method(session, proxy_url, "代理访问")
-
-        if not direct.success and not proxy.success:
-            api = self._request_api(session, website.url)
-            time.sleep(0.2)
-
-        record = self._compose_record(website, cached, direct, proxy, api)
         if record.reachable and self.config.enable_backlink_check and self.config.author_url and website.linkpage:
             record.backlink_checked = True
             record.has_author_link = self._check_author_link_in_page(session, website.linkpage)
+        elif not record.reachable:
+            record.backlink_checked = bool(website.linkpage)
+            record.has_author_link = False
         return record
 
-    def _request_method(self, session: requests.Session, url: str, desc: str) -> LinkMethodStatus:
+    def _check_rss_first(self, website: Website, cached: LinkCheckRecord | None) -> LinkCheckRecord | None:
+        configured = self.feed_lookup.get(website.name)
+        if configured:
+            endpoint = FeedEndpoint(url=configured.url, feed_type="specific", source=configured.source)
+            if self._feed_has_articles(endpoint, website):
+                return self._build_feed_record(website, endpoint, self._last_feed_latency())
+            logging.warning(f"友链 {website.name} 的缓存 RSS 失效: {configured.url} ，开始重新探测")
+            if configured.source == "cache":
+                self.feed_updates[website.name] = None
+
+        discovered = self.feed_discovery.discover(website.url) if self.feed_discovery else None
+        if discovered and self._feed_has_articles(discovered, website):
+            self.feed_updates[website.name] = CacheRecord(name=website.name, url=discovered.url, source="cache")
+            return self._build_feed_record(website, discovered, self._last_feed_latency())
+        return None
+
+    def _feed_has_articles(self, endpoint: FeedEndpoint, website: Website) -> bool:
+        articles = self.feed_parser.parse(endpoint.url, count=1, blog_url=website.url)
+        return bool(articles)
+
+    def _last_feed_latency(self) -> float:
+        return normalize_latency(getattr(self.feed_parser, "last_latency", None))
+
+    def _build_feed_record(self, website: Website, endpoint: FeedEndpoint, latency: float) -> LinkCheckRecord:
+        method = "rss_cache" if endpoint.source == "cache" else "rss"
+        return LinkCheckRecord(
+            name=website.name,
+            url=website.url,
+            avatar=website.avatar,
+            linkpage=website.linkpage,
+            checked_at=self._now_text(),
+            reachable=True,
+            crawl_allowed=True,
+            best_method=method,
+            best_latency=latency,
+            fail_count=0,
+            rss_crawl_reason=f"allowed_by_{method}",
+        )
+
+    def _request_homepage(self, url: str) -> LinkMethodStatus:
         if not self._is_url(url):
             return LinkMethodStatus()
-
-        response, latency = self._request_url(session, url, headers=LINK_CHECK_HEADERS, desc=desc)
-        if response is None:
-            return LinkMethodStatus(success=False, status_code=None, latency=latency)
-        success = response.status_code == 200
-        if success:
-            logging.info(f"[{desc}] 成功访问: {url}，延迟 {latency} 秒")
-        else:
-            logging.warning(f"[{desc}] 状态码异常: {url} -> {response.status_code}")
-        return LinkMethodStatus(success=success, status_code=response.status_code, latency=latency)
+        result = self.fetcher.get(url, headers=LINK_CHECK_HEADERS, timeout=self.config.timeout, desc="主页检测")
+        if result.response is None:
+            return LinkMethodStatus(success=False, status_code=None, latency=result.latency)
+        return LinkMethodStatus(success=result.success, status_code=result.response.status_code, latency=result.latency)
 
     def _request_api(self, session: requests.Session, url: str) -> LinkMethodStatus:
         if not self.config.status_api_url:
             return LinkMethodStatus()
 
         api_url = self.config.status_api_url.format(url=quote(url, safe=""))
-        response, latency = self._request_url(session, api_url, headers=RAW_HEADERS, desc="API 检查", timeout=30)
-        if response is None:
-            return LinkMethodStatus(success=False, status_code=None, latency=latency)
+        start_time = time.time()
+        try:
+            response = session.get(api_url, headers=RAW_HEADERS, timeout=30)
+            latency = normalize_latency(time.time() - start_time)
+        except requests.RequestException as exc:
+            logging.warning(f"[API 检查] 请求失败: {url} ，错误: {exc}")
+            return LinkMethodStatus(success=False, status_code=None, latency=normalize_latency(time.time() - start_time))
 
         try:
             payload = response.json()
             status_code = int(payload.get("data", 0))
             success = int(payload.get("code", 0)) == 200 and status_code == 200
             if success:
-                logging.info(f"[API] 成功访问: {url}，状态码 200")
+                logging.info(f"[API 检查] 成功访问: {url} ，状态码 200")
             else:
-                logging.warning(f"[API] 状态异常: {url} -> [{payload.get('code')}, {payload.get('data')}]")
+                logging.warning(f"[API 检查] 状态异常: {url} -> [{payload.get('code')}, {payload.get('data')}]")
             return LinkMethodStatus(success=success, status_code=status_code, latency=latency)
         except Exception as exc:
-            logging.warning(f"[API] 解析响应失败: {url}，错误: {exc}")
+            logging.warning(f"[API 检查] 解析响应失败: {url} ，错误: {exc}")
             return LinkMethodStatus(success=False, status_code=response.status_code, latency=latency)
 
-    def _compose_record(
+    def _compose_non_rss_record(
         self,
         website: Website,
         cached: LinkCheckRecord | None,
-        direct: LinkMethodStatus,
-        proxy: LinkMethodStatus,
+        homepage: LinkMethodStatus,
         api: LinkMethodStatus,
     ) -> LinkCheckRecord:
-        reachable = direct.success or proxy.success or api.success
-        crawl_allowed = direct.success or proxy.success
-        if direct.success:
-            best_method = "direct"
-            best_latency = direct.latency
-            reason = "allowed_by_direct"
-        elif proxy.success:
-            best_method = "proxy"
-            best_latency = proxy.latency
-            reason = "allowed_by_proxy"
+        reachable = homepage.success or api.success
+        if homepage.success:
+            best_method = "homepage"
+            best_latency = homepage.latency
+            reason = "reachable_without_rss"
         elif api.success:
             best_method = "api"
             best_latency = api.latency
-            reason = "blocked_api_only"
+            reason = "api_reachable_without_rss"
         else:
             best_method = "none"
-            best_latency = -1
+            best_latency = self._first_measured_latency(homepage, api)
             reason = "blocked_unreachable"
 
         fail_count = 0 if reachable else ((cached.fail_count if cached else 0) + 1)
@@ -177,19 +238,27 @@ class LinkReachabilityService:
             linkpage=website.linkpage,
             checked_at=self._now_text(),
             reachable=reachable,
-            crawl_allowed=crawl_allowed,
+            crawl_allowed=False,
             best_method=best_method,
             best_latency=best_latency,
             fail_count=fail_count,
             rss_crawl_reason=reason,
-            direct=direct,
-            proxy=proxy,
+            direct=homepage,
             api=api,
         )
 
+    @staticmethod
+    def _first_measured_latency(*statuses: LinkMethodStatus) -> float:
+        for status in statuses:
+            if status.latency > 0:
+                return normalize_latency(status.latency)
+        return normalize_latency(None)
+
     def _check_author_link_in_page(self, session: requests.Session, linkpage_url: str) -> bool:
-        response, _ = self._request_url(session, linkpage_url, headers=RAW_HEADERS, desc="友链页面检测")
-        if not response:
+        fetcher = self.fetcher or WebFetchClient(session, self.proxy_settings)
+        result = fetcher.get(linkpage_url, headers=RAW_HEADERS, timeout=self.config.timeout, desc="友链页面检测")
+        response = result.response
+        if response is None:
             return False
 
         author_url = self.config.author_url
@@ -218,24 +287,14 @@ class LinkReachabilityService:
                 return True
         return False
 
-    def _request_url(
-        self,
-        session: requests.Session,
-        url: str,
-        headers: dict[str, str],
-        desc: str,
-        timeout: int | None = None,
-    ) -> tuple[requests.Response | None, float]:
-        try:
-            start_time = time.time()
-            response = session.get(url, headers=headers, timeout=timeout or self.config.timeout)
-            return response, round(time.time() - start_time, 2)
-        except requests.RequestException as exc:
-            logging.warning(f"[{desc}] 请求失败: {url}，错误: {exc}")
-            return None, -1
-
     def _can_reuse_cached_record(self, cached: LinkCheckRecord, website: Website) -> bool:
-        if self.config.enable_backlink_check and cached.linkpage != website.linkpage:
+        try:
+            has_measured_latency = float(cached.best_latency) > 0
+        except (TypeError, ValueError):
+            has_measured_latency = False
+        if not has_measured_latency:
+            return False
+        if cached.crawl_allowed and website.name not in self.feed_lookup:
             return False
         return self.store.is_fresh(cached, self.config.max_age_hours)
 
@@ -245,6 +304,23 @@ class LinkReachabilityService:
         cached.avatar = website.avatar
         cached.linkpage = website.linkpage
         return cached
+
+    def _should_refresh_backlink(self, record: LinkCheckRecord, website: Website, linkpage_changed: bool) -> bool:
+        return bool(
+            linkpage_changed
+            and record.reachable
+            and self.config.enable_backlink_check
+            and self.config.author_url
+            and website.linkpage
+        )
+
+    def _refresh_backlinks_only(self, items: list[tuple[Website, LinkCheckRecord]]) -> None:
+        with requests.Session() as session:
+            self.fetcher = self.fetcher or WebFetchClient(session, self.proxy_settings)
+            for website, record in items:
+                record.backlink_checked = True
+                record.has_author_link = self._check_author_link_in_page(session, website.linkpage)
+            self.store.save_records([record for _, record in items])
 
     def _build_failed_record(self, website: Website, cached: LinkCheckRecord | None) -> LinkCheckRecord:
         record = LinkCheckRecord.unchecked(website, self._now_text())
@@ -262,27 +338,34 @@ class LinkReachabilityService:
             reachable=True,
             crawl_allowed=True,
             best_method="disabled",
-            best_latency=-1,
+            best_latency=0.01,
             rss_crawl_reason="link_check_disabled",
         )
-
-    def _build_proxy_url(self, url: str) -> str:
-        if not self.proxy_settings.proxy_url:
-            return ""
-        if "{}" in self.proxy_settings.proxy_url:
-            return self.proxy_settings.proxy_url.format(url)
-        if "{url}" in self.proxy_settings.proxy_url:
-            return self.proxy_settings.proxy_url.format(url=url)
-        return f"{self.proxy_settings.proxy_url}{url}"
 
     @staticmethod
     def _is_url(path: str) -> bool:
         return urlparse(path).scheme in ("http", "https")
 
     @staticmethod
+    def _same_linkpage(left: str, right: str) -> bool:
+        return LinkReachabilityService._normalize_linkpage(left) == LinkReachabilityService._normalize_linkpage(right)
+
+    @staticmethod
+    def _normalize_linkpage(url: str) -> str:
+        url = (url or "").strip()
+        if not url:
+            return ""
+        try:
+            parts = urlsplit(url)
+            path = parts.path.rstrip("/") or "/"
+            return urlunsplit((parts.scheme.lower(), parts.netloc.lower(), path, parts.query, parts.fragment))
+        except Exception:
+            return url.rstrip("/")
+
+    @staticmethod
     def _now_text() -> str:
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-# Backward-compatible class name kept for legacy imports.
+# 兼容旧类名。
 LinkCheckService = LinkReachabilityService

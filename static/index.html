@@ -345,7 +345,6 @@
         flex-shrink: 0;
       }
 
-      .method-text,
       .time-text {
         color: #000000a5;
         white-space: nowrap;
@@ -651,7 +650,7 @@
         const sortedLinks = state.links
           .filter(matchKeywordForLink)
           .filter(matchFilter)
-          .sort((a, b) => linkPriority(a) - linkPriority(b) || (b.latency ?? -1) - (a.latency ?? -1));
+          .sort((a, b) => linkPriority(a) - linkPriority(b));
 
         let errorLinksHTML = "";
         let otherLinksHTML = "";
@@ -709,11 +708,15 @@
       }
 
       function getLinkStatus(link) {
-        if (!link.reachable) return { className: "status-error", title: "不可达" };
-        if (link.method === "api") return { className: "status-api", title: "仅 API 可达" };
-        if (link.latency > 4) return { className: "status-slow", title: "响应较慢" };
-        if (link.method === "proxy") return { className: "status-api", title: "代理可达" };
-        return { className: "status-normal", title: "直连可达" };
+        const latencyText = formatLatency(link.latency);
+        if (!link.reachable) return { className: "status-error", title: `不可达${latencyText}` };
+        return { className: "status-normal", title: `可达${latencyText}` };
+      }
+
+      function formatLatency(value) {
+        const latency = Number(value);
+        if (!Number.isFinite(latency) || latency < 0) return "";
+        return `，参考延迟 ${latency.toFixed(2)} 秒`;
       }
 
       function matchFilter(link) {
@@ -724,7 +727,7 @@
 
       function matchKeywordForLink(link) {
         if (!state.keyword) return true;
-        return [link.name, link.link, link.link_page, link.reason]
+        return [link.name, link.link, link.link_page]
           .some((value) => String(value || "").toLowerCase().includes(state.keyword));
       }
 
@@ -736,13 +739,8 @@
 
       function linkPriority(link) {
         if (!link.reachable) return 0;
-        if (link.method === "api") return 1;
-        if (link.latency > 4) return 2;
-        return 3;
-      }
-
-      function formatLatency(latency) {
-        return latency >= 0 ? `${latency}s` : "--";
+        if (!link.crawlable) return 1;
+        return 2;
       }
 
       function escapeHTML(value) {

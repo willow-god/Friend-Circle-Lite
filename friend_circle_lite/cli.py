@@ -22,6 +22,7 @@ from friend_circle_lite.outputs.legacy_api import (
     merge_errors_from_json_url,
     merge_link_data_from_json_url,
 )
+from friend_circle_lite.storage.diagnostics import SQLiteDebugDumper
 from friend_circle_lite.utils.json import write_json
 
 
@@ -33,11 +34,20 @@ class FriendCircleLiteApplication:
 
     def run(self) -> None:
         """Execute the enabled application features in a stable order."""
-        print_startup_config(self.config)
-        self.run_crawler_if_enabled()
-        mail_runtime = self.prepare_mail_runtime()
-        self.run_email_push_if_enabled(mail_runtime)
-        self.run_rss_subscription_if_enabled(mail_runtime)
+        try:
+            print_startup_config(self.config)
+            self.run_crawler_if_enabled()
+            mail_runtime = self.prepare_mail_runtime()
+            self.run_email_push_if_enabled(mail_runtime)
+            self.run_rss_subscription_if_enabled(mail_runtime)
+        finally:
+            self.dump_sqlite_debug_if_enabled()
+
+    def dump_sqlite_debug_if_enabled(self) -> None:
+        """在 debug 开启时输出 SQLite 全量缓存数据，便于排查 Action 问题。"""
+        if not self.config.debug:
+            return
+        SQLiteDebugDumper(self.config.runtime_paths.cache_file).run()
 
     def run_crawler_if_enabled(self) -> None:
         """Run the article crawl and persist public output files when enabled."""

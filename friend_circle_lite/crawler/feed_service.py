@@ -1,4 +1,4 @@
-"""Feed discovery, parsing, and incremental tracking services."""
+"""RSS 发现、解析与文章更新追踪服务。"""
 
 from __future__ import annotations
 
@@ -12,7 +12,9 @@ import feedparser
 import requests
 
 from friend_circle_lite import HEADERS_XML, timeout
-from friend_circle_lite.domain.models import Article, FeedEndpoint, Website
+from friend_circle_lite.config.models import ProxySettings
+from friend_circle_lite.crawler.http_client import WebFetchClient
+from friend_circle_lite.domain.models import Article, FeedEndpoint, Website, normalize_latency
 from friend_circle_lite.utils.time import format_published_time
 from friend_circle_lite.utils.url import replace_non_domain
 
@@ -34,19 +36,19 @@ class FeedDiscoveryService:
         ("rss11", "/feed.php"),   # 同上
     ]
 
-    def __init__(self, session: requests.Session):
+    def __init__(self, session: requests.Session, proxy_settings: ProxySettings | None = None):
         self.session = session
+        self.fetcher = WebFetchClient(session, proxy_settings)
+        self.last_latency = 0.01
 
     def discover(self, website_url: str) -> FeedEndpoint | None:
         """Try common feed endpoints and return the first valid match."""
         for feed_type, path in self.POSSIBLE_FEEDS:
             feed_url = website_url.rstrip("/") + path
-            try:
-                response = self.session.get(feed_url, headers=HEADERS_XML, timeout=timeout)
-            except requests.RequestException:
-                continue
+            result = self.fetcher.get(feed_url, headers=HEADERS_XML, timeout=timeout, desc="RSS 探测")
+            response = result.response
 
-            if response.status_code != 200:
+            if response is None or response.status_code != 200:
                 continue
 
             content_type = response.headers.get("Content-Type", "").lower()
@@ -64,8 +66,10 @@ class FeedDiscoveryService:
 class FeedParserService:
     """Parse a discovered feed into normalized article objects."""
 
-    def __init__(self, session: requests.Session):
+    def __init__(self, session: requests.Session, proxy_settings: ProxySettings | None = None):
         self.session = session
+        self.fetcher = WebFetchClient(session, proxy_settings)
+        self.last_latency = 0.01
 
     def parse(self, feed_url: str, count: int = 5, blog_url: str = "") -> list[Article]:
         """Parse a feed URL and return the newest `count` articles.
@@ -74,7 +78,11 @@ class FeedParserService:
         model, while preserving the original public output fields.
         """
         try:
-            response = self.session.get(feed_url, headers=HEADERS_XML, timeout=timeout)
+            result = self.fetcher.get(feed_url, headers=HEADERS_XML, timeout=timeout, desc="RSS 抓取")
+            self.last_latency = normalize_latency(result.latency)
+            if result.response is None:
+                return []
+            response = result.response
             # 强制使用 UTF-8 编码，因为 apparent_encoding 可能检测错误
             response.encoding = "utf-8"
             feed = feedparser.parse(response.text)

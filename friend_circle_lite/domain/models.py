@@ -9,10 +9,38 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
+from urllib.parse import urlsplit, urlunsplit
 from zoneinfo import ZoneInfo
 
 
 SHANGHAI_TZ = ZoneInfo("Asia/Shanghai")
+MIN_RECORDED_LATENCY = 0.01
+
+
+def normalize_latency(value: float | int | str | None, default: float = MIN_RECORDED_LATENCY) -> float:
+    """规范化延迟值，对外记录时不使用 0 或负数表示未知。"""
+    try:
+        latency = float(value)
+    except (TypeError, ValueError):
+        return default
+    if latency <= 0:
+        return default
+    return max(round(latency, 2), default)
+
+
+def normalize_homepage_url(url: str) -> str:
+    """规范化站点主页 URL，用于缓存匹配和持久化。"""
+    value = str(url or "").strip()
+    if not value:
+        return ""
+    try:
+        parts = urlsplit(value)
+        if parts.scheme and parts.netloc:
+            path = (parts.path.rstrip("/") + "/") if parts.path else "/"
+            return urlunsplit((parts.scheme.lower(), parts.netloc.lower(), path, parts.query, parts.fragment))
+    except Exception:
+        pass
+    return value.rstrip("/") + "/"
 
 
 @dataclass(slots=True)
@@ -24,13 +52,16 @@ class Website:
     avatar: str = ""
     linkpage: str = ""
 
+    def __post_init__(self) -> None:
+        self.url = normalize_homepage_url(self.url)
+
     @classmethod
     def from_friend_item(cls, raw_friend: list | tuple | dict) -> "Website":
         """Create a website from common friend link structures."""
         if isinstance(raw_friend, dict):
             return cls(
                 name=str(raw_friend.get("name", "")).strip(),
-                url=str(raw_friend.get("link") or raw_friend.get("url") or "").strip(),
+                url=normalize_homepage_url(raw_friend.get("link") or raw_friend.get("url") or ""),
                 avatar=str(raw_friend.get("avatar", "")).strip(),
                 linkpage=str(raw_friend.get("linkpage", "")).strip(),
             )
@@ -43,7 +74,7 @@ class Website:
         else:
             linkpage = ""
             avatar = raw_friend[2] if len(raw_friend) > 2 else ""
-        return cls(name=str(name).strip(), url=str(url).strip(), avatar=str(avatar or "").strip(), linkpage=str(linkpage or "").strip())
+        return cls(name=str(name).strip(), url=normalize_homepage_url(url), avatar=str(avatar or "").strip(), linkpage=str(linkpage or "").strip())
 
     def to_error_payload(self) -> list[str]:
         """Return the legacy structure used by `errors.json`."""
@@ -99,6 +130,9 @@ class LinkCheckRecord:
     def unchecked(cls, website: Website, checked_at: str = "") -> "LinkCheckRecord":
         return cls(name=website.name, url=website.url, avatar=website.avatar, linkpage=website.linkpage, checked_at=checked_at)
 
+    def __post_init__(self) -> None:
+        self.url = normalize_homepage_url(self.url)
+
     def to_public_dict(self) -> dict[str, object]:
         return {
             "name": self.name,
@@ -128,12 +162,9 @@ class LinkCheckRecord:
             "avatar": self.avatar,
             "reachable": self.reachable,
             "crawlable": self.crawl_allowed,
-            "method": self.best_method,
-            "latency": self.best_latency,
+            "latency": normalize_latency(self.best_latency),
             "fail_count": self.fail_count,
-            "checked_at": self.checked_at,
             "has_backlink": self.has_author_link if self.backlink_checked else None,
-            "reason": self.rss_crawl_reason,
         }
 
 

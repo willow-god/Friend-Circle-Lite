@@ -20,6 +20,25 @@ DEFAULT_ERRORS_JSON = "./errors.json"
 DEFAULT_LINK_JSON = "./link.json"
 
 
+def _as_bool(value: object, default: bool = False) -> bool:
+    """稳健解析布尔值，兼容 YAML 布尔与字符串写法。"""
+    if value is None:
+        return default
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        return value.strip().lower() in {"1", "true", "yes", "on"}
+    return bool(value)
+
+
+def _env_flag(name: str) -> bool | None:
+    """读取布尔环境变量；未配置时返回 None，避免覆盖配置文件。"""
+    value = os.getenv(name)
+    if value is None:
+        return None
+    return _as_bool(value)
+
+
 @dataclass(slots=True)
 class MergeSettings:
     """Options for merging local crawl results with remote data sources."""
@@ -50,6 +69,7 @@ class SpiderSettings:
 class LinkCheckConfig:
     """Settings for friend link reachability checks."""
 
+    # 兼容旧配置字段。当前抓取流程依赖可达性检测，因此运行时会始终视为启用。
     enable: bool = True
     max_age_hours: int = 24
     timeout: int = 15
@@ -122,6 +142,7 @@ class ApplicationConfig:
     specific_rss: list[dict]
     runtime_paths: RuntimePaths = field(default_factory=RuntimePaths)
     future_article_tolerance_days: int = 2
+    debug: bool = False
 
     @classmethod
     def from_dict(cls, data: dict) -> "ApplicationConfig":
@@ -135,6 +156,8 @@ class ApplicationConfig:
         website_info_raw = rss_subscribe_raw.get("website_info", {})
         smtp_raw = data.get("smtp", {})
         runtime_raw = data.get("runtime_paths", {})
+        debug_from_env = _env_flag("FCL_DEBUG")
+        debug_enabled = debug_from_env if debug_from_env is not None else _as_bool(data.get("debug"), False)
 
         return cls(
             spider_settings=SpiderSettings(
@@ -152,7 +175,7 @@ class ApplicationConfig:
                 merge_link_check_data=bool(merge_raw.get("merge_link_check_data", True)),
             ),
             link_check=LinkCheckConfig(
-                enable=bool(link_check_raw.get("enable", True)),
+                enable=True,
                 max_age_hours=int(link_check_raw.get("max_age_hours", 24)),
                 timeout=int(link_check_raw.get("timeout", 15)),
                 max_workers=int(link_check_raw.get("max_workers", 10)),
@@ -189,6 +212,7 @@ class ApplicationConfig:
                 errors_json_file=str(runtime_raw.get("errors_json_file", DEFAULT_ERRORS_JSON)).strip() or DEFAULT_ERRORS_JSON,
                 link_json_file=str(runtime_raw.get("link_json_file", DEFAULT_LINK_JSON)).strip() or DEFAULT_LINK_JSON,
             ),
+            debug=debug_enabled,
         )
 
 

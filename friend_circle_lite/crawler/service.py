@@ -69,22 +69,7 @@ class SingleSiteCrawler:
         parse_error = endpoint is not None and not articles
 
         if parse_error and endpoint and endpoint.source in ("cache", "unknown"):
-            logging.warning(f"'{website.name}' 缓存的 RSS 源无效，尝试重新探测...")
-            rediscovered = self.resolver.discovery_service.discover(website.url)
-            if rediscovered:
-                articles = self._parse_articles(rediscovered, website, count)
-                if articles:
-                    endpoint = rediscovered
-                    cache_update = CacheUpdate(action="set", name=website.name, url=rediscovered.url, reason="repair_cache")
-                    logging.info(f"'{website.name}' 重新探测成功，更新缓存：{rediscovered.url}")
-                else:
-                    endpoint = None
-                    cache_update = CacheUpdate(action="delete", name=website.name, url=None, reason="remove_invalid")
-                    logging.warning(f"'{website.name}' 重新探测失败，删除无效缓存")
-            else:
-                endpoint = None
-                cache_update = CacheUpdate(action="delete", name=website.name, url=None, reason="remove_invalid")
-                logging.warning(f"'{website.name}' 未找到有效 RSS，删除无效缓存")
+            logging.warning(f"'{website.name}' 缓存 RSS 本次抓取失败，将等待下次友链检测刷新 RSS 缓存")
 
         status = "active" if articles else "error"
         if not articles:
@@ -131,7 +116,7 @@ class FriendCircleCrawlService:
         self.count = count
         self.specific_rss = specific_rss or []
         self.cache_store = FeedCacheStore(cache_file)
-        self.link_check_config = link_check_config or LinkCheckConfig(enable=False)
+        self.link_check_config = link_check_config or LinkCheckConfig()
         self.proxy_settings = proxy_settings or ProxySettings()
         self.link_check_store = LinkCheckStore(cache_file)
 
@@ -142,20 +127,28 @@ class FriendCircleCrawlService:
         if websites is None:
             return None
 
-        link_check_records = self._check_links(websites)
-        link_check_map = {record.url: record for record in link_check_records}
-        crawlable_websites = [website for website in websites if link_check_map.get(website.url, LinkCheckRecord.unchecked(website)).crawl_allowed]
-        skipped_count = len(websites) - len(crawlable_websites)
-        if skipped_count:
-            logging.info(f"🔎 根据友链可达性检测跳过 {skipped_count} 个不可抓取站点")
-
         cache_records = self.cache_store.load_records()
         manual_records = self._build_manual_records()
         merged_records = self._merge_feed_records(cache_records, manual_records)
         manual_names = {record.name for record in manual_records}
 
-        discovery_service = FeedDiscoveryService(session)
-        parser_service = FeedParserService(session)
+        link_check_records = self._check_links(websites, merged_records, manual_names)
+        link_check_map = {record.url: record for record in link_check_records}
+
+        cache_records = self.cache_store.load_records()
+        merged_records = self._merge_feed_records(cache_records, manual_records)
+        feed_names = {record.name for record in merged_records}
+        crawlable_websites = [
+            website for website in websites
+            if link_check_map.get(website.url, LinkCheckRecord.unchecked(website)).crawl_allowed
+            and website.name in feed_names
+        ]
+        skipped_count = len(websites) - len(crawlable_websites)
+        if skipped_count:
+            logging.info(f"🔎 根据友链可达性检测跳过 {skipped_count} 个不可抓取站点")
+
+        discovery_service = FeedDiscoveryService(session, self.proxy_settings)
+        parser_service = FeedParserService(session, self.proxy_settings)
         resolver = FeedResolver(discovery_service=discovery_service, configured_feeds=merged_records)
         crawler = SingleSiteCrawler(parser_service=parser_service, resolver=resolver)
 
@@ -188,7 +181,6 @@ class FriendCircleCrawlService:
             article_num=len(all_articles),
         )
         stats_payload = statistics.to_dict()
-        stats_payload.update(self._build_link_statistics(link_check_records))
         result = {
             "statistical_data": stats_payload,
             "article_data": all_articles,
@@ -200,9 +192,36 @@ class FriendCircleCrawlService:
         )
         return result, error_results, link_payload
 
-    def _check_links(self, websites: list[Website]) -> list[LinkCheckRecord]:
-        service = LinkReachabilityService(config=self.link_check_config, proxy_settings=self.proxy_settings, store=self.link_check_store)
-        return service.check_websites(websites)
+    def _check_links(self, websites: list[Website], feed_records: list[CacheRecord], manual_names: set[str]) -> list[LinkCheckRecord]:
+        service = LinkReachabilityService(
+            config=self.link_check_config,
+            proxy_settings=self.proxy_settings,
+            store=self.link_check_store,
+            feed_records=feed_records,
+        )
+        records = service.check_websites(websites)
+        if service.feed_updates:
+            self._apply_feed_updates_from_link_check(service.feed_updates, manual_names)
+        return records
+
+    def _apply_feed_updates_from_link_check(self, updates: dict[str, CacheRecord | None], manual_names: set[str]) -> None:
+        """保存可达性检测阶段发现或失效的 RSS 缓存。"""
+        cache_map = {record.name: record for record in self.cache_store.load_records()}
+        changed = False
+        for name, record in updates.items():
+            if name in manual_names:
+                continue
+            if record is None:
+                if name in cache_map:
+                    cache_map.pop(name)
+                    changed = True
+                    logging.info(f"🗑️ 可达性检测删除失效 RSS 缓存: {name}")
+            else:
+                cache_map[name] = record
+                changed = True
+                logging.info(f"💾 可达性检测保存 RSS 缓存: {name} -> {record.url}")
+        if changed:
+            self.cache_store.save_records(list(cache_map.values()))
 
     @staticmethod
     def _build_link_statistics(records: list[LinkCheckRecord]) -> dict[str, int | str]:
@@ -268,13 +287,14 @@ class FriendCircleCrawlService:
             logging.error(f"无法获取链接：{self.json_url} ：{exc}", exc_info=True)
             return None
 
-        websites: list[Website] = []
+        website_map: dict[str, Website] = {}
         for friend in friends_data.get("friends", []):
             try:
-                websites.append(Website.from_friend_item(friend))
+                website = Website.from_friend_item(friend)
+                website_map[website.url] = website
             except Exception:
                 logging.warning(f"发现格式异常的友链数据，已跳过: {friend!r}")
-        return websites
+        return list(website_map.values())
 
     def _build_manual_records(self) -> list[CacheRecord]:
         manual_records: list[CacheRecord] = []
