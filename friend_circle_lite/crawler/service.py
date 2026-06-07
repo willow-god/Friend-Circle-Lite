@@ -37,16 +37,16 @@ class FeedResolver:
         configured = self.feed_lookup.get(website.name)
         if configured:
             if configured.source == 'manual':
-                logging.info(f"'{website.name}' 使用预设 RSS 源：{configured.url}")
+                logging.info(f"[RSS 解析] {website.name} 使用预设 RSS 源：{configured.url}")
             elif configured.source == 'cache':
-                logging.info(f"'{website.name}' 使用缓存 RSS 源：{configured.url}")
+                logging.info(f"[RSS 解析] {website.name} 使用缓存 RSS 源：{configured.url}")
             else:
-                logging.info(f"'{website.name}' 使用 RSS 源：{configured.url} (来源: {configured.source})")
+                logging.info(f"[RSS 解析] {website.name} 使用 RSS 源：{configured.url} ，来源: {configured.source}")
             return FeedEndpoint(url=configured.url, feed_type="specific", source=configured.source)
 
         discovered = self.discovery_service.discover(website.url)
         if discovered:
-            logging.info(f"'{website.name}' 自动探测到 RSS：{discovered.url}")
+            logging.info(f"[RSS 探测] {website.name} 自动探测到 RSS：{discovered.url}")
         return discovered
 
 
@@ -69,14 +69,14 @@ class SingleSiteCrawler:
         parse_error = endpoint is not None and not articles
 
         if parse_error and endpoint and endpoint.source in ("cache", "unknown"):
-            logging.warning(f"'{website.name}' 缓存 RSS 本次抓取失败，将等待下次友链检测刷新 RSS 缓存")
+            logging.warning(f"[RSS 抓取] {website.name} 缓存 RSS 本次抓取失败，将等待下次友链检测刷新 RSS 缓存")
 
         status = "active" if articles else "error"
         if not articles:
             if endpoint is None:
-                logging.warning(f"'{website.name}' 的博客 {website.url} 未找到有效 RSS ")
+                logging.warning(f"[RSS 抓取] {website.name} 的博客 {website.url} 未找到有效 RSS")
             else:
-                logging.warning(f"'{website.name}' 的 RSS {endpoint.url} 未解析出文章 ")
+                logging.warning(f"[RSS 抓取] {website.name} 的 RSS {endpoint.url} 未解析出文章")
 
         return CrawlResult(
             website=website,
@@ -96,7 +96,7 @@ class SingleSiteCrawler:
         for article in articles:
             article.author = website.name
             article.avatar = website.avatar
-            logging.info(f"{website.name} 发布了新文章：{article.title}，时间：{article.published}，链接：{article.link}")
+            logging.info(f"[RSS 抓取] {website.name} 发布了新文章：{article.title}，时间：{article.published}，链接：{article.link}")
         return articles
 
 
@@ -144,8 +144,10 @@ class FriendCircleCrawlService:
             and website.name in feed_names
         ]
         skipped_count = len(websites) - len(crawlable_websites)
-        if skipped_count:
-            logging.info(f"🔎 根据友链可达性检测跳过 {skipped_count} 个不可抓取站点")
+        logging.info(
+            f"[朋友圈抓取] 友链总数 {len(websites)} 个，可进入 RSS 抓取 {len(crawlable_websites)} 个，"
+            f"跳过 {skipped_count} 个不可抓取或无 RSS 缓存站点"
+        )
 
         discovery_service = FeedDiscoveryService(session, self.proxy_settings)
         parser_service = FeedParserService(session, self.proxy_settings)
@@ -153,6 +155,7 @@ class FriendCircleCrawlService:
         crawler = SingleSiteCrawler(parser_service=parser_service, resolver=resolver)
 
         crawl_results: list[CrawlResult] = []
+        logging.info(f"[朋友圈抓取] 开始抓取 {len(crawlable_websites)} 个可抓取站点，每站最多 {self.count} 篇文章")
         with ThreadPoolExecutor(max_workers=10) as executor:
             future_to_website = {
                 executor.submit(crawler.crawl, website, self.count): website
@@ -163,7 +166,7 @@ class FriendCircleCrawlService:
                 try:
                     crawl_results.append(future.result())
                 except Exception as exc:
-                    logging.error(f"处理 {website.to_error_payload()} 时发生错误: {exc}", exc_info=True)
+                    logging.error(f"[朋友圈抓取] 处理 {website.to_error_payload()} 时发生错误: {exc}", exc_info=True)
                     crawl_results.append(CrawlResult(website=website, status="error"))
 
         self._apply_cache_updates(cache_records, crawl_results, manual_names)
@@ -187,8 +190,8 @@ class FriendCircleCrawlService:
         }
         link_payload = self._build_link_payload(link_check_records)
         logging.info(
-            f"数据处理完成，总共有 {len(websites)} 位朋友，其中 {len(active_results)} 位博客可抓取到文章，"
-            f"{len(crawl_error_results)} 位博客 RSS 抓取失败，{len(unreachable_results)} 位友链不可达。"
+            f"[数据汇总] 处理完成：友链总数 {len(websites)} 个，成功抓取文章站点 {len(active_results)} 个，"
+            f"RSS 抓取失败 {len(crawl_error_results)} 个，友链不可达 {len(unreachable_results)} 个。"
         )
         return result, error_results, link_payload
 
@@ -215,11 +218,11 @@ class FriendCircleCrawlService:
                 if name in cache_map:
                     cache_map.pop(name)
                     changed = True
-                    logging.info(f"🗑️ 可达性检测删除失效 RSS 缓存: {name}")
+                    logging.info(f"[RSS 缓存] 可达性检测删除失效 RSS 缓存: {name}")
             else:
                 cache_map[name] = record
                 changed = True
-                logging.info(f"💾 可达性检测保存 RSS 缓存: {name} -> {record.url}")
+                logging.info(f"[RSS 缓存] 可达性检测保存 RSS 缓存: {name} -> {record.url}")
         if changed:
             self.cache_store.save_records(list(cache_map.values()))
 
@@ -344,7 +347,7 @@ def sort_articles_by_time(data: dict, future_tolerance_days: int = 2) -> dict:
     for article in data.get("article_data", []):
         if not article.get("created"):
             article["created"] = "2024-01-01 00:00"
-            logging.warning(f"文章 {article['title']} 未包含时间信息，已设置为默认时间 2024-01-01 00:00")
+            logging.warning(f"[数据处理] 文章 {article['title']} 未包含时间信息，已设置为默认时间 2024-01-01 00:00")
 
     now = datetime.now(ZoneInfo("Asia/Shanghai")).replace(tzinfo=None)
     max_allowed_time = now + timedelta(days=future_tolerance_days)
@@ -356,7 +359,7 @@ def sort_articles_by_time(data: dict, future_tolerance_days: int = 2) -> dict:
         if article_time > max_allowed_time:
             removed_count += 1
             logging.warning(
-                f"文章 {article['title']} 的时间 {article['created']} 超出当前时间 {future_tolerance_days} 天以上，已跳过显示"
+                f"[数据处理] 文章 {article['title']} 的时间 {article['created']} 超出当前时间 {future_tolerance_days} 天以上，已跳过显示"
             )
             continue
         filtered_articles.append(article)
@@ -364,7 +367,7 @@ def sort_articles_by_time(data: dict, future_tolerance_days: int = 2) -> dict:
     filtered_articles.sort(key=lambda item: datetime.strptime(item["created"], "%Y-%m-%d %H:%M"), reverse=True)
     data["article_data"] = filtered_articles
     if removed_count:
-        logging.info(f"已过滤 {removed_count} 篇未来时间异常的文章")
+        logging.info(f"[数据处理] 已过滤 {removed_count} 篇未来时间异常的文章")
     return data
 
 
@@ -376,7 +379,7 @@ def limit_large_dataset(result: dict, future_tolerance_days: int = 2) -> dict:
 
     max_articles = 150
     if len(article_data) > max_articles:
-        logging.info("数据量较大，开始进行处理...")
+        logging.info(f"[数据处理] 数据量较大，开始裁剪，当前 {len(article_data)} 篇，基础保留 {max_articles} 篇")
         top_authors = {article["author"] for article in article_data[:max_articles]}
         filtered_articles = article_data[:max_articles] + [
             article for article in article_data[max_articles:]
@@ -384,7 +387,7 @@ def limit_large_dataset(result: dict, future_tolerance_days: int = 2) -> dict:
         ]
         result["article_data"] = filtered_articles
         result["statistical_data"]["article_num"] = len(filtered_articles)
-        logging.info(f"数据处理完成，保留 {len(filtered_articles)} 篇文章")
+        logging.info(f"[数据处理] 数据裁剪完成，保留 {len(filtered_articles)} 篇文章")
 
     return result
 

@@ -59,7 +59,7 @@ class FeedDiscoveryService:
             if "<rss" in text_head or "<feed" in text_head or "<rdf:rdf" in text_head:
                 return FeedEndpoint(url=feed_url, feed_type=feed_type, source="auto")
 
-        logging.warning(f"未找到 {website_url} 的 RSS 订阅源")
+        logging.warning(f"[RSS 探测] 未找到 {website_url} 的 RSS 订阅源")
         return None
 
 
@@ -87,7 +87,7 @@ class FeedParserService:
             response.encoding = "utf-8"
             feed = feedparser.parse(response.text)
         except Exception as exc:
-            logging.error(f"解析 RSS 失败：{feed_url}，错误: {exc}")
+            logging.error(f"[RSS 抓取] 解析 RSS 失败：{feed_url}，错误: {exc}")
             return []
 
         default_author = feed.feed.author if "author" in feed.feed else ""
@@ -113,7 +113,7 @@ class FeedParserService:
             try:
                 return datetime.strptime(article.published, "%Y-%m-%d %H:%M")
             except ValueError:
-                logging.warning(f"文章 {article.title} 的发布时间格式异常: {article.published}，已跳过")
+                logging.warning(f"[RSS 抓取] 文章 {article.title} 的发布时间格式异常: {article.published}，已跳过")
                 return None
         
         # 只保留能成功解析日期的文章
@@ -141,11 +141,11 @@ class FeedParserService:
             elif isinstance(time_value, time.struct_time):
                 # 检查年份是否异常
                 if time_value.tm_year < 1900:
-                    logging.warning(f"文章 {entry.get('title', 'Unknown')} 的时间年份异常: {time_value.tm_year}，已跳过")
+                    logging.warning(f"[RSS 抓取] 文章 {entry.get('title', 'Unknown')} 的时间年份异常: {time_value.tm_year}，已跳过")
                     return ""
                 return time.strftime('%Y-%m-%dT%H:%M:%SZ', time_value)
             else:
-                logging.warning(f"文章 {entry.get('title', 'Unknown')} 的时间格式未知: {type(time_value)}，已跳过")
+                logging.warning(f"[RSS 抓取] 文章 {entry.get('title', 'Unknown')} 的时间格式未知: {type(time_value)}，已跳过")
                 return ""
         
         if "published" in entry:
@@ -158,10 +158,10 @@ class FeedParserService:
             if not time_str:
                 return ""
             published = format_published_time(time_str)
-            logging.warning(f"文章 {entry.title} 未包含发布时间，已使用更新时间 {published}")
+            logging.warning(f"[RSS 抓取] 文章 {entry.title} 未包含发布时间，已使用更新时间 {published}")
             return published
 
-        logging.warning(f"文章 {entry.title} 未包含任何时间信息, 请检查原文, 跳过该文章")
+        logging.warning(f"[RSS 抓取] 文章 {entry.title} 未包含任何时间信息，请检查原文，跳过该文章")
         return ""
 
 
@@ -184,7 +184,7 @@ class LatestArticleTracker:
         
         # First run: no previous data exists, skip sending to prevent sending old articles
         if not previous_articles:
-            logging.info(f"首次运行：跳过推送以防止发送旧文章")
+            logging.info("[文章追踪] 首次运行：跳过推送以防止发送旧文章")
             self.store.save_articles(latest_articles)
             return None
         
@@ -210,16 +210,16 @@ class LatestArticleTracker:
                 if previous_latest_date is None or article_date > previous_latest_date:
                     truly_new_articles.append(article)
             except Exception as exc:
-                logging.warning(f"解析文章日期失败: {article.title}, 日期: {article.published}, 错误: {exc}")
+                logging.warning(f"[文章追踪] 解析文章日期失败: {article.title}, 日期: {article.published}, 错误: {exc}")
                 continue
         
         self.store.save_articles(latest_articles)
         
         if truly_new_articles:
-            logging.info(f"发现 {len(truly_new_articles)} 篇新文章（日期比之前更新）")
+            logging.info(f"[文章追踪] 发现 {len(truly_new_articles)} 篇新文章（日期比之前更新）")
             return [article.to_tracking_dict() for article in truly_new_articles]
         else:
-            logging.info(f"发现 {len(new_articles)} 篇新文章，但日期不够新，跳过推送")
+            logging.info(f"[文章追踪] 发现 {len(new_articles)} 篇新文章，但日期不够新，跳过推送")
             return None
 
     @staticmethod

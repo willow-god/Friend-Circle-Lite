@@ -14,6 +14,7 @@ from friend_circle_lite.crawler.http_client import WebFetchClient
 from friend_circle_lite.crawler.service import FeedResolver, FriendCircleCrawlService, SingleSiteCrawler
 from friend_circle_lite.all_friends import deal_with_large_data, merge_link_data_from_json_url
 from friend_circle_lite.app_config import ApplicationConfig
+from friend_circle_lite.cli import FriendCircleLiteApplication
 from friend_circle_lite.link_checker.service import LinkReachabilityService
 from friend_circle_lite.models import Article, CacheRecord, FeedEndpoint, LinkCheckRecord, LinkMethodStatus, Website
 from friend_circle_lite.outputs.legacy_api import _to_public_link
@@ -21,6 +22,23 @@ from friend_circle_lite.storage.diagnostics import SQLiteDebugDumper
 
 
 class RefactorContractsTest(unittest.TestCase):
+    def test_github_action_schedule_uses_22_minute_offset(self):
+        workflow = Path(".github/workflows/friend_circle_lite.yml").read_text(encoding="utf-8")
+
+        self.assertIn('cron: "22 */4 * * *"', workflow)
+        self.assertNotIn('cron: "0 */4 * * *"', workflow)
+
+    def test_github_actions_opt_into_node24_runtime(self):
+        workflow_paths = [
+            Path(".github/workflows/friend_circle_lite.yml"),
+            Path(".github/workflows/deal_subscribe_issue.yml"),
+        ]
+
+        for workflow_path in workflow_paths:
+            with self.subTest(workflow=str(workflow_path)):
+                workflow = workflow_path.read_text(encoding="utf-8")
+                self.assertIn("FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true", workflow)
+
     def test_link_check_uses_cached_rss_without_homepage_request(self):
         class Store:
             def load_records(self, urls):
@@ -54,6 +72,84 @@ class RefactorContractsTest(unittest.TestCase):
         self.assertTrue(records[0].reachable)
         self.assertTrue(records[0].crawl_allowed)
         self.assertEqual(records[0].best_method, "rss_cache")
+
+    def test_link_check_logs_total_cached_and_actual_check_counts(self):
+        class Store:
+            def load_records(self, urls):
+                return {
+                    "https://cached.example/": LinkCheckRecord(
+                        name="Cached",
+                        url="https://cached.example/",
+                        checked_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        reachable=True,
+                        crawl_allowed=False,
+                        best_method="homepage",
+                        best_latency=0.2,
+                    )
+                }
+
+            def save_records(self, records):
+                return True
+
+            def is_fresh(self, record, max_age_hours):
+                return True
+
+        class Discovery:
+            def discover(self, website_url):
+                return None
+
+        class Response:
+            status_code = 200
+
+        class Fetcher:
+            def get(self, *args, **kwargs):
+                return type("Result", (), {"response": Response(), "latency": 0.1, "success": True})()
+
+        service = LinkReachabilityService(
+            config=ApplicationConfig.from_dict({"link_check": {"max_age_hours": 24}}).link_check,
+            proxy_settings=ProxySettings(),
+            store=Store(),
+            feed_parser=type("Parser", (), {"parse": lambda self, *args, **kwargs: [], "last_latency": 0.01})(),
+            feed_discovery=Discovery(),
+            fetcher=Fetcher(),
+        )
+
+        with patch("logging.info") as info:
+            service.check_websites([
+                Website(name="Cached", url="https://cached.example/", avatar="cached.png"),
+                Website(name="Fresh", url="https://fresh.example/", avatar="fresh.png"),
+            ])
+
+        messages = "\n".join(str(call.args[0]) for call in info.call_args_list)
+        self.assertIn("[友链检测]", messages)
+        self.assertIn("友链总数 2 个", messages)
+        self.assertIn("缓存复用 1 个", messages)
+        self.assertIn("本次实际检测 1 个", messages)
+
+    def test_crawler_entry_logs_source_and_article_limit_with_module_label(self):
+        config = ApplicationConfig.from_dict({
+            "spider_settings": {
+                "enable": True,
+                "json_url": "https://example.com/friends.json",
+                "article_count": 3,
+            },
+            "runtime_paths": {
+                "all_json_file": "./tmp/all.json",
+                "errors_json_file": "./tmp/errors.json",
+                "link_json_file": "./tmp/link.json",
+            },
+        })
+        payload = ({"statistical_data": {}, "article_data": []}, [], {"statistical_data": {}, "link_data": []})
+
+        with patch("friend_circle_lite.cli.fetch_and_process_data", return_value=payload), \
+            patch("friend_circle_lite.cli.write_json"), \
+            patch("logging.info") as info:
+            FriendCircleLiteApplication(config).run_crawler_if_enabled()
+
+        messages = "\n".join(str(call.args[0]) for call in info.call_args_list)
+        self.assertIn("[爬虫入口]", messages)
+        self.assertIn("https://example.com/friends.json", messages)
+        self.assertIn("每站最多 3 篇文章", messages)
 
     def test_link_check_reuses_cached_linkpage_when_only_trailing_slash_differs(self):
         class Store:

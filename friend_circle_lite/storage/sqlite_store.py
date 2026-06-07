@@ -43,10 +43,10 @@ class FeedCacheStore:
         migrated_records = self._load_legacy_records()
         if migrated_records:
             if self.save_records(migrated_records):
-                logging.info(f"已从旧格式迁移 {len(migrated_records)} 条 RSS 缓存到 SQLite")
+                logging.info(f"[RSS 缓存] 已从旧格式迁移 {len(migrated_records)} 条 RSS 缓存到 SQLite")
             return migrated_records
 
-        logging.info(f"RSS 缓存文件不存在，将在首次抓取后自动创建")
+        logging.info("[RSS 缓存] RSS 缓存文件不存在，将在首次抓取后自动创建")
         return []
 
     def save_records(self, records: list[CacheRecord]) -> bool:
@@ -64,10 +64,10 @@ class FeedCacheStore:
                     [(record.name, record.url, record.source) for record in sorted(records, key=lambda item: item.name)],
                 )
                 connection.commit()
-            logging.info(f"RSS 缓存已保存（{len(records)} 条）")
+            logging.info(f"[RSS 缓存] RSS 缓存已保存（{len(records)} 条）")
             return True
         except Exception as exc:
-            logging.error(f"保存 RSS 缓存失败: {exc}")
+            logging.error(f"[RSS 缓存] 保存 RSS 缓存失败: {exc}")
             return False
 
     def _load_from_sqlite(self) -> list[CacheRecord]:
@@ -80,7 +80,7 @@ class FeedCacheStore:
                     "SELECT name, url, source FROM feed_cache ORDER BY name"
                 ).fetchall()
         except Exception as exc:
-            logging.warning(f"读取 RSS 缓存失败: {exc}")
+            logging.warning(f"[RSS 缓存] 读取 RSS 缓存失败: {exc}")
             return []
 
         return [
@@ -188,10 +188,10 @@ class ArticleTrackingStore:
         migrated_articles = self._load_legacy_json()
         if migrated_articles:
             if self.save_articles(migrated_articles):
-                logging.info(f"已从旧 JSON 格式迁移 {len(migrated_articles)} 篇文章记录到 SQLite")
+                logging.info(f"[文章追踪] 已从旧 JSON 格式迁移 {len(migrated_articles)} 篇文章记录到 SQLite")
             return migrated_articles
 
-        logging.info(f"文章追踪数据不存在，这是首次运行")
+        logging.info("[文章追踪] 文章追踪数据不存在，这是首次运行")
         return []
 
     def save_articles(self, articles: list[Article]) -> bool:
@@ -230,7 +230,7 @@ class ArticleTrackingStore:
                 connection.commit()
             return True
         except Exception as exc:
-            logging.error(f"保存文章追踪数据失败: {exc}")
+            logging.error(f"[文章追踪] 保存文章追踪数据失败: {exc}")
             return False
 
     def _load_from_sqlite(self) -> list[Article]:
@@ -245,7 +245,7 @@ class ArticleTrackingStore:
                        ORDER BY published DESC"""
                 ).fetchall()
         except Exception as exc:
-            logging.warning(f"读取文章追踪数据失败: {exc}")
+            logging.warning(f"[文章追踪] 读取文章追踪数据失败: {exc}")
             return []
 
         return [
@@ -336,7 +336,7 @@ class LinkCheckStore:
                     """
                 ).fetchall()
         except Exception as exc:
-            logging.warning(f"读取友链检测缓存失败: {exc}")
+            logging.warning(f"[友链检测] 读取友链检测缓存失败: {exc}")
             return {}
 
         allowed_urls = {normalize_homepage_url(url) for url in (urls or [])}
@@ -415,10 +415,10 @@ class LinkCheckStore:
                     [self._record_to_row(record) for record in records],
                 )
                 connection.commit()
-            logging.info(f"友链检测缓存已保存（{len(records)} 条）")
+            logging.info(f"[友链检测] 友链检测缓存已保存（{len(records)} 条）")
             return True
         except Exception as exc:
-            logging.error(f"保存友链检测缓存失败: {exc}")
+            logging.error(f"[友链检测] 保存友链检测缓存失败: {exc}")
             return False
 
     @staticmethod

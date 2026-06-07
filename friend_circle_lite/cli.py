@@ -53,12 +53,12 @@ class FriendCircleLiteApplication:
         """Run the article crawl and persist public output files when enabled."""
         spider_settings = self.config.spider_settings
         if not spider_settings.enable:
-            logging.info("⏭️ 爬虫未启用，跳过抓取流程")
+            logging.info("[爬虫入口] 爬虫未启用，跳过抓取流程")
             return
 
-        logging.info("✅ 爬虫已启用")
+        logging.info("[爬虫入口] 爬虫已启用")
         logging.info(
-            f"📥 正在从 {spider_settings.json_url} 获取数据，每个博客获取 {spider_settings.article_count} 篇文章"
+            f"[爬虫入口] 正在从 {spider_settings.json_url} 获取友链原始数据，每站最多 {spider_settings.article_count} 篇文章"
         )
 
         crawl_result = fetch_and_process_data(
@@ -70,14 +70,14 @@ class FriendCircleLiteApplication:
             proxy_settings=self.config.proxy_settings,
         )
         if crawl_result is None:
-            logging.error("❌ 抓取流程失败，未生成任何输出文件")
+            logging.error("[爬虫入口] 抓取流程失败，未生成任何输出文件")
             return
 
         result, lost_friends, link_payload = crawl_result
         result, lost_friends, link_payload = self._merge_remote_results_if_enabled(result, lost_friends, link_payload)
 
         article_count = len(result.get("article_data", []))
-        logging.info(f"📦 数据获取完毕，共有 {article_count} 篇文章，正在处理数据")
+        logging.info(f"[爬虫入口] 数据获取完毕，共有 {article_count} 篇文章，正在处理输出文件")
 
         result = deal_with_large_data(
             result,
@@ -168,7 +168,7 @@ class FriendCircleLiteApplication:
             return result, lost_friends, link_payload
 
         remote_url = merge_settings.remote_base_url
-        logging.info(f"🔀 合并功能开启，从 {remote_url} 获取外部数据")
+        logging.info(f"[数据合并] 合并功能开启，从 {remote_url} 获取外部数据")
 
         if merge_settings.merge_article_data:
             result = merge_data_from_json_url(result, f"{remote_url}/all.json")
@@ -193,7 +193,7 @@ class FriendCircleLiteApplication:
             f"https://api.github.com/repos/{github_username}/{github_repo}/issues"
             f"?state=closed&label=subscribed&per_page=200"
         )
-        logging.info(f"🔎 正在从 GitHub 获取订阅邮箱：{github_api_url}")
+        logging.info(f"[订阅邮箱] 正在从 GitHub 获取订阅邮箱：{github_api_url}")
         return extract_emails_from_issues(github_api_url)
 
     def _build_email_template_data(self, article: dict, github_username: str, github_repo: str) -> dict[str, str]:

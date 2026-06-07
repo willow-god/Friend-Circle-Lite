@@ -2,12 +2,13 @@ name: Friend Circle Lite
 
 on:
   schedule:
-    - cron: "0 */4 * * *"
+    - cron: "22 */4 * * *"
   workflow_dispatch:
 
 env:
   TZ: Asia/Shanghai
   PAGE_BRANCH: page
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   friend-circle-lite:

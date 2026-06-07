@@ -84,16 +84,27 @@ class LinkReachabilityService:
             else:
                 websites_to_check.append(website)
 
+        total_count = len(websites)
+        cached_count = total_count - len(websites_to_check)
+        logging.info(
+            f"[友链检测] 友链总数 {total_count} 个，缓存复用 {cached_count} 个，"
+            f"本次实际检测 {len(websites_to_check)} 个，缓存有效期 {self.config.max_age_hours} 小时"
+        )
+
         if websites_to_check:
-            logging.info(f"🔎 开始检测 {len(websites_to_check)} 个友链状态")
+            logging.info(
+                f"[友链检测] 开始实际检测 {len(websites_to_check)} 个友链状态，"
+                f"其余 {cached_count} 个复用缓存"
+            )
             checked_records = self._check_fresh_websites(websites_to_check, cached_records)
             self.store.save_records(checked_records)
             for record in checked_records:
                 records_by_url[record.url] = record
         else:
-            logging.info("🔎 友链状态缓存仍有效，本次复用缓存结果")
+            logging.info(f"[友链检测] 全部 {total_count} 个友链状态缓存仍有效，本次不发起友链检测请求")
 
         if backlink_refresh_records:
+            logging.info(f"[反链检测] 友链页地址变更，单独刷新 {len(backlink_refresh_records)} 个反链状态")
             self._refresh_backlinks_only(backlink_refresh_records)
 
         return [records_by_url.get(website.url) or LinkCheckRecord.unchecked(website) for website in websites]
@@ -114,7 +125,7 @@ class LinkReachabilityService:
                     try:
                         records.append(future.result())
                     except Exception as exc:
-                        logging.warning(f"友链 {website.name} 检测失败: {exc}")
+                        logging.warning(f"[友链检测] 友链 {website.name} 检测失败: {exc}")
                         records.append(self._build_failed_record(website, cached_records.get(website.url)))
         return records
 
