@@ -39,6 +39,41 @@ class RefactorContractsTest(unittest.TestCase):
                 workflow = workflow_path.read_text(encoding="utf-8")
                 self.assertIn("FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true", workflow)
 
+    def test_static_index_is_standalone_dashboard_with_view_switch(self):
+        html = Path("static/index.html").read_text(encoding="utf-8")
+
+        self.assertIn('data-view="links"', html)
+        self.assertIn('data-view="articles"', html)
+        self.assertIn('["first24", "前 24 条"]', html)
+        link_config_start = html.index("links:", html.index("viewConfig"))
+        self.assertIn('defaultFilter: "unreachable"', html[link_config_start:html.index("articles:", link_config_start)])
+        self.assertLess(
+            html.index('["unreachable", "不可达"]', link_config_start),
+            html.index('["all", "全部"]', link_config_start),
+        )
+        article_config_start = html.index("articles:", html.index("viewConfig"))
+        self.assertLess(
+            html.index('["first24", "前 24 条"]', article_config_start),
+            html.index('["all", "全部"]', article_config_start),
+        )
+        self.assertIn("scrollbar-width: thin", html)
+        self.assertIn("::-webkit-scrollbar", html)
+        self.assertIn(".dashboard {\n        display: grid;\n        align-items: start;", html)
+        self.assertIn(".content-grid {\n        display: grid;\n        align-items: start;", html)
+        self.assertIn("align-self: start", html)
+        self.assertIn("-webkit-line-clamp: 2", html)
+        self.assertIn("article-avatar-mark", html)
+        self.assertIn("article.avatar", html)
+        self.assertIn("https://github.com/willow-god/Friend-Circle-Lite", html)
+        self.assertIn("poem-background", html)
+        self.assertIn("icon-badge", html)
+        self.assertIn("title=", html)
+        self.assertIn("Promise.all", html)
+        self.assertIn("link.json", html)
+        self.assertIn("all.json", html)
+        self.assertNotIn("fclite.js", html)
+        self.assertNotIn("fclite.css", html)
+
     def test_link_check_uses_cached_rss_without_homepage_request(self):
         class Store:
             def load_records(self, urls):
