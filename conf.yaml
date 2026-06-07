@@ -17,8 +17,9 @@ spider_settings:
 # 说明：用于友链检测和 RSS 抓取。程序会先直连，请求失败且配置了代理时自动走代理。
 #   proxy_url: 代理地址涉及一定违规风险和隐私风险，请尽量不要写入配置文件。
 #              推荐在仓库环境变量 PROXY_URL 中配置，并让此处保持为空。
-#              推荐格式为代理前缀，例如 https://nginx.430070.xyz/
-#              程序会自动拼接为 https://nginx.430070.xyz/https://example.com/feed.xml
+#              推荐格式为代理前缀，例如 https://proxy.example.com/
+#              程序会自动拼接为 https://proxy.example.com/https://example.com/feed.xml
+#              如需自行搭建代理，可参考：https://blog.liushen.fun/posts/dd89adc9/
 #              兼容高级格式 https://proxy.example.com?url={url}，但普通反代场景不推荐这样写。
 #              留空则不使用代理。
 proxy_settings:
