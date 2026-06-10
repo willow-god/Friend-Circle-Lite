@@ -21,7 +21,7 @@ import requests
 from friend_circle_lite.config.models import LinkCheckConfig, ProxySettings
 from friend_circle_lite.crawler.feed_service import FeedDiscoveryService, FeedParserService
 from friend_circle_lite.crawler.http_client import WebFetchClient
-from friend_circle_lite.domain.models import CacheRecord, FeedEndpoint, LinkCheckRecord, LinkMethodStatus, Website, normalize_latency
+from friend_circle_lite.domain.models import Article, CacheRecord, FeedEndpoint, LinkCheckRecord, LinkMethodStatus, Website, normalize_latency
 from friend_circle_lite.storage.sqlite_store import LinkCheckStore
 
 
@@ -151,27 +151,30 @@ class LinkReachabilityService:
         configured = self.feed_lookup.get(website.name)
         if configured:
             endpoint = FeedEndpoint(url=configured.url, feed_type="specific", source=configured.source)
-            if self._feed_has_articles(endpoint, website):
-                return self._build_feed_record(website, endpoint, self._last_feed_latency())
+            latest_article = self._latest_feed_article(endpoint, website)
+            if latest_article:
+                return self._build_feed_record(website, endpoint, self._last_feed_latency(), latest_article)
             logging.warning(f"友链 {website.name} 的缓存 RSS 失效: {configured.url} ，开始重新探测")
             if configured.source == "cache":
                 self.feed_updates[website.name] = None
 
         discovered = self.feed_discovery.discover(website.url) if self.feed_discovery else None
-        if discovered and self._feed_has_articles(discovered, website):
+        latest_article = self._latest_feed_article(discovered, website) if discovered else None
+        if discovered and latest_article:
             self.feed_updates[website.name] = CacheRecord(name=website.name, url=discovered.url, source="cache")
-            return self._build_feed_record(website, discovered, self._last_feed_latency())
+            return self._build_feed_record(website, discovered, self._last_feed_latency(), latest_article)
         return None
 
-    def _feed_has_articles(self, endpoint: FeedEndpoint, website: Website) -> bool:
+    def _latest_feed_article(self, endpoint: FeedEndpoint, website: Website) -> Article | None:
         articles = self.feed_parser.parse(endpoint.url, count=1, blog_url=website.url)
-        return bool(articles)
+        return articles[0] if articles else None
 
     def _last_feed_latency(self) -> float:
         return normalize_latency(getattr(self.feed_parser, "last_latency", None))
 
-    def _build_feed_record(self, website: Website, endpoint: FeedEndpoint, latency: float) -> LinkCheckRecord:
+    def _build_feed_record(self, website: Website, endpoint: FeedEndpoint, latency: float, latest_article: Article) -> LinkCheckRecord:
         method = "rss_cache" if endpoint.source == "cache" else "rss"
+        last_post_published, last_post_days_ago = self._article_staleness(latest_article)
         return LinkCheckRecord(
             name=website.name,
             url=website.url,
@@ -184,7 +187,21 @@ class LinkReachabilityService:
             best_latency=latency,
             fail_count=0,
             rss_crawl_reason=f"allowed_by_{method}",
+            last_post_published=last_post_published,
+            last_post_days_ago=last_post_days_ago,
         )
+
+    @staticmethod
+    def _article_staleness(article: Article) -> tuple[str, int | None]:
+        published = article.published or ""
+        if not published:
+            return "", None
+        try:
+            published_at = datetime.strptime(published, "%Y-%m-%d %H:%M")
+        except ValueError:
+            return published, None
+        days_ago = max(0, int((datetime.now() - published_at).total_seconds() // 86400))
+        return published, days_ago
 
     def _request_homepage(self, url: str) -> LinkMethodStatus:
         if not self._is_url(url):
@@ -238,7 +255,7 @@ class LinkReachabilityService:
             reason = "api_reachable_without_rss"
         else:
             best_method = "none"
-            best_latency = self._first_measured_latency(homepage, api)
+            best_latency = -1
             reason = "blocked_unreachable"
 
         fail_count = 0 if reachable else ((cached.fail_count if cached else 0) + 1)

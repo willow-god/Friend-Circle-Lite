@@ -19,21 +19,22 @@
       @import url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=ZCOOL+XiaoWei&display=swap");
 
       :root {
-        --ink: #172629;
-        --ink-soft: #41565a;
-        --muted: #718486;
+        --ink: #14283d;
+        --ink-soft: #38566f;
+        --muted: #6c8298;
         --paper: #e7f3ff;
-        --paper-strong: #ffffff;
-        --line: #cadbd4;
-        --mist: #e5eee9;
-        --cyan: #147d80;
-        --cyan-deep: #0c5b60;
-        --leaf: #2b7a4e;
-        --amber: #ad7a21;
-        --red: #b7443d;
+        --paper-strong: #fbfdff;
+        --line: #bfd4e8;
+        --mist: #dcebf8;
+        --cyan: #2f7fa8;
+        --cyan-deep: #1d5577;
         --blue: #466f9f;
-        --shadow: 0 18px 42px rgba(24, 42, 43, 0.11);
-        --fine-shadow: 0 8px 22px rgba(24, 42, 43, 0.08);
+        --blue-pale: #eef7ff;
+        --blue-wash: #d7e9f8;
+        --blue-quiet: #88aeca;
+        --shadow: 0 18px 42px rgba(30, 70, 104, 0.12);
+        --fine-shadow: 0 8px 22px rgba(30, 70, 104, 0.09);
+        --control-height: 44px;
       }
 
       * {
@@ -85,10 +86,10 @@
         inset: 0;
         z-index: -2;
         background:
-          linear-gradient(115deg, rgba(20, 125, 128, 0.16), transparent 42%),
-          linear-gradient(245deg, rgba(173, 122, 33, 0.09), transparent 40%),
+          linear-gradient(115deg, rgba(47, 127, 168, 0.2), transparent 42%),
+          linear-gradient(245deg, rgba(136, 174, 202, 0.15), transparent 44%),
           url("./bg-light.webp") center / cover no-repeat;
-        opacity: 0.34;
+        opacity: 0.42;
       }
 
       body::after {
@@ -98,7 +99,7 @@
         z-index: -1;
         pointer-events: none;
         background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.82)),
+          linear-gradient(180deg, rgba(247, 252, 255, 0.58), rgba(247, 252, 255, 0.82)),
           linear-gradient(90deg, rgba(255, 255, 255, 0.25), transparent 22%, transparent 78%, rgba(255, 255, 255, 0.22));
       }
 
@@ -191,13 +192,10 @@
 
       .dashboard {
         display: grid;
-        align-items: start;
-        grid-template-columns: minmax(250px, 320px) minmax(0, 1fr);
-        gap: 16px;
+        gap: 14px;
         margin-top: 18px;
       }
 
-      .rail,
       .board {
         min-width: 0;
       }
@@ -210,14 +208,36 @@
         backdrop-filter: blur(14px);
       }
 
-      .rail {
+      .action-strip {
         display: grid;
         gap: 12px;
-        align-content: start;
+        padding: 14px;
+      }
+
+      .summary-row {
+        display: grid;
+        grid-template-columns: minmax(190px, 245px) minmax(0, 1fr);
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .control-row {
+        display: grid;
+        grid-template-columns: minmax(280px, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        border-top: 1px solid rgba(24, 34, 38, 0.09);
+        padding-top: 12px;
       }
 
       .time-panel {
-        padding: 16px;
+        overflow: hidden;
+        padding: 14px 16px;
+        border: 1px solid rgba(20, 125, 128, 0.16);
+        border-radius: 8px;
+        background:
+          linear-gradient(135deg, rgba(20, 125, 128, 0.08), transparent 58%),
+          rgba(255, 255, 255, 0.62);
       }
 
       .time-label {
@@ -238,32 +258,44 @@
         gap: 8px;
       }
 
+      .metrics-row {
+        grid-template-columns: repeat(4, minmax(130px, 1fr));
+        gap: 8px;
+      }
+
       .metric {
         position: relative;
         overflow: hidden;
-        padding: 14px 16px;
+        min-width: 0;
+        border: 1px solid rgba(20, 125, 128, 0.16);
+        border-radius: 8px;
+        background:
+          linear-gradient(135deg, rgba(47, 127, 168, 0.1), transparent 62%),
+          rgba(251, 253, 255, 0.66);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+        min-height: 72px;
+        padding: 11px 14px;
       }
 
-      .metric::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 5px;
-        height: 100%;
-        background: var(--cyan);
+      .metric:nth-child(2) {
+        border-color: rgba(70, 111, 159, 0.18);
+        background:
+          linear-gradient(135deg, rgba(70, 111, 159, 0.09), transparent 62%),
+          rgba(251, 253, 255, 0.66);
       }
 
-      .metric:nth-child(2)::before {
-        background: var(--leaf);
+      .metric:nth-child(3) {
+        border-color: rgba(29, 85, 119, 0.18);
+        background:
+          linear-gradient(135deg, rgba(29, 85, 119, 0.08), transparent 62%),
+          rgba(251, 253, 255, 0.68);
       }
 
-      .metric:nth-child(3)::before {
-        background: var(--amber);
-      }
-
-      .metric:nth-child(4)::before {
-        background: var(--red);
+      .metric:nth-child(4) {
+        border-color: rgba(136, 174, 202, 0.32);
+        background:
+          linear-gradient(135deg, rgba(136, 174, 202, 0.14), transparent 62%),
+          rgba(251, 253, 255, 0.68);
       }
 
       .metric-label {
@@ -277,9 +309,9 @@
 
       .metric-value {
         display: block;
-        margin-top: 3px;
+        margin-top: 4px;
         font-family: "ZCOOL XiaoWei", "Noto Serif SC", serif;
-        font-size: 2rem;
+        font-size: 1.65rem;
         line-height: 1.1;
       }
 
@@ -287,7 +319,12 @@
         display: grid;
         grid-template-columns: minmax(0, 1fr);
         gap: 10px;
-        padding: 12px;
+      }
+
+      .top-toolbar {
+        grid-template-columns: minmax(280px, 1fr) auto;
+        align-items: center;
+        min-width: 0;
       }
 
       .search-wrap {
@@ -304,12 +341,12 @@
 
       .search {
         width: 100%;
-        min-height: 44px;
+        height: var(--control-height);
         border: 1px solid var(--line);
         border-radius: 8px;
         background: rgba(255, 255, 255, 0.86);
         color: var(--ink);
-        padding: 10px 12px 10px 36px;
+        padding: 0 12px 0 36px;
         outline: none;
       }
 
@@ -322,24 +359,35 @@
         display: flex;
         flex-wrap: wrap;
         gap: 7px;
+        align-items: center;
       }
 
       .filter-button {
-        min-height: 34px;
-        border: 1px solid var(--line);
-        border-radius: 7px;
-        background: rgba(255, 255, 255, 0.8);
+        position: relative;
+        height: var(--control-height);
+        border: 1px solid rgba(20, 125, 128, 0.18);
+        border-radius: 6px 6px 8px 8px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(229, 238, 233, 0.68));
         color: var(--ink-soft);
         cursor: pointer;
-        padding: 6px 10px;
+        padding: 0 12px;
         font-size: 0.88rem;
-        transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+        box-shadow: inset 0 -3px 0 rgba(20, 125, 128, 0.08);
+        transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+      }
+
+      .filter-button:hover {
+        color: var(--cyan-deep);
+        transform: translateY(-1px);
       }
 
       .filter-button.active {
         border-color: var(--cyan-deep);
-        background: var(--cyan-deep);
+        background:
+          linear-gradient(180deg, var(--cyan), var(--cyan-deep));
         color: #fff;
+        box-shadow: inset 0 -3px 0 rgba(255, 255, 255, 0.18), 0 8px 18px rgba(12, 91, 96, 0.16);
       }
 
       .board {
@@ -386,8 +434,15 @@
       .content-grid {
         display: grid;
         align-items: start;
-        grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
-        gap: 10px;
+        gap: 12px;
+      }
+
+      .content-grid.is-links {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .content-grid.is-articles {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       }
 
       .link-card,
@@ -397,9 +452,9 @@
         min-width: 0;
         border: 1px solid var(--line);
         border-radius: 8px;
-        background: rgba(255, 255, 255, 0.84);
+        background: rgba(251, 253, 255, 0.84);
         box-shadow: var(--fine-shadow);
-        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
       }
 
       .link-card:hover,
@@ -410,7 +465,48 @@
       }
 
       .link-card {
-        padding: 13px;
+        overflow: hidden;
+        display: grid;
+        gap: 12px;
+        min-height: 174px;
+        padding: 14px;
+        border-color: rgba(70, 111, 159, 0.18);
+        background:
+          linear-gradient(145deg, rgba(47, 127, 168, 0.11), transparent 54%),
+          linear-gradient(320deg, rgba(136, 174, 202, 0.12), transparent 48%),
+          rgba(251, 253, 255, 0.9);
+      }
+
+      .link-card.is-unreachable {
+        border-color: rgba(29, 85, 119, 0.3);
+        background:
+          linear-gradient(145deg, rgba(29, 85, 119, 0.15), transparent 56%),
+          linear-gradient(320deg, rgba(136, 174, 202, 0.14), transparent 44%),
+          rgba(247, 252, 255, 0.92);
+      }
+
+      .link-card.is-stale {
+        border-color: rgba(70, 111, 159, 0.28);
+        background:
+          linear-gradient(145deg, rgba(70, 111, 159, 0.14), transparent 56%),
+          linear-gradient(320deg, rgba(151, 190, 216, 0.12), transparent 44%),
+          rgba(247, 252, 255, 0.92);
+      }
+
+      .link-card.is-healthy {
+        border-color: rgba(47, 127, 168, 0.22);
+        background:
+          linear-gradient(145deg, rgba(47, 127, 168, 0.1), transparent 56%),
+          rgba(251, 253, 255, 0.9);
+      }
+
+      .link-card.featured {
+        min-height: 248px;
+        border-color: rgba(29, 85, 119, 0.34);
+        background:
+          linear-gradient(150deg, rgba(29, 85, 119, 0.16), transparent 50%),
+          linear-gradient(315deg, rgba(136, 174, 202, 0.16), transparent 46%),
+          rgba(251, 253, 255, 0.94);
       }
 
       .link-main {
@@ -423,9 +519,9 @@
       .avatar {
         width: 44px;
         height: 44px;
-        border: 1px solid var(--line);
+        border: 1px solid rgba(70, 111, 159, 0.26);
         border-radius: 8px;
-        background: var(--mist);
+        background: var(--blue-wash);
         object-fit: cover;
       }
 
@@ -448,42 +544,123 @@
         white-space: nowrap;
       }
 
-      .badges {
-        display: flex;
+      .link-status {
+        justify-self: start;
+        display: inline-flex;
         align-items: center;
-        flex-wrap: wrap;
         gap: 6px;
-        margin-top: 12px;
+        margin-top: 8px;
+        border: 1px solid rgba(47, 127, 168, 0.18);
+        border-radius: 999px;
+        background: rgba(238, 247, 255, 0.76);
+        color: var(--cyan-deep);
+        padding: 4px 9px;
+        font-size: 0.75rem;
+        font-weight: 800;
       }
 
-      .icon-badge {
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        width: 28px;
-        height: 28px;
-        border: 1px solid rgba(24, 34, 38, 0.08);
-        border-radius: 999px;
-        background: var(--mist);
+      .link-insight {
+        display: grid;
+        gap: 2px;
+        align-self: end;
+        min-height: 52px;
+      }
+
+      .insight-label {
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 800;
+      }
+
+      .insight-value {
+        color: var(--ink);
+        font-family: "ZCOOL XiaoWei", "Noto Serif SC", serif;
+        font-size: 1.62rem;
+        font-weight: 400;
+        line-height: 1.08;
+      }
+
+      .surface-facts {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .surface-fact {
+        min-width: 0;
+        border: 1px solid rgba(70, 111, 159, 0.14);
+        border-radius: 8px;
+        background: rgba(251, 253, 255, 0.58);
+        padding: 7px 8px;
+      }
+
+      .surface-label {
+        display: block;
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 800;
+      }
+
+      .surface-value {
+        display: block;
+        overflow: hidden;
+        margin-top: 2px;
         color: var(--ink-soft);
+        font-size: 0.82rem;
+        font-weight: 900;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .link-detail {
+        display: none;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+        margin-top: 2px;
+      }
+
+      .link-card.featured .link-detail {
+        display: grid;
+        animation: inkReveal 0.32s ease both;
+      }
+
+      .detail-chip {
+        min-width: 0;
+        border: 1px solid rgba(70, 111, 159, 0.14);
+        border-radius: 8px;
+        background: rgba(238, 247, 255, 0.58);
+        padding: 8px 9px;
+      }
+
+      .detail-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--muted);
         font-size: 0.76rem;
         font-weight: 700;
-        cursor: help;
       }
 
-      .icon-badge.good {
-        background: rgba(40, 120, 76, 0.11);
-        color: var(--leaf);
+      .detail-value {
+        display: block;
+        overflow: hidden;
+        margin-top: 3px;
+        color: var(--ink);
+        font-size: 0.95rem;
+        font-weight: 900;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
-      .icon-badge.warn {
-        background: rgba(174, 118, 25, 0.13);
-        color: var(--amber);
-      }
-
-      .icon-badge.bad {
-        background: rgba(190, 62, 56, 0.12);
-        color: var(--red);
+      @keyframes inkReveal {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .poem-background {
@@ -511,19 +688,12 @@
         overflow: hidden;
         display: grid;
         align-content: space-between;
+        border-color: rgba(47, 127, 168, 0.14);
+        background:
+          linear-gradient(135deg, rgba(47, 127, 168, 0.08), transparent 54%),
+          rgba(251, 253, 255, 0.86);
         min-height: 118px;
         padding: 12px;
-      }
-
-      .article-card::before {
-        content: "";
-        position: absolute;
-        top: 12px;
-        bottom: 12px;
-        left: 0;
-        width: 3px;
-        border-radius: 999px;
-        background: linear-gradient(180deg, rgba(20, 125, 128, 0.68), rgba(173, 122, 33, 0.5));
       }
 
       .article-title {
@@ -545,12 +715,12 @@
         display: inline-flex;
         width: 38px;
         height: 38px;
-        border: 1px solid rgba(183, 68, 61, 0.28);
+        border: 1px solid rgba(70, 111, 159, 0.28);
         border-radius: 999px;
         background:
-          linear-gradient(135deg, rgba(183, 68, 61, 0.16), rgba(20, 125, 128, 0.12)),
-          rgba(255, 255, 255, 0.76);
-        box-shadow: 0 8px 18px rgba(23, 38, 41, 0.12);
+          linear-gradient(135deg, rgba(70, 111, 159, 0.16), rgba(47, 127, 168, 0.12)),
+          rgba(251, 253, 255, 0.76);
+        box-shadow: 0 8px 18px rgba(30, 70, 104, 0.12);
         padding: 3px;
         transform: rotate(2deg);
       }
@@ -559,7 +729,7 @@
         width: 100%;
         height: 100%;
         border-radius: inherit;
-        background: var(--mist);
+        background: var(--blue-wash);
         object-fit: cover;
       }
 
@@ -614,7 +784,9 @@
 
       @media (max-width: 900px) {
         .masthead,
-        .dashboard {
+        .summary-row,
+        .control-row,
+        .top-toolbar {
           grid-template-columns: 1fr;
         }
 
@@ -623,7 +795,11 @@
           min-width: 0;
         }
 
-        .metrics {
+        .metrics-row {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .content-grid.is-links {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
@@ -642,9 +818,11 @@
           grid-template-columns: 1fr;
         }
 
-        .metrics,
-        .content-grid {
-          grid-template-columns: 1fr;
+        .metrics-row,
+        .content-grid.is-links,
+        .content-grid.is-articles,
+        .link-detail {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
         .board-head,
@@ -679,6 +857,15 @@
           font-size: 2rem;
         }
       }
+
+      @media (max-width: 390px) {
+        .metrics-row,
+        .content-grid.is-links,
+        .content-grid.is-articles,
+        .link-detail {
+          grid-template-columns: 1fr;
+        }
+      }
     </style>
   </head>
   <body>
@@ -702,20 +889,22 @@
       </header>
 
       <section class="dashboard">
-        <aside class="rail">
-          <section class="panel time-panel">
-            <span class="time-label">CURRENT VIEW TIME</span>
-            <strong class="time-value" id="footer-time">加载中...</strong>
-          </section>
-          <section class="metrics" id="summary"></section>
-          <section class="panel toolbar">
+        <section class="panel action-strip">
+          <div class="summary-row">
+            <section class="time-panel">
+              <span class="time-label">CURRENT VIEW TIME</span>
+              <strong class="time-value" id="footer-time">加载中...</strong>
+            </section>
+            <section class="metrics metrics-row" id="summary"></section>
+          </div>
+          <section class="control-row toolbar top-toolbar">
             <div class="search-wrap">
               <i class="fa-solid fa-magnifying-glass"></i>
               <input class="search" id="search" type="search" placeholder="搜索名称、链接、文章或作者" />
             </div>
             <div class="filters" id="filters"></div>
           </section>
-        </aside>
+        </section>
 
         <section class="board">
           <header class="panel board-head">
@@ -765,9 +954,9 @@
           defaultFilter: "unreachable",
           filters: [
             ["unreachable", "不可达"],
-            ["reachable", "可达"],
+            ["stale", "久未更新"],
             ["crawlable", "可抓取"],
-            ["backlink", "有反链"],
+            ["backlink", "反链"],
             ["all", "全部"],
           ],
         },
@@ -790,8 +979,8 @@
         fetchJSON("/all.json"),
       ])
         .then(([linkPayload, articlePayload]) => {
-          state.links = linkPayload.link_data || [];
-          state.linkStats = linkPayload.statistical_data || {};
+          state.links = normalizeLinks(linkPayload);
+          state.linkStats = normalizeLinkStats(linkPayload);
           state.articles = articlePayload.article_data || [];
           state.articleStats = articlePayload.statistical_data || {};
           render();
@@ -823,6 +1012,34 @@
         });
       }
 
+      function normalizeLinks(payload) {
+        const items = payload.links || payload.link_data || [];
+        return items.map((item) => ({
+          name: item.name || "",
+          url: item.url || item.link || "",
+          page: item.page || item.link_page || "",
+          avatar: item.avatar || "",
+          ok: "ok" in item ? item.ok : Boolean(item.reachable),
+          rss: "rss" in item ? item.rss : Boolean(item.crawlable),
+          latency: item.latency,
+          fails: Number(item.fails ?? item.fail_count ?? 0),
+          backlink: "backlink" in item ? item.backlink : item.has_backlink,
+          updated: item.updated || item.last_post_published || "",
+          stale_days: item.stale_days ?? item.last_post_days_ago ?? null,
+        }));
+      }
+
+      function normalizeLinkStats(payload) {
+        const stats = payload.stats || payload.statistical_data || {};
+        return {
+          total: stats.total ?? stats.link_total_num,
+          ok: stats.ok ?? stats.link_reachable_num,
+          rss: stats.rss ?? stats.crawl_allowed_num,
+          backlink: stats.backlink ?? stats.has_author_link_num,
+          checked: stats.checked ?? stats.link_last_checked_time,
+        };
+      }
+
       function render() {
         const config = viewConfig[state.view];
         document.getElementById("view-description").textContent = config.description;
@@ -846,10 +1063,10 @@
       function linkMetrics() {
         const stats = state.linkStats;
         return [
-          ["友链总数", stats.link_total_num ?? state.links.length, "fa-solid fa-users"],
-          ["可达友链", stats.link_reachable_num ?? state.links.filter((item) => item.reachable).length, "fa-solid fa-circle-check"],
-          ["可抓取 RSS", stats.crawl_allowed_num ?? state.links.filter((item) => item.crawlable).length, "fa-solid fa-rss"],
-          ["有反链", stats.has_author_link_num ?? state.links.filter((item) => item.has_backlink).length, "fa-solid fa-heart-circle-check"],
+          ["友链总数", stats.total ?? state.links.length, "fa-solid fa-users"],
+          ["可达友链", stats.ok ?? state.links.filter((item) => item.ok).length, "fa-solid fa-circle-check"],
+          ["可抓取 RSS", stats.rss ?? state.links.filter((item) => item.rss).length, "fa-solid fa-rss"],
+          ["有反链", stats.backlink ?? state.links.filter((item) => item.backlink).length, "fa-solid fa-heart-circle-check"],
         ];
       }
 
@@ -879,6 +1096,8 @@
       }
 
       function renderContent() {
+        const content = document.getElementById("content");
+        content.className = `content-grid ${state.view === "links" ? "is-links" : "is-articles"}`;
         if (state.view === "links") {
           renderLinks();
         } else {
@@ -890,38 +1109,131 @@
         const links = state.links
           .filter(matchKeywordForLink)
           .filter(matchLinkFilter)
-          .sort((left, right) => linkRank(left) - linkRank(right));
-        document.getElementById("content").innerHTML = links.map(renderLinkCard).join("") ||
+          .sort(sortLinks);
+        const content = document.getElementById("content");
+        content.innerHTML = links.map(renderLinkCard).join("") ||
           `<div class="empty">当前条件下没有友链数据</div>`;
       }
 
       function renderLinkCard(link) {
-        const status = link.reachable ? "good" : "bad";
-        const statusText = link.reachable ? "可达" : "不可达";
-        const crawlText = link.crawlable ? "可抓取" : "不可抓取";
-        const crawlClass = link.crawlable ? "good" : "warn";
-        const backlinkText = link.has_backlink === true ? "有反链" : link.has_backlink === false ? "无反链" : "未检测";
-        const backlinkClass = link.has_backlink === true ? "good" : link.has_backlink === false ? "bad" : "";
-        const latencyText = formatLatency(link.latency);
-        const failCount = Number(link.fail_count || 0);
+        const featured = isFeatured(link);
+        const insight = primaryInsight(link);
+        const cardClass = [
+          "link-card",
+          featured ? "featured" : "",
+          !link.ok ? "is-unreachable" : link.rss && link.stale_days !== null ? "is-stale" : "is-healthy",
+        ].filter(Boolean).join(" ");
         return `
-          <article class="link-card">
+          <article class="${cardClass}">
             <div class="link-main">
               <img class="avatar" src="${escapeAttr(link.avatar || "./favicon.ico")}" alt="" loading="lazy" />
               <div>
-                <a class="name" href="${escapeAttr(link.link)}" target="_blank" rel="noopener noreferrer">${escapeHTML(link.name)}</a>
-                <a class="url" href="${escapeAttr(link.link)}" target="_blank" rel="noopener noreferrer">${escapeHTML(link.link)}</a>
+                <a class="name" href="${escapeAttr(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(link.name)}</a>
+                <a class="url" href="${escapeAttr(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(link.url)}</a>
               </div>
             </div>
-            <div class="badges">
-              <span class="icon-badge ${status}" title="站点状态：${escapeAttr(statusText)}"><i class="fa-solid fa-signal"></i></span>
-              <span class="icon-badge ${crawlClass}" title="RSS 状态：${escapeAttr(crawlText)}"><i class="fa-solid fa-rss"></i></span>
-              <span class="icon-badge ${backlinkClass}" title="反链状态：${escapeAttr(backlinkText)}"><i class="fa-solid fa-heart"></i></span>
-              <span class="icon-badge" title="参考延迟：${escapeAttr(latencyText)}"><i class="fa-regular fa-clock"></i></span>
-              <span class="icon-badge" title="连续失败次数：${escapeAttr(failCount)} 次"><i class="fa-solid fa-rotate"></i></span>
+            <span class="link-status"><i class="${insight.icon}"></i>${escapeHTML(insight.status)}</span>
+            <div class="link-insight">
+              <span class="insight-label">${escapeHTML(insight.label)}</span>
+              <strong class="insight-value">${escapeHTML(insight.value)}</strong>
             </div>
+            ${renderSurfaceFacts(link)}
+            ${featured ? renderLinkDetails(link) : ""}
           </article>
         `;
+      }
+
+      function primaryInsight(link) {
+        if (!link.ok) {
+          return { status: "暂不可达", label: "可用性", value: "离线", icon: "fa-solid fa-cloud" };
+        }
+        if (link.rss && link.stale_days !== null && link.stale_days !== undefined) {
+          return { status: "RSS 可解析", label: "最近更新", value: `${link.stale_days} 天未更`, icon: "fa-solid fa-rss" };
+        }
+        if (link.rss) {
+          return { status: "RSS 可解析", label: "最近更新", value: compactUpdateAge(link), icon: "fa-solid fa-rss" };
+        }
+        return { status: "站点可达", label: "可用性", value: "在线", icon: "fa-solid fa-water" };
+      }
+
+      function renderSurfaceFacts(link) {
+        return `
+          <div class="surface-facts">
+            ${surfaceFacts(link).map(([label, value]) => `
+              <span class="surface-fact">
+                <span class="surface-label">${escapeHTML(label)}</span>
+                <strong class="surface-value">${escapeHTML(value)}</strong>
+              </span>
+            `).join("")}
+          </div>
+        `;
+      }
+
+      function surfaceFacts(link) {
+        if (!link.ok) {
+          return [
+            ["RSS", formatRss(link)],
+            ["反链", formatBacklink(link)],
+            ["文章", compactUpdateAge(link)],
+          ];
+        }
+        if (link.rss && link.stale_days !== null && link.stale_days !== undefined) {
+          return [
+            ["状态", "在线"],
+            ["反链", formatBacklink(link)],
+            ["延迟", formatLatency(link.latency)],
+          ];
+        }
+        return [
+          ["RSS", formatRss(link)],
+          ["更新", compactUpdateAge(link)],
+          ["反链", formatBacklink(link)],
+        ];
+      }
+
+      function renderLinkDetails(link) {
+        return `
+          <div class="link-detail">
+            ${visibleDetails(link).map(([label, value, icon]) => `
+              <span class="detail-chip">
+                <span class="detail-label"><i class="${icon}"></i>${escapeHTML(label)}</span>
+                <strong class="detail-value">${escapeHTML(value)}</strong>
+              </span>
+            `).join("")}
+          </div>
+        `;
+      }
+
+      function visibleDetails(link) {
+        if (state.filter === "unreachable") {
+          return [
+            ["RSS", formatRss(link), "fa-solid fa-rss"],
+            ["友链页", link.page ? "已记录" : "暂无记录", "fa-solid fa-link"],
+            ["文章", compactUpdateAge(link), "fa-regular fa-newspaper"],
+          ];
+        }
+        if (state.filter === "stale") {
+          return [
+            ["未更新", formatStaleDays(link), "fa-regular fa-calendar-xmark"],
+            ["最新", link.updated || "暂无记录", "fa-regular fa-newspaper"],
+            ["站点", link.ok ? "在线" : "离线", "fa-solid fa-water"],
+          ];
+        }
+        if (state.filter === "crawlable") {
+          return [
+            ["RSS", formatRss(link), "fa-solid fa-rss"],
+            ["最新", link.updated || "暂无记录", "fa-regular fa-newspaper"],
+            ["延迟", formatLatency(link.latency), "fa-regular fa-clock"],
+          ];
+        }
+        if (state.filter === "backlink") {
+          return [
+            ["反链", formatBacklink(link), "fa-solid fa-heart"],
+            ["友链页", link.page || "暂无记录", "fa-solid fa-link"],
+            ["状态", link.ok ? "站点可达" : "站点不可达", "fa-solid fa-signal"],
+          ];
+        }
+        return [];
       }
 
       function renderArticles() {
@@ -952,7 +1264,7 @@
 
       function matchKeywordForLink(link) {
         if (!state.keyword) return true;
-        return [link.name, link.link, link.link_page].some((value) =>
+        return [link.name, link.url, link.page].some((value) =>
           String(value || "").toLowerCase().includes(state.keyword)
         );
       }
@@ -965,10 +1277,10 @@
       }
 
       function matchLinkFilter(link) {
-        if (state.filter === "reachable") return link.reachable;
-        if (state.filter === "crawlable") return link.crawlable;
-        if (state.filter === "unreachable") return !link.reachable;
-        if (state.filter === "backlink") return link.has_backlink === true;
+        if (state.filter === "unreachable") return !link.ok;
+        if (state.filter === "stale") return link.rss && link.stale_days !== null;
+        if (state.filter === "crawlable") return link.rss;
+        if (state.filter === "backlink") return link.backlink === true;
         return true;
       }
 
@@ -990,21 +1302,72 @@
         return Number.isNaN(date.getTime()) ? null : date;
       }
 
+      function sortLinks(left, right) {
+        if (state.filter === "unreachable") {
+          return Number(right.fails || 0) - Number(left.fails || 0) || left.name.localeCompare(right.name, "zh-Hans-CN");
+        }
+        if (state.filter === "stale") {
+          return Number(right.stale_days ?? -1) - Number(left.stale_days ?? -1) || left.name.localeCompare(right.name, "zh-Hans-CN");
+        }
+        if (state.filter === "crawlable") {
+          return normalizeSortLatency(left.latency) - normalizeSortLatency(right.latency) ||
+            Number(left.stale_days ?? 99999) - Number(right.stale_days ?? 99999);
+        }
+        if (state.filter === "backlink") {
+          return Number(right.ok) - Number(left.ok) || left.name.localeCompare(right.name, "zh-Hans-CN");
+        }
+        return linkRank(left) - linkRank(right) || left.name.localeCompare(right.name, "zh-Hans-CN");
+      }
+
+      function normalizeSortLatency(value) {
+        const latency = Number(value);
+        return Number.isFinite(latency) && latency >= 0 ? latency : 99999;
+      }
+
       function linkRank(link) {
-        if (!link.reachable) return 0;
-        if (!link.crawlable) return 1;
+        if (!link.ok) return 0;
+        if (!link.rss) return 1;
         return 2;
+      }
+
+      function isFeatured(link) {
+        if (state.filter === "unreachable") return !link.ok;
+        if (state.filter === "stale") return link.rss && link.stale_days !== null;
+        if (state.filter === "crawlable") return link.rss;
+        if (state.filter === "backlink") return link.backlink === true;
+        return false;
       }
 
       function formatLatency(value) {
         const latency = Number(value);
-        if (!Number.isFinite(latency)) return "无延迟";
+        if (!Number.isFinite(latency) || latency < 0) return "无延迟";
         return `${latency.toFixed(2)} 秒`;
+      }
+
+      function compactUpdateAge(link) {
+        if (link.stale_days !== null && link.stale_days !== undefined) return `${link.stale_days} 天未更`;
+        if (link.updated) return "有记录";
+        return "暂无记录";
+      }
+
+      function formatRss(link) {
+        return link.rss ? "可解析" : "未解析";
+      }
+
+      function formatStaleDays(link) {
+        if (link.stale_days === null || link.stale_days === undefined) return "暂无记录";
+        return `${link.stale_days} 天`;
+      }
+
+      function formatBacklink(link) {
+        if (link.backlink === true) return "已确认";
+        if (link.backlink === false) return "未发现";
+        return "未检测";
       }
 
       function renderTime() {
         const time = state.view === "links"
-          ? state.linkStats.link_last_checked_time
+          ? state.linkStats.checked
           : state.articleStats.last_updated_time;
         document.getElementById("footer-time").textContent = time || "暂无更新时间";
       }

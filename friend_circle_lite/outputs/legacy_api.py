@@ -88,20 +88,20 @@ def merge_link_data_from_json_url(link_data, merge_json_url):
         logging.warning(f"无法获取友链数据：{merge_json_url} ，跳过友链数据合并。错误：{e}")
         return link_data
 
-    if 'link_data' not in remote_data:
-        logging.warning(f"远程数据不包含 link_data 字段，跳过友链数据合并")
+    if not _extract_links(remote_data):
+        logging.warning("远程数据不包含可用友链字段，跳过友链数据合并")
         return link_data
 
-    local_links = link_data.get('link_data', [])
-    remote_links = remote_data.get('link_data', [])
+    local_links = [_normalize_merge_link(link) for link in _extract_links(link_data)]
+    remote_links = [_normalize_merge_link(link) for link in _extract_links(remote_data)]
 
     logging.info(f"开始合并友链数据，本地 {len(local_links)} 条，远程 {len(remote_links)} 条")
 
     # 按 URL 建立索引
-    link_map = {link['link']: link for link in local_links}
+    link_map = {link["url"]: link for link in local_links}
 
     for remote_link in remote_links:
-        url = remote_link['link']
+        url = remote_link["url"]
         if url not in link_map:
             # 新友链，直接添加
             link_map[url] = remote_link
@@ -110,14 +110,16 @@ def merge_link_data_from_json_url(link_data, merge_json_url):
             local_link = link_map[url]
             link_map[url] = _merge_single_link(local_link, remote_link)
 
-    merged_links = [_to_public_link(link) for link in link_map.values()]
-    logging.info(f"合并友链数据完成，共有 {len(merged_links)} 条友链")
-
     # 重新计算统计数据
-    merged_stats = _recalculate_link_statistics(merged_links)
+    merged_records = list(link_map.values())
+    merged_stats = _recalculate_link_statistics(merged_records)
+    merged_links = [_to_public_link(link) for link in merged_records]
+    logging.info(f"合并友链数据完成，共有 {len(merged_links)} 条友链")
+    local_stats = _extract_stats(link_data)
+    remote_stats = _extract_stats(remote_data)
     checked_times = [
-        link_data.get("statistical_data", {}).get("link_last_checked_time", ""),
-        remote_data.get("statistical_data", {}).get("link_last_checked_time", ""),
+        local_stats.get("checked", "") or local_stats.get("link_last_checked_time", ""),
+        remote_stats.get("checked", "") or remote_stats.get("link_last_checked_time", ""),
         merged_stats.get("link_last_checked_time", ""),
     ]
     merged_stats["link_last_checked_time"] = max([item for item in checked_times if item] or [""])
@@ -162,60 +164,102 @@ def _merge_single_link(local, remote):
             alt = remote
 
     # 反链取并集
-    local_backlink = local.get('has_backlink')
-    remote_backlink = remote.get('has_backlink')
+    local_backlink = local.get('backlink')
+    remote_backlink = remote.get('backlink')
     if local_backlink is True or remote_backlink is True:
-        base['has_backlink'] = True
+        base['backlink'] = True
     elif local_backlink is False and remote_backlink is False:
-        base['has_backlink'] = False
+        base['backlink'] = False
     # 否则保持 base 的值
 
     # 失败次数取最小值
-    local_fail = local.get('fail_count', 0)
-    remote_fail = remote.get('fail_count', 0)
-    base['fail_count'] = min(local_fail, remote_fail)
+    local_fail = local.get('fails', 0)
+    remote_fail = remote.get('fails', 0)
+    base['fails'] = min(local_fail, remote_fail)
+
+    # 最新文章时间取更新的一侧，天数取更小的一侧
+    if remote.get("updated", "") > local.get("updated", ""):
+        base["updated"] = remote.get("updated", "")
+    elif local.get("updated"):
+        base["updated"] = local.get("updated", "")
+    stale_values = [value for value in (local.get("stale_days"), remote.get("stale_days")) if value is not None]
+    base["stale_days"] = min(stale_values) if stale_values else None
 
     # 检测时间取最新
-    local_checked = local.get('checked_at', '')
-    remote_checked = remote.get('checked_at', '')
+    local_checked = local.get('_checked', '')
+    remote_checked = remote.get('_checked', '')
     if remote_checked > local_checked:
-        base['checked_at'] = remote_checked
+        base['_checked'] = remote_checked
 
     return base
 
 
 def _link_priority(link, method_priority):
     """计算友链合并优先级，兼容新旧 link.json 字段。"""
-    if link.get("crawlable"):
-        return 10 + method_priority.get(link.get("method", ""), 0)
-    if link.get("reachable"):
-        return 5 + method_priority.get(link.get("method", ""), 0)
-    return method_priority.get(link.get("method", ""), 0)
+    if link.get("rss"):
+        return 10 + method_priority.get(link.get("_method", ""), 0)
+    if link.get("ok"):
+        return 5 + method_priority.get(link.get("_method", ""), 0)
+    return method_priority.get(link.get("_method", ""), 0)
 
 
 def _to_public_link(link):
     """转换为前端需要的精简友链状态结构。"""
-    latency = normalize_latency(link.get("latency", link.get("best_latency")))
+    normalized = _normalize_merge_link(link)
+    latency = normalize_latency(normalized.get("latency")) if normalized.get("ok") else -1
+    return {
+        "name": normalized.get("name", ""),
+        "link": normalized.get("url", ""),
+        "link_page": normalized.get("page", ""),
+        "avatar": normalized.get("avatar", ""),
+        "reachable": bool(normalized.get("ok")),
+        "crawlable": bool(normalized.get("rss")),
+        "latency": latency,
+        "fail_count": int(normalized.get("fails", 0) or 0),
+        "has_backlink": normalized.get("backlink"),
+        "updated": normalized.get("updated", ""),
+        "stale_days": normalized.get("stale_days"),
+    }
+
+
+def _extract_links(payload):
+    """读取新旧 link.json 列表字段。"""
+    return payload.get("links") or payload.get("link_data") or []
+
+
+def _extract_stats(payload):
+    """读取新旧 link.json 统计字段。"""
+    return payload.get("stats") or payload.get("statistical_data") or {}
+
+
+def _normalize_merge_link(link):
+    """把新旧单条友链结构统一为内部紧凑结构。"""
+    ok = link.get("ok") if "ok" in link else link.get("reachable")
+    rss = link.get("rss") if "rss" in link else link.get("crawlable", link.get("crawl_allowed"))
     return {
         "name": link.get("name", ""),
-        "link": link.get("link") or link.get("url", ""),
-        "link_page": link.get("link_page") or link.get("linkpage", ""),
+        "url": link.get("url") or link.get("link") or "",
+        "page": link.get("page") or link.get("link_page") or link.get("linkpage", ""),
         "avatar": link.get("avatar", ""),
-        "reachable": bool(link.get("reachable")),
-        "crawlable": bool(link.get("crawlable") if "crawlable" in link else link.get("crawl_allowed")),
-        "latency": latency,
-        "fail_count": int(link.get("fail_count", 0) or 0),
-        "has_backlink": link.get("has_backlink"),
+        "ok": bool(ok),
+        "rss": bool(rss),
+        "latency": link.get("latency", link.get("best_latency", -1)),
+        "fails": int(link.get("fails", link.get("fail_count", 0)) or 0),
+        "backlink": link.get("backlink") if "backlink" in link else link.get("has_backlink"),
+        "updated": link.get("updated") or link.get("last_post_published", ""),
+        "stale_days": link.get("stale_days", link.get("last_post_days_ago")),
+        "_method": link.get("method") or link.get("best_method", ""),
+        "_checked": link.get("checked_at", ""),
     }
 
 
 def _recalculate_link_statistics(links):
     """重新计算合并后的友链统计数据。"""
-    reachable = [link for link in links if link.get('reachable')]
-    crawl_allowed = [link for link in links if link.get('crawlable')]
-    api_only = [link for link in links if link.get('method') == 'api']
-    has_backlink = [link for link in links if link.get('has_backlink') is True]
-    checked_times = [link.get('checked_at', '') for link in links if link.get('checked_at')]
+    reachable = [link for link in links if link.get('ok')]
+    crawl_allowed = [link for link in links if link.get('rss')]
+    api_only = [link for link in links if link.get('_method') == 'api']
+    has_backlink = [link for link in links if link.get('backlink') is True]
+    checked_times = [link.get('_checked', '') for link in links if link.get('_checked')]
 
     return {
         'link_total_num': len(links),

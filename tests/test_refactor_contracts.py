@@ -1,8 +1,9 @@
 import unittest
+import json
 import sqlite3
 import tempfile
 from contextlib import closing
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from unittest.mock import patch
 
@@ -19,6 +20,7 @@ from friend_circle_lite.link_checker.service import LinkReachabilityService
 from friend_circle_lite.models import Article, CacheRecord, FeedEndpoint, LinkCheckRecord, LinkMethodStatus, Website
 from friend_circle_lite.outputs.legacy_api import _to_public_link
 from friend_circle_lite.storage.diagnostics import SQLiteDebugDumper
+from friend_circle_lite.utils.json import write_json
 
 
 class RefactorContractsTest(unittest.TestCase):
@@ -58,19 +60,49 @@ class RefactorContractsTest(unittest.TestCase):
         )
         self.assertIn("scrollbar-width: thin", html)
         self.assertIn("::-webkit-scrollbar", html)
-        self.assertIn(".dashboard {\n        display: grid;\n        align-items: start;", html)
+        self.assertIn(".dashboard {\n        display: grid;\n        gap: 14px;", html)
+        self.assertIn(".action-strip", html)
+        self.assertIn(".summary-row", html)
+        self.assertIn(".control-row", html)
+        self.assertIn(".metrics-row", html)
+        self.assertIn("summary-row", html)
+        self.assertIn("control-row", html)
+        self.assertIn("metrics metrics-row", html)
+        self.assertIn("toolbar top-toolbar", html)
+        self.assertIn("--control-height: 44px", html)
+        self.assertIn("height: var(--control-height)", html)
         self.assertIn(".content-grid {\n        display: grid;\n        align-items: start;", html)
+        self.assertIn(".content-grid.is-links {\n        grid-template-columns: repeat(3, minmax(0, 1fr));", html)
+        self.assertIn('content.className = `content-grid ${state.view === "links" ? "is-links" : "is-articles"}`;', html)
+        self.assertIn(".link-card.featured", html)
+        self.assertIn('["stale", "久未更新"]', html)
+        self.assertIn("sortLinks", html)
+        self.assertIn("visibleDetails", html)
+        self.assertIn("renderSurfaceFacts", html)
+        self.assertIn("primaryInsight", html)
+        self.assertNotIn("formatFailureAge", html)
+        self.assertNotIn("fa-solid fa-rotate", html)
+        self.assertNotIn("--leaf", html)
+        self.assertNotIn("--amber", html)
+        self.assertNotIn("--red", html)
+        self.assertNotIn(".icon-badge.good", html)
+        self.assertNotIn(".icon-badge.warn", html)
+        self.assertNotIn(".icon-badge.bad", html)
         self.assertIn("align-self: start", html)
         self.assertIn("-webkit-line-clamp: 2", html)
         self.assertIn("article-avatar-mark", html)
         self.assertIn("article.avatar", html)
         self.assertIn("https://github.com/willow-god/Friend-Circle-Lite", html)
         self.assertIn("poem-background", html)
-        self.assertIn("icon-badge", html)
+        self.assertIn("link-status", html)
+        self.assertIn("surface-facts", html)
         self.assertIn("title=", html)
         self.assertIn("Promise.all", html)
         self.assertIn("link.json", html)
         self.assertIn("all.json", html)
+        self.assertNotIn(".metric::before", html)
+        self.assertNotIn(".link-card::before", html)
+        self.assertNotIn(".article-card::before", html)
         self.assertNotIn("fclite.js", html)
         self.assertNotIn("fclite.css", html)
 
@@ -107,6 +139,49 @@ class RefactorContractsTest(unittest.TestCase):
         self.assertTrue(records[0].reachable)
         self.assertTrue(records[0].crawl_allowed)
         self.assertEqual(records[0].best_method, "rss_cache")
+
+    def test_link_check_records_latest_rss_article_staleness(self):
+        class Store:
+            def load_records(self, urls):
+                return {}
+
+            def save_records(self, records):
+                return True
+
+        published = (datetime.now() - timedelta(days=8, hours=1)).strftime("%Y-%m-%d %H:%M")
+
+        class Parser:
+            last_latency = 0.42
+
+            def parse(self, feed_url, count=1, blog_url=""):
+                return [Article(title="Latest", author="Site", link="https://site.example/post", published=published)]
+
+        service = LinkReachabilityService(
+            config=ApplicationConfig.from_dict({"link_check": {"enable": True}}).link_check,
+            proxy_settings=ProxySettings(),
+            store=Store(),
+            feed_records=[CacheRecord(name="Site", url="https://site.example/rss.xml", source="cache")],
+            feed_parser=Parser(),
+        )
+
+        record = service.check_websites([Website(name="Site", url="https://site.example", avatar="avatar.png")])[0]
+        public_link = record.to_link_dict()
+
+        self.assertEqual(record.last_post_published, published)
+        self.assertEqual(record.last_post_days_ago, 8)
+        self.assertEqual(public_link["updated"], published)
+        self.assertEqual(public_link["stale_days"], 8)
+
+    def test_unreachable_public_link_keeps_latency_unknown(self):
+        public_link = _to_public_link({
+            "name": "Blocked",
+            "url": "https://blocked.example/",
+            "reachable": False,
+            "crawl_allowed": False,
+            "best_latency": 0.31,
+        })
+
+        self.assertEqual(public_link["latency"], -1)
 
     def test_link_check_logs_total_cached_and_actual_check_counts(self):
         class Store:
@@ -643,9 +718,11 @@ class RefactorContractsTest(unittest.TestCase):
             "latency": 1.2,
             "fail_count": 0,
             "has_backlink": True,
+            "updated": "",
+            "stale_days": None,
         })
 
-    def test_public_link_never_uses_zero_latency_as_unknown_fallback(self):
+    def test_public_link_uses_negative_latency_when_unreachable(self):
         public_link = _to_public_link({
             "name": "Legacy",
             "url": "https://legacy.example/",
@@ -654,8 +731,7 @@ class RefactorContractsTest(unittest.TestCase):
             "best_latency": -1,
         })
 
-        self.assertGreater(public_link["latency"], 0)
-        self.assertNotEqual(public_link["latency"], 0.0)
+        self.assertEqual(public_link["latency"], -1)
 
     def test_homepage_url_normalization_adds_trailing_slash_to_paths(self):
         website = Website.from_friend_item(["PathSite", "https://example.com/blog", "avatar.png"])
@@ -701,6 +777,17 @@ class RefactorContractsTest(unittest.TestCase):
         self.assertEqual([article["title"] for article in result["article_data"]], ["New", "Old"])
         self.assertEqual(result["statistical_data"]["article_num"], 2)
         self.assertEqual(set(result["article_data"][0].keys()), {"title", "created", "link", "author", "avatar"})
+
+    def test_write_json_minifies_generated_payloads(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "link.json"
+
+            self.assertTrue(write_json(path, {"statistical_data": {"link_total_num": 1}, "link_data": [{"name": "站点"}]}))
+
+            text = path.read_text(encoding="utf-8")
+
+        self.assertEqual(text, '{"statistical_data":{"link_total_num":1},"link_data":[{"name":"站点"}]}')
+        self.assertEqual(json.loads(text)["link_data"][0]["name"], "站点")
 
     def test_link_merge_keeps_best_reachability_shape(self):
         local = {
@@ -752,6 +839,8 @@ class RefactorContractsTest(unittest.TestCase):
         self.assertEqual(merged["link_data"][0]["fail_count"], 0)
         self.assertTrue(merged["link_data"][0]["has_backlink"])
         self.assertEqual(merged["statistical_data"]["link_total_num"], 1)
+        self.assertNotIn("stats", merged)
+        self.assertNotIn("links", merged)
 
     def test_all_json_statistics_do_not_include_link_statistics(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -790,6 +879,9 @@ class RefactorContractsTest(unittest.TestCase):
             "last_updated_time",
         })
         self.assertIn("link_total_num", link_payload["statistical_data"])
+        self.assertIn("link_data", link_payload)
+        self.assertNotIn("stats", link_payload)
+        self.assertNotIn("links", link_payload)
 
     def test_crawl_filter_uses_crawl_allowed_and_feed_cache_not_best_method(self):
         with tempfile.TemporaryDirectory() as temp_dir:

@@ -122,6 +122,8 @@ class LinkCheckRecord:
     backlink_checked: bool = False
     has_author_link: bool = False
     rss_crawl_reason: str = "blocked_unreachable"
+    last_post_published: str = ""
+    last_post_days_ago: int | None = None
     direct: LinkMethodStatus = field(default_factory=LinkMethodStatus)
     proxy: LinkMethodStatus = field(default_factory=LinkMethodStatus)
     api: LinkMethodStatus = field(default_factory=LinkMethodStatus)
@@ -148,6 +150,8 @@ class LinkCheckRecord:
             "backlink_checked": self.backlink_checked,
             "has_author_link": self.has_author_link,
             "rss_crawl_reason": self.rss_crawl_reason,
+            "last_post_published": self.last_post_published,
+            "last_post_days_ago": self.last_post_days_ago,
             "methods": {
                 "direct": self.direct.to_dict(),
                 "proxy": self.proxy.to_dict(),
@@ -155,6 +159,7 @@ class LinkCheckRecord:
             },
         }
     def to_link_dict(self) -> dict[str, object]:
+        latency = normalize_latency(self.best_latency) if self.reachable else -1
         return {
             "name": self.name,
             "link": self.url,
@@ -162,9 +167,11 @@ class LinkCheckRecord:
             "avatar": self.avatar,
             "reachable": self.reachable,
             "crawlable": self.crawl_allowed,
-            "latency": normalize_latency(self.best_latency),
+            "latency": latency,
             "fail_count": self.fail_count,
             "has_backlink": self.has_author_link if self.backlink_checked else None,
+            "updated": self.last_post_published,
+            "stale_days": self.last_post_days_ago,
         }
 
 
