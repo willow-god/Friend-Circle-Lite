@@ -101,5 +101,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: write
+      contents: read
     steps:
       - uses: liskin/gh-workflow-keepalive@v1
+        with:
+          GITHUB_TOKEN: ${{ github.token }}
+        env:
+          GH_TOKEN: ${{ github.token }}
