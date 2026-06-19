@@ -169,6 +169,44 @@
 [data-theme="dark"] .scroll-down-icon {
     color: #007BFF;
 }
+
+.beian-footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 20px 10px 70px;
+    font-size: 12px;
+    color: #666;
+}
+
+.beian-footer a {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.beian-footer a:hover {
+    color: #007BFF;
+}
+
+.beian-footer .beian-icon {
+    width: 14px;
+    height: 14px;
+    vertical-align: -2px;
+    margin-right: 4px;
+}
+
+[data-theme="dark"] .beian-footer,
+[data-theme="dark"] .beian-footer a {
+    color: #aaaaaa;
+}
+
+[data-theme="dark"] .beian-footer a:hover {
+    color: #4dabff;
+}
 </style>
 
 <body>
@@ -185,6 +223,12 @@
         <div id="friend-circle-lite-root"></div>
     </div>
     <button id="theme-toggle">暗色模式</button>
+    <footer class="beian-footer">
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">滇ICP备2026003487号</a>
+        <a href="https://beian.mps.gov.cn/#/query/webSearch?code=53310302000158" target="_blank" rel="noopener noreferrer">
+            <img src="https://www.qixz.cn/mps.png" alt="" class="beian-icon">滇公网安备53310302000158号
+        </a>
+    </footer>
 <script>
     if (typeof UserConfig === 'undefined') {
         var UserConfig = {
