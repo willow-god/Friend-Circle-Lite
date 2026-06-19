@@ -10,7 +10,7 @@ debug: false
 #   article_count: 每个站点最多抓取的文章数量
 spider_settings:
   enable: true
-  json_url: "https://blog.liushen.fun/friend.json"
+  json_url: "https://mingcy.cn/js/friend.json"
   article_count: 5
 
 # 代理配置
@@ -33,7 +33,7 @@ proxy_settings:
 #   merge_link_check_data: 是否合并友链可达性数据
 merge_settings:
   enable: false
-  remote_base_url: "https://fc.liushen.fun"
+  remote_base_url: "https://fc.mingcy.cn"
   merge_article_data: true
   merge_link_check_data: true
 
@@ -51,7 +51,7 @@ link_check:
   max_workers: 10
   status_api_url: "https://v2.xxapi.cn/api/status?url={url}"
   enable_backlink_check: true
-  author_url: "blog.liushen.fun"
+  author_url: "mingcy.cn"
 
 # 邮件推送功能配置，暂未实现，等待后续开发
 # 说明：每次运行后向指定邮箱推送所有友链文章更新。
@@ -67,10 +67,10 @@ rss_subscribe:
   enable: true
   github_username: willow-god
   github_repo: Friend-Circle-Lite
-  your_blog_url: https://blog.liushen.fun/
+  your_blog_url: https://mingcy.cn/
   email_template: "./push_templates/default.html"
   website_info:
-    title: "清羽飞扬"
+    title: "茗辰原"
 
 # SMTP 配置
 # 说明：用于上方邮件相关功能。如果不使用邮件功能，可关闭 email_push 和 rss_subscribe。
