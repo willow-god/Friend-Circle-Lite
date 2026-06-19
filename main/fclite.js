@@ -92,6 +92,7 @@ function initialize_fc_lite() {
             author.className = 'card-author';
             const authorImg = document.createElement('img');
             authorImg.className = 'no-lightbox';
+            authorImg.referrerPolicy = 'no-referrer-when-downgrade';
             authorImg.src = article.avatar || UserConfig.error_img; // 使用默认头像
             authorImg.onerror = () => authorImg.src = UserConfig.error_img; // 头像加载失败时使用默认头像
             author.appendChild(authorImg);
@@ -109,6 +110,7 @@ function initialize_fc_lite() {
 
             const bgImg = document.createElement('img');
             bgImg.className = 'card-bg no-lightbox';
+            bgImg.referrerPolicy = 'no-referrer-when-downgrade';
             bgImg.src = article.avatar || UserConfig.error_img;
             bgImg.onerror = () => bgImg.src = UserConfig.error_img; // 头像加载失败时使用默认头像
             card.appendChild(bgImg);
@@ -170,8 +172,10 @@ function initialize_fc_lite() {
         const modalBg = document.getElementById('modal-bg');
 
         modalArticlesContainer.innerHTML = ''; // 清空之前的内容
+        modalAuthorAvatar.referrerPolicy = 'no-referrer-when-downgrade';
         modalAuthorAvatar.src = avatar  || UserConfig.error_img; // 使用默认头像
         modalAuthorAvatar.onerror = () => modalAuthorAvatar.src = UserConfig.error_img; // 头像加载失败时使用默认头像
+        modalBg.referrerPolicy = 'no-referrer-when-downgrade';
         modalBg.src = avatar || UserConfig.error_img; // 使用默认头像
         modalBg.onerror = () => modalBg.src = UserConfig.error_img; // 头像加载失败时使用默认头像
         modalAuthorNameLink.innerText = author;
