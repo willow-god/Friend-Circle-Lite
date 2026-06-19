@@ -2,12 +2,13 @@ name: Friend Circle Lite
 
 on:
   schedule:
-    - cron: "0 */4 * * *"
+    - cron: "22 */4 * * *"
   workflow_dispatch:
 
 env:
   TZ: Asia/Shanghai
   PAGE_BRANCH: page
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   friend-circle-lite:
@@ -55,6 +56,7 @@ jobs:
     - name: Check RSS feeds
       env:
         SMTP_PWD: ${{ secrets.SMTP_PWD }}
+        PROXY_URL: ${{ secrets.PROXY_URL }}
         FCL_REPO: ${{ github.repository }}
       run: |
         echo "Checking RSS feeds..."
@@ -99,5 +101,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: write
+      contents: read
     steps:
       - uses: liskin/gh-workflow-keepalive@v1
+        with:
+          GITHUB_TOKEN: ${{ github.token }}
+        env:
+          GH_TOKEN: ${{ github.token }}

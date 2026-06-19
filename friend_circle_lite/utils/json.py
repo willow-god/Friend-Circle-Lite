@@ -23,7 +23,7 @@ def write_json(file_path: str | Path, data: Any) -> bool:
     try:
         Path(file_path).parent.mkdir(parents=True, exist_ok=True)
         with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+            json.dump(data, f, ensure_ascii=False, separators=(',', ':'))
         return True
     except Exception as e:
         logging.warning(f"写入 JSON 文件时发生错误: {file_path}, 错误信息: {str(e)}")

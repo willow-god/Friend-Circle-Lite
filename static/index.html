@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="googlebot" content="noindex" />
-    <title>友链朋友圈状态</title>
+    <title>友链清册</title>
     <link rel="icon" href="./favicon.ico" type="image/x-icon" />
     <link
       rel="stylesheet"
@@ -16,742 +16,1369 @@
       rel="stylesheet"
     />
     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=ZCOOL+XiaoWei&display=swap");
+
       :root {
-        --primary-color: #2c3e50;
-        --secondary-color: #3498db;
-        --accent-color: #e74c3c;
-        --text-color: #34495e;
-        --background-color: #e7f3ff;
-        --code-background-color: #efefef;
+        --ink: #14283d;
+        --ink-soft: #38566f;
+        --muted: #6c8298;
+        --paper: #e7f3ff;
+        --paper-strong: #fbfdff;
+        --line: #bfd4e8;
+        --mist: #dcebf8;
+        --cyan: #2f7fa8;
+        --cyan-deep: #1d5577;
+        --blue: #466f9f;
+        --blue-pale: #eef7ff;
+        --blue-wash: #d7e9f8;
+        --blue-quiet: #88aeca;
+        --shadow: 0 18px 42px rgba(30, 70, 104, 0.12);
+        --fine-shadow: 0 8px 22px rgba(30, 70, 104, 0.09);
+        --control-height: 44px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: var(--paper);
+        scrollbar-color: rgba(12, 91, 96, 0.26) transparent;
+        scrollbar-width: thin;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        border: 2px solid transparent;
+        border-radius: 999px;
+        background: rgba(12, 91, 96, 0.22);
+        background-clip: content-box;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(12, 91, 96, 0.34);
+        background-clip: content-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        color: var(--ink);
+        font-family: "KingHwa_OldSong", "Noto Serif SC", "Songti SC", "STSong", serif;
+        line-height: 1.55;
+        background:
+          linear-gradient(90deg, rgba(24, 42, 43, 0.035) 1px, transparent 1px) 0 0 / 38px 38px,
+          linear-gradient(180deg, rgba(24, 42, 43, 0.028) 1px, transparent 1px) 0 0 / 38px 38px,
+          var(--paper);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        background:
+          linear-gradient(115deg, rgba(47, 127, 168, 0.2), transparent 42%),
+          linear-gradient(245deg, rgba(136, 174, 202, 0.15), transparent 44%),
+          url("./bg-light.webp") center / cover no-repeat;
+        opacity: 0.42;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background:
+          linear-gradient(180deg, rgba(247, 252, 255, 0.58), rgba(247, 252, 255, 0.82)),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.25), transparent 22%, transparent 78%, rgba(255, 255, 255, 0.22));
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .shell {
+        position: relative;
+        z-index: 1;
+        width: min(1280px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 26px 0 58px;
+      }
+
+      .masthead {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 22px;
+        align-items: end;
+        padding: 20px 0 20px;
+        border-bottom: 3px double rgba(24, 34, 38, 0.28);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--cyan-deep);
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0;
+      }
+
+      h1 {
+        margin: 5px 0 0;
+        font-family: "ZCOOL XiaoWei", "Noto Serif SC", serif;
+        font-size: clamp(2.25rem, 6vw, 5.6rem);
+        font-weight: 400;
+        letter-spacing: 0;
+        line-height: 0.95;
+      }
+
+      .mastnote {
+        max-width: 740px;
+        margin: 10px 0 0;
+        color: var(--ink-soft);
+        font-size: 1rem;
+      }
+
+      .mode-switch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-width: 320px;
+        padding: 5px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.72);
+        box-shadow: var(--fine-shadow);
+        backdrop-filter: blur(12px);
+      }
+
+      .mode-button {
+        min-height: 46px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--ink-soft);
+        cursor: pointer;
+        font-weight: 700;
+        white-space: nowrap;
+        transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+      }
+
+      .mode-button:hover {
+        color: var(--cyan-deep);
+        transform: translateY(-1px);
+      }
+
+      .mode-button.active {
+        background: var(--cyan-deep);
+        color: #fff;
+      }
+
+      .dashboard {
+        display: grid;
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      .board {
+        min-width: 0;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(14px);
+      }
+
+      .action-strip {
+        display: grid;
+        gap: 12px;
+        padding: 14px;
+      }
+
+      .summary-row {
+        display: grid;
+        grid-template-columns: minmax(190px, 245px) minmax(0, 1fr);
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .control-row {
+        display: grid;
+        grid-template-columns: minmax(280px, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        border-top: 1px solid rgba(24, 34, 38, 0.09);
+        padding-top: 12px;
+      }
+
+      .time-panel {
+        overflow: hidden;
+        padding: 14px 16px;
+        border: 1px solid rgba(20, 125, 128, 0.16);
+        border-radius: 8px;
+        background:
+          linear-gradient(135deg, rgba(20, 125, 128, 0.08), transparent 58%),
+          rgba(255, 255, 255, 0.62);
+      }
+
+      .time-label {
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .time-value {
+        display: block;
+        margin-top: 5px;
+        font-family: "ZCOOL XiaoWei", "Noto Serif SC", serif;
+        font-size: 1.3rem;
+      }
+
+      .metrics {
+        display: grid;
+        gap: 8px;
+      }
+
+      .metrics-row {
+        grid-template-columns: repeat(4, minmax(130px, 1fr));
+        gap: 8px;
+      }
+
+      .metric {
+        position: relative;
+        overflow: hidden;
+        min-width: 0;
+        border: 1px solid rgba(20, 125, 128, 0.16);
+        border-radius: 8px;
+        background:
+          linear-gradient(135deg, rgba(47, 127, 168, 0.1), transparent 62%),
+          rgba(251, 253, 255, 0.66);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+        min-height: 72px;
+        padding: 11px 14px;
+      }
+
+      .metric:nth-child(2) {
+        border-color: rgba(70, 111, 159, 0.18);
+        background:
+          linear-gradient(135deg, rgba(70, 111, 159, 0.09), transparent 62%),
+          rgba(251, 253, 255, 0.66);
+      }
+
+      .metric:nth-child(3) {
+        border-color: rgba(29, 85, 119, 0.18);
+        background:
+          linear-gradient(135deg, rgba(29, 85, 119, 0.08), transparent 62%),
+          rgba(251, 253, 255, 0.68);
+      }
+
+      .metric:nth-child(4) {
+        border-color: rgba(136, 174, 202, 0.32);
+        background:
+          linear-gradient(135deg, rgba(136, 174, 202, 0.14), transparent 62%),
+          rgba(251, 253, 255, 0.68);
+      }
+
+      .metric-label {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      .metric-value {
+        display: block;
+        margin-top: 4px;
+        font-family: "ZCOOL XiaoWei", "Noto Serif SC", serif;
+        font-size: 1.65rem;
+        line-height: 1.1;
+      }
+
+      .toolbar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+      }
+
+      .top-toolbar {
+        grid-template-columns: minmax(280px, 1fr) auto;
+        align-items: center;
+        min-width: 0;
+      }
+
+      .search-wrap {
+        position: relative;
+      }
+
+      .search-wrap i {
+        position: absolute;
+        top: 50%;
+        left: 12px;
+        color: var(--muted);
+        transform: translateY(-50%);
+      }
+
+      .search {
+        width: 100%;
+        height: var(--control-height);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.86);
+        color: var(--ink);
+        padding: 0 12px 0 36px;
+        outline: none;
+      }
+
+      .search:focus {
+        border-color: var(--cyan);
+        box-shadow: 0 0 0 3px rgba(8, 127, 140, 0.12);
+      }
+
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        align-items: center;
+      }
+
+      .filter-button {
+        position: relative;
+        height: var(--control-height);
+        border: 1px solid rgba(20, 125, 128, 0.18);
+        border-radius: 6px 6px 8px 8px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(229, 238, 233, 0.68));
+        color: var(--ink-soft);
+        cursor: pointer;
+        padding: 0 12px;
+        font-size: 0.88rem;
+        box-shadow: inset 0 -3px 0 rgba(20, 125, 128, 0.08);
+        transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+      }
+
+      .filter-button:hover {
+        color: var(--cyan-deep);
+        transform: translateY(-1px);
+      }
+
+      .filter-button.active {
+        border-color: var(--cyan-deep);
+        background:
+          linear-gradient(180deg, var(--cyan), var(--cyan-deep));
+        color: #fff;
+        box-shadow: inset 0 -3px 0 rgba(255, 255, 255, 0.18), 0 8px 18px rgba(12, 91, 96, 0.16);
+      }
+
+      .board {
+        display: grid;
+        align-content: start;
+        gap: 12px;
+      }
+
+      .board-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 16px;
+      }
+
+      .board-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        margin: 0;
+        font-size: 1.08rem;
+      }
+
+      .board-title::before {
+        content: "";
+        width: 8px;
+        height: 22px;
+        border-radius: 999px;
+        background: var(--cyan);
+        box-shadow: 0 0 0 5px rgba(20, 125, 128, 0.12);
+        flex-shrink: 0;
+      }
+
+      .source-links {
+        display: flex;
+        gap: 10px;
+        color: var(--cyan-deep);
+        font-size: 0.86rem;
+        white-space: nowrap;
+      }
+
+      .content-grid {
+        display: grid;
+        align-items: start;
+        gap: 12px;
+      }
+
+      .content-grid.is-links {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .content-grid.is-articles {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      }
+
+      .link-card,
+      .article-card {
+        position: relative;
+        align-self: start;
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(251, 253, 255, 0.84);
+        box-shadow: var(--fine-shadow);
+        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+      }
+
+      .link-card:hover,
+      .article-card:hover {
+        border-color: rgba(8, 127, 140, 0.45);
+        box-shadow: 0 18px 44px rgba(25, 38, 43, 0.13);
+        transform: translateY(-2px);
+      }
+
+      .link-card {
+        overflow: hidden;
+        display: grid;
+        gap: 12px;
+        min-height: 174px;
+        padding: 14px;
+        border-color: rgba(70, 111, 159, 0.18);
+        background:
+          linear-gradient(145deg, rgba(47, 127, 168, 0.11), transparent 54%),
+          linear-gradient(320deg, rgba(136, 174, 202, 0.12), transparent 48%),
+          rgba(251, 253, 255, 0.9);
+      }
+
+      .link-card.is-unreachable {
+        border-color: rgba(29, 85, 119, 0.3);
+        background:
+          linear-gradient(145deg, rgba(29, 85, 119, 0.15), transparent 56%),
+          linear-gradient(320deg, rgba(136, 174, 202, 0.14), transparent 44%),
+          rgba(247, 252, 255, 0.92);
+      }
+
+      .link-card.is-stale {
+        border-color: rgba(70, 111, 159, 0.28);
+        background:
+          linear-gradient(145deg, rgba(70, 111, 159, 0.14), transparent 56%),
+          linear-gradient(320deg, rgba(151, 190, 216, 0.12), transparent 44%),
+          rgba(247, 252, 255, 0.92);
+      }
+
+      .link-card.is-healthy {
+        border-color: rgba(47, 127, 168, 0.22);
+        background:
+          linear-gradient(145deg, rgba(47, 127, 168, 0.1), transparent 56%),
+          rgba(251, 253, 255, 0.9);
+      }
+
+      .link-card.featured {
+        min-height: 248px;
+        border-color: rgba(29, 85, 119, 0.34);
+        background:
+          linear-gradient(150deg, rgba(29, 85, 119, 0.16), transparent 50%),
+          linear-gradient(315deg, rgba(136, 174, 202, 0.16), transparent 46%),
+          rgba(251, 253, 255, 0.94);
+      }
+
+      .link-main {
+        display: grid;
+        grid-template-columns: 44px minmax(0, 1fr);
+        gap: 10px;
+        align-items: center;
+      }
+
+      .avatar {
+        width: 44px;
+        height: 44px;
+        border: 1px solid rgba(70, 111, 159, 0.26);
+        border-radius: 8px;
+        background: var(--blue-wash);
+        object-fit: cover;
+      }
+
+      .name {
+        display: block;
+        overflow: hidden;
+        color: var(--ink);
+        font-weight: 900;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .url {
+        display: block;
+        overflow: hidden;
+        margin-top: 2px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .link-status {
+        justify-self: start;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+        border: 1px solid rgba(47, 127, 168, 0.18);
+        border-radius: 999px;
+        background: rgba(238, 247, 255, 0.76);
+        color: var(--cyan-deep);
+        padding: 4px 9px;
+        font-size: 0.75rem;
+        font-weight: 800;
+      }
+
+      .link-insight {
+        display: grid;
+        gap: 2px;
+        align-self: end;
+        min-height: 52px;
+      }
+
+      .insight-label {
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 800;
+      }
+
+      .insight-value {
+        color: var(--ink);
+        font-family: "ZCOOL XiaoWei", "Noto Serif SC", serif;
+        font-size: 1.62rem;
+        font-weight: 400;
+        line-height: 1.08;
+      }
+
+      .surface-facts {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .surface-fact {
+        min-width: 0;
+        border: 1px solid rgba(70, 111, 159, 0.14);
+        border-radius: 8px;
+        background: rgba(251, 253, 255, 0.58);
+        padding: 7px 8px;
+      }
+
+      .surface-label {
+        display: block;
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 800;
+      }
+
+      .surface-value {
+        display: block;
+        overflow: hidden;
+        margin-top: 2px;
+        color: var(--ink-soft);
+        font-size: 0.82rem;
+        font-weight: 900;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .link-detail {
+        display: none;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+        margin-top: 2px;
+      }
+
+      .link-card.featured .link-detail {
+        display: grid;
+        animation: inkReveal 0.32s ease both;
+      }
+
+      .detail-chip {
+        min-width: 0;
+        border: 1px solid rgba(70, 111, 159, 0.14);
+        border-radius: 8px;
+        background: rgba(238, 247, 255, 0.58);
+        padding: 8px 9px;
+      }
+
+      .detail-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 700;
+      }
+
+      .detail-value {
+        display: block;
+        overflow: hidden;
+        margin-top: 3px;
+        color: var(--ink);
+        font-size: 0.95rem;
+        font-weight: 900;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      @keyframes inkReveal {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .poem-background {
         position: fixed;
         bottom: calc(50% - 300px);
         left: 50%;
-        z-index: -1;
-        opacity: 0.15;
+        z-index: 0;
         width: 2000px;
-        text-align: left;
         color: #93a1a9;
-        pointer-events: none;
+        font-family: "KingHwa_OldSong", "Noto Serif SC", serif;
         line-height: 1.8;
+        opacity: 0.18;
+        pointer-events: none;
+        text-align: left;
+        transform: translateX(-50%);
       }
 
       .poem-background p {
         margin: 0;
-        font-size: 4rem;
-      }
-
-      body {
-        font-family: "KingHwa_OldSong", "Noto Serif SC", serif;
-        margin: 0;
-        padding: 40px 20px;
-        background-color: var(--background-color);
-        color: var(--text-color);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .container {
-        max-width: 900px;
-        width: 100%;
-        padding: 0 20px;
-      }
-
-      .header {
-        text-align: center;
-        margin-bottom: 40px;
-        position: relative;
-      }
-
-      h1 {
-        font-size: 2.8rem;
-        color: var(--primary-color);
-        margin: 20px 0;
-        position: relative;
-      }
-
-      h1::after {
-        content: "";
-        display: block;
-        width: 60%;
-        height: 3px;
-        background: var(--secondary-color);
-        margin: 10px auto 0;
-      }
-
-      .subtitle {
-        font-size: 1.1rem;
-        color: #7f8c8d;
-        max-width: 600px;
-        margin: 0 auto;
-        line-height: 1.6;
-      }
-
-      .quick-links {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 20px;
-      }
-
-      .quick-links a,
-      .filter-btn {
-        color: var(--primary-color);
-        background: #fff;
-        border: 1px solid #00000018;
-        border-radius: 999px;
-        padding: 8px 14px;
-        text-decoration: none;
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
-        font-family: inherit;
-        font-size: 1rem;
-      }
-
-      .quick-links a:hover,
-      .filter-btn:hover,
-      .filter-btn.active {
-        color: #fff;
-        background: var(--secondary-color);
-      }
-
-      .total-info {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-        margin-top: 30px;
-      }
-
-      @media (min-width: 1200px) {
-        .total-info {
-          grid-template-columns: repeat(4, 1fr);
-        }
-      }
-
-      @media (max-width: 380px) {
-        .total-info {
-          grid-template-columns: repeat(1, 1fr);
-        }
-      }
-
-      .total-status-card {
-        background: #fff;
-        border-radius: 8px;
-        padding: 15px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        font-size: 1rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: all 0.2s ease-in-out;
-      }
-
-      .total-status-card span {
-        font-weight: bold;
+        font-size: clamp(2.4rem, 5.2vw, 4.4rem);
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .total-status-card:hover,
-      .status-card:hover,
-      .article-card:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
-
-      .toolbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-top: 20px;
-        background: #fff;
-        border-radius: 8px;
-        padding: 12px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      }
-
-      .filters {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
-      .search-input {
-        flex: 1;
-        min-width: min(260px, 100%);
-        max-width: 360px;
-        border: 1px solid #00000018;
-        border-radius: 999px;
-        padding: 9px 14px;
-        color: var(--text-color);
-        font-family: inherit;
-        font-size: 1rem;
-        outline: none;
-      }
-
-      .status-grid {
-        display: grid;
-        gap: 15px;
-        margin-top: 15px;
-      }
-
-      .status-grid.other {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      }
-
-      .status-grid.error {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      }
-
-      .fail_counts {
-        margin-right: 10px;
-        color: #000000a5;
-        white-space: nowrap;
-      }
-
-      .status-card {
-        display: flex;
-        background: #fff;
-        border-radius: 8px;
-        padding: 15px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        font-size: 1rem;
-        justify-content: space-between;
-        align-items: center;
-        transition: all 0.2s ease-in-out;
-        min-width: 0;
-      }
-
-      .status-link {
-        color: var(--primary-color);
-        text-decoration: none;
-        font-weight: bold;
-        transition: all 0.2s ease-in-out;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        flex: 1;
-        margin-right: 10px;
-      }
-
-      .status-link:hover {
-        color: var(--secondary-color);
-      }
-
-      .status-dot {
-        display: inline-block;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        margin-right: 6px;
-        position: relative;
-      }
-
-      .status-dot::before {
-        content: "";
-        position: absolute;
-        top: -4px;
-        left: -4px;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        animation: pulse 1.5s infinite;
-      }
-
-      @keyframes pulse {
-        0% {
-          transform: scale(1);
-          opacity: 1;
-        }
-
-        50% {
-          transform: scale(1.5);
-          opacity: 0.5;
-        }
-
-        100% {
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
-
-      .status-normal {
-        background: green;
-      }
-
-      .status-normal::before {
-        background-color: rgba(0, 128, 0, 0.2);
-      }
-
-      .status-slow {
-        background: rgb(255, 200, 0);
-      }
-
-      .status-slow::before {
-        background-color: rgba(255, 174, 0, 0.2);
-      }
-
-      .status-api {
-        background: #3498db;
-      }
-
-      .status-api::before {
-        background-color: rgba(52, 152, 219, 0.2);
-      }
-
-      .status-error {
-        background: red;
-      }
-
-      .status-error::before {
-        background-color: rgba(255, 0, 0, 0.2);
-      }
-
-      .backlink-status {
-        display: inline-flex;
-        align-items: center;
-        margin: 0 8px;
-        text-decoration: none;
-        transition: all 0.2s ease-in-out;
-      }
-
-      .backlink-status:hover {
-        transform: scale(1.1);
-      }
-
-      .backlink-icon {
-        font-size: 16px;
-      }
-
-      .backlink-true {
-        color: #27ae60;
-      }
-
-      .backlink-false {
-        color: #e74c3c;
-      }
-
-      .status-indicators {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-shrink: 0;
-      }
-
-      .method-text,
-      .time-text {
-        color: #000000a5;
-        white-space: nowrap;
-      }
-
-      .article-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 15px;
-        margin-top: 15px;
       }
 
       .article-card {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        min-width: 0;
-        background: #fff;
-        border-radius: 8px;
-        padding: 15px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        font-size: 1rem;
-        transition: all 0.2s ease-in-out;
+        overflow: hidden;
+        display: grid;
+        align-content: space-between;
+        border-color: rgba(47, 127, 168, 0.14);
+        background:
+          linear-gradient(135deg, rgba(47, 127, 168, 0.08), transparent 54%),
+          rgba(251, 253, 255, 0.86);
+        min-height: 118px;
+        padding: 12px;
       }
 
-      .article-link {
-        color: var(--primary-color);
-        text-decoration: none;
-        font-weight: bold;
-        line-height: 1.5;
-        min-height: 3em;
+      .article-title {
         display: -webkit-box;
+        overflow: hidden;
+        padding-right: 50px;
+        color: var(--ink);
+        font-size: 0.96rem;
+        font-weight: 900;
+        -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
         line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
       }
 
-      .article-link:hover {
-        color: var(--secondary-color);
+      .article-avatar-mark {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: inline-flex;
+        width: 38px;
+        height: 38px;
+        border: 1px solid rgba(70, 111, 159, 0.28);
+        border-radius: 999px;
+        background:
+          linear-gradient(135deg, rgba(70, 111, 159, 0.16), rgba(47, 127, 168, 0.12)),
+          rgba(251, 253, 255, 0.76);
+        box-shadow: 0 8px 18px rgba(30, 70, 104, 0.12);
+        padding: 3px;
+        transform: rotate(2deg);
+      }
+
+      .article-avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--blue-wash);
+        object-fit: cover;
       }
 
       .article-meta {
         display: flex;
+        align-items: end;
         justify-content: space-between;
         gap: 10px;
-        color: #000000a5;
-        font-size: 0.95rem;
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 0.78rem;
       }
 
-      .article-author {
-        white-space: nowrap;
+      .author {
+        display: inline-flex;
+        align-items: center;
+        min-width: 0;
+        gap: 7px;
         overflow: hidden;
         text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
-      .empty-state {
+      .date {
+        flex-shrink: 0;
+      }
+
+      .empty {
         grid-column: 1 / -1;
-        background: #fff;
+        border: 1px dashed rgba(24, 34, 38, 0.24);
         border-radius: 8px;
-        padding: 20px;
-        color: #7f8c8d;
+        background: rgba(255, 255, 255, 0.68);
+        color: var(--muted);
+        padding: 34px;
         text-align: center;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       }
 
-      footer {
-        margin-top: 50px;
-        padding-top: 30px;
-        border-top: 1px solid #ecf0f1;
-        width: 100%;
-        text-align: center;
-        color: #95a5a6;
-        line-height: 1.8;
-      }
-
-      footer a {
-        color: #95a5a6;
-        text-decoration: none;
-        transition: all 0.2s ease-in-out;
-      }
-
-      footer a:hover {
-        color: var(--secondary-color);
-      }
-
-      .github-icon {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 1000;
-        background: #fff;
-        border-radius: 50%;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        width: 45px;
-        height: 45px;
+      .footer {
         display: flex;
-        justify-content: center;
-        align-items: center;
-        transition: all 0.2s ease-in-out;
+        justify-content: space-between;
+        gap: 16px;
+        margin-top: 20px;
+        color: var(--muted);
+        font-size: 0.86rem;
       }
 
-      .github-icon:hover {
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+      .footer a,
+      .source-links a {
+        color: var(--cyan-deep);
+        font-weight: 700;
       }
 
-      .github-icon svg {
-        margin-top: 7px;
-        fill: #2c3e50;
-        width: 25px;
-        height: 25px;
+      @media (max-width: 900px) {
+        .masthead,
+        .summary-row,
+        .control-row,
+        .top-toolbar {
+          grid-template-columns: 1fr;
+        }
+
+        .mode-switch {
+          width: 100%;
+          min-width: 0;
+        }
+
+        .metrics-row {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .content-grid.is-links {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
       }
 
       @media (max-width: 560px) {
-        body {
-          padding: 28px 12px;
+        .shell {
+          width: min(100% - 20px, 1280px);
+          padding-top: 14px;
         }
 
-        .container {
-          padding: 0;
+        .masthead {
+          gap: 14px;
         }
 
-        h1 {
-          font-size: 2.3rem;
+        .mode-switch {
+          grid-template-columns: 1fr;
         }
 
-        .toolbar {
+        .metrics-row,
+        .content-grid.is-links,
+        .content-grid.is-articles,
+        .link-detail {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .board-head,
+        .footer {
           align-items: stretch;
+          flex-direction: column;
         }
 
-        .search-input {
-          max-width: none;
+        .source-links {
+          flex-wrap: wrap;
+        }
+
+        .article-title {
+          padding-right: 42px;
+        }
+
+        .article-avatar-mark {
+          top: 9px;
+          right: 9px;
+          width: 32px;
+          height: 32px;
+          padding: 2px;
+        }
+
+        .poem-background {
+          bottom: calc(50% - 220px);
+          left: 54%;
+          opacity: 0.14;
+        }
+
+        .poem-background p {
+          font-size: 2rem;
+        }
+      }
+
+      @media (max-width: 390px) {
+        .metrics-row,
+        .content-grid.is-links,
+        .content-grid.is-articles,
+        .link-detail {
+          grid-template-columns: 1fr;
         }
       }
     </style>
   </head>
-
   <body>
-    <div class="poem-background">
+    <main class="shell">
+      <header class="masthead">
+        <div>
+          <span class="eyebrow"><i class="fa-solid fa-feather-pointed"></i> FRIEND CIRCLE LITE</span>
+          <h1>友链清册</h1>
+          <p class="mastnote" id="view-description">正在展开友链清册...</p>
+        </div>
+        <nav class="mode-switch" aria-label="数据视图切换">
+          <button class="mode-button active" data-view="links" type="button">
+            <i class="fa-solid fa-seedling"></i>
+            友链可达性
+          </button>
+          <button class="mode-button" data-view="articles" type="button">
+            <i class="fa-solid fa-newspaper"></i>
+            友链朋友圈
+          </button>
+        </nav>
+      </header>
+
+      <section class="dashboard">
+        <section class="panel action-strip">
+          <div class="summary-row">
+            <section class="time-panel">
+              <span class="time-label">CURRENT VIEW TIME</span>
+              <strong class="time-value" id="footer-time">加载中...</strong>
+            </section>
+            <section class="metrics metrics-row" id="summary"></section>
+          </div>
+          <section class="control-row toolbar top-toolbar">
+            <div class="search-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input class="search" id="search" type="search" placeholder="搜索名称、链接、文章或作者" />
+            </div>
+            <div class="filters" id="filters"></div>
+          </section>
+        </section>
+
+        <section class="board">
+          <header class="panel board-head">
+            <h2 class="board-title" id="section-title">友链可达性数据</h2>
+            <nav class="source-links" aria-label="数据源">
+              <a href="/link.json" target="_blank" rel="noopener noreferrer">link.json</a>
+              <a href="/all.json" target="_blank" rel="noopener noreferrer">all.json</a>
+              <a href="https://github.com/willow-god/Friend-Circle-Lite" target="_blank" rel="noopener noreferrer">GitHub</a>
+            </nav>
+          </header>
+          <section class="content-grid" id="content"></section>
+        </section>
+      </section>
+
+      <footer class="footer">
+        <span>
+          Powered by
+          <a href="https://github.com/willow-god/Friend-Circle-Lite" target="_blank" rel="noopener noreferrer">Friend-Circle-Lite</a>
+        </span>
+        <a href="https://www.liushen.fun/" target="_blank" rel="noopener noreferrer">LiuShen</a>
+      </footer>
+    </main>
+
+    <div class="poem-background" aria-hidden="true">
       <p>凤凰台上凤凰游，凤去台空江自流。</p>
       <p>吴宫花草埋幽径，晋代衣冠成古丘。</p>
       <p>三山半落青天外，二水中分白鹭洲。</p>
       <p>总为浮云能蔽日，长安不见使人愁。</p>
-      <p>- —— 节选自 李白《登金陵凤凰台》</p>
-    </div>
-
-    <div class="github-icon">
-      <a
-        href="https://github.com/willow-god/Friend-Circle-Lite"
-        target="_blank"
-        rel="noopener noreferrer"
-        title="Friend-Circle-Lite"
-      >
-        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-          <path d="M850.346667 155.008a42.666667 42.666667 0 0 0-22.741334-23.509333c-8.704-3.754667-85.717333-33.322667-200.32 39.168H396.714667c-114.773333-72.618667-191.701333-42.922667-200.32-39.168a42.88 42.88 0 0 0-22.741334 23.466666c-26.197333 66.218667-18.048 136.448-7.850666 176.896C134.272 374.016 128 413.098667 128 469.333333c0 177.877333 127.104 227.882667 226.730667 246.272a189.568 189.568 0 0 0-13.013334 46.549334A44.373333 44.373333 0 0 0 341.333333 768v38.613333c-19.498667-4.138667-41.002667-11.946667-55.168-26.112C238.08 732.416 188.330667 682.666667 128 682.666667v85.333333c25.002667 0 65.365333 40.362667 97.834667 72.832 51.029333 51.029333 129.066667 55.253333 153.386666 55.253333 3.114667 0 5.376-0.085333 6.528-0.128A42.666667 42.666667 0 0 0 426.666667 853.333333v-82.090666c4.266667-24.746667 20.224-49.621333 27.946666-56.362667a42.666667 42.666667 0 0 0-23.125333-74.581333C293.333333 624.554667 213.333333 591.488 213.333333 469.333333c0-53.12 5.632-70.741333 31.573334-99.285333 11.008-12.117333 14.08-29.568 7.978666-44.8-4.821333-11.904-18.773333-65.450667-6.485333-117.546667 20.650667-1.578667 59.904 4.565333 113.706667 40.96C367.104 253.44 375.466667 256 384 256h256a42.666667 42.666667 0 0 0 23.936-7.338667c54.016-36.522667 92.970667-41.770667 113.664-41.130666 12.330667 52.224-1.578667 105.770667-6.4 117.674666a42.666667 42.666667 0 0 0 8.021333 44.928C805.077333 398.464 810.666667 416.085333 810.666667 469.333333c0 122.581333-79.957333 155.52-218.069334 170.922667a42.666667 42.666667 0 0 0-23.125333 74.709333c19.797333 17.066667 27.861333 32.469333 27.861333 53.034667v128h85.333334v-128c0-20.437333-3.925333-38.101333-9.770667-53.12C769.92 695.765333 896 643.712 896 469.333333c0-56.362667-6.272-95.530667-37.76-137.514666 10.197333-40.405333 18.261333-110.506667-7.893333-176.810667z"></path>
-        </svg>
-      </a>
-    </div>
-
-    <div class="container">
-      <header class="header">
-        <h1>友链朋友圈状态</h1>
-        <p class="subtitle">
-          基于 Friend-Circle-Lite 生成的纯静态数据，展示友链可达性与友圈文章。
-        </p>
-        <p class="subtitle">更新时间：<span id="update-time">加载中...</span></p>
-        <div class="quick-links">
-          <a href="/all.json" target="_blank">all.json</a>
-          <a href="/link.json" target="_blank">link.json</a>
-        </div>
-      </header>
-
-      <section class="total-info" id="total-info">
-        <div class="total-status-card">
-          <div class="total-status-card-title">
-            <i class="fa-solid fa-users"></i>
-            <span>友链总数</span>
-          </div>
-          <span id="total-links">加载中...</span>
-        </div>
-        <div class="total-status-card">
-          <div class="total-status-card-title">
-            <i class="fa-solid fa-circle-check"></i>
-            <span>可抓取友链</span>
-          </div>
-          <span id="crawlable-links">加载中...</span>
-        </div>
-        <div class="total-status-card">
-          <div class="total-status-card-title">
-            <i class="fa-solid fa-circle-xmark"></i>
-            <span>错误友链</span>
-          </div>
-          <span id="error-links">加载中...</span>
-        </div>
-        <div class="total-status-card">
-          <div class="total-status-card-title">
-            <i class="fa-solid fa-newspaper"></i>
-            <span>友圈文章</span>
-          </div>
-          <span id="article-count">加载中...</span>
-        </div>
-      </section>
-
-      <section class="toolbar">
-        <div class="filters">
-          <button class="filter-btn active" data-filter="all">全部</button>
-          <button class="filter-btn" data-filter="error">错误</button>
-          <button class="filter-btn" data-filter="crawlable">可抓取</button>
-        </div>
-        <input class="search-input" id="search-input" placeholder="搜索友链、文章或作者" />
-      </section>
-
-      <hr style="width: 100%; margin: 15px 0; border: 0; border-top: 2px solid #00000021" />
-
-      <h2 class="error-link-h2">失效友链</h2>
-      <section class="status-grid error" id="status-container-error"></section>
-
-      <hr class="error-link-hr" style="width: 100%; margin: 15px 0; border: 0; border-top: 2px solid #00000021" />
-
-      <h2 class="other-link-h2">其他友链</h2>
-      <section class="status-grid other" id="status-container-other"></section>
-
-      <hr style="width: 100%; margin: 25px 0 15px; border: 0; border-top: 2px solid #00000021" />
-
-      <h2>友圈文章</h2>
-      <section class="article-grid" id="article-container"></section>
-
-      <footer>
-        <div style="margin-bottom: 0.5em">
-          数据来源：<a href="/link.json" target="_blank">link.json</a> |
-          <a href="/all.json" target="_blank">all.json</a>
-        </div>
-        <div>
-          项目地址:
-          <a href="https://github.com/willow-god/Friend-Circle-Lite" target="_blank" rel="nofollow noopener noreferrer">Friend-Circle-Lite</a>
-          | MIT License © <span id="year"></span> |
-          <a href="https://www.liushen.fun/" target="_blank" rel="nofollow noopener noreferrer">LiuShen</a>
-        </div>
-      </footer>
+      <p>—— 节选自 李白《登金陵凤凰台》</p>
     </div>
 
     <script>
       const state = {
+        view: "links",
+        filter: "unreachable",
+        keyword: "",
         links: [],
         articles: [],
         linkStats: {},
         articleStats: {},
-        filter: "all",
-        keyword: "",
       };
 
-      document.getElementById("year").textContent = new Date().getFullYear();
+      const viewConfig = {
+        links: {
+          title: "友链可达性数据",
+          description: "记录站点连通、RSS 可抓取、反链与参考延迟，轻轻翻看便知近况。",
+          defaultFilter: "unreachable",
+          filters: [
+            ["unreachable", "不可达"],
+            ["stale", "久未更新"],
+            ["crawlable", "可抓取"],
+            ["backlink", "反链"],
+            ["all", "全部"],
+          ],
+        },
+        articles: {
+          title: "友链朋友圈数据",
+          description: "把友链最近的文章汇入同一张稿纸，按时间排列，保留每一位作者的来处。",
+          defaultFilter: "first24",
+          filters: [
+            ["first24", "前 24 条"],
+            ["today", "今日"],
+            ["week", "近 7 天"],
+            ["month", "近 30 天"],
+            ["all", "全部"],
+          ],
+        },
+      };
 
-      Promise.allSettled([
-        fetch("/link.json").then((response) => response.json()),
-        fetch("/all.json").then((response) => response.json()),
-      ]).then(([linkResult, articleResult]) => {
-        if (linkResult.status === "fulfilled") {
-          state.links = linkResult.value.link_data || [];
-          state.linkStats = linkResult.value.statistical_data || {};
-        }
-        if (articleResult.status === "fulfilled") {
-          state.articles = articleResult.value.article_data || [];
-          state.articleStats = articleResult.value.statistical_data || {};
-        }
-        renderAll();
-      });
+      Promise.all([
+        fetchJSON("/link.json"),
+        fetchJSON("/all.json"),
+      ])
+        .then(([linkPayload, articlePayload]) => {
+          state.links = normalizeLinks(linkPayload);
+          state.linkStats = normalizeLinkStats(linkPayload);
+          state.articles = articlePayload.article_data || [];
+          state.articleStats = articlePayload.statistical_data || {};
+          render();
+        })
+        .catch((error) => {
+          document.getElementById("content").innerHTML =
+            `<div class="empty">数据加载失败：${escapeHTML(error.message)}</div>`;
+        });
 
-      document.querySelectorAll("[data-filter]").forEach((button) => {
+      document.querySelectorAll("[data-view]").forEach((button) => {
         button.addEventListener("click", () => {
-          document.querySelectorAll("[data-filter]").forEach((item) => item.classList.remove("active"));
+          state.view = button.dataset.view;
+          state.filter = viewConfig[state.view].defaultFilter;
+          document.querySelectorAll("[data-view]").forEach((item) => item.classList.remove("active"));
           button.classList.add("active");
-          state.filter = button.dataset.filter;
-          renderLinks();
+          render();
         });
       });
 
-      document.getElementById("search-input").addEventListener("input", (event) => {
+      document.getElementById("search").addEventListener("input", (event) => {
         state.keyword = event.target.value.trim().toLowerCase();
-        renderLinks();
-        renderArticles();
+        renderContent();
       });
 
-      function renderAll() {
-        document.getElementById("update-time").textContent =
-          state.linkStats.link_last_checked_time || state.articleStats.last_updated_time || "暂无";
-        document.getElementById("total-links").textContent =
-          state.linkStats.link_total_num ?? state.links.length;
-        document.getElementById("crawlable-links").textContent =
-          state.linkStats.crawl_allowed_num ?? state.links.filter((link) => link.crawlable).length;
-        document.getElementById("error-links").textContent =
-          state.linkStats.link_unreachable_num ?? state.links.filter((link) => !link.reachable).length;
-        document.getElementById("article-count").textContent =
-          state.articleStats.article_num ?? state.articles.length;
-        renderLinks();
-        renderArticles();
+      function fetchJSON(url) {
+        return fetch(url).then((response) => {
+          if (!response.ok) throw new Error(`${url} ${response.status}`);
+          return response.json();
+        });
+      }
+
+      function normalizeLinks(payload) {
+        const items = payload.links || payload.link_data || [];
+        return items.map((item) => ({
+          name: item.name || "",
+          url: item.url || item.link || "",
+          page: item.page || item.link_page || "",
+          avatar: item.avatar || "",
+          ok: "ok" in item ? item.ok : Boolean(item.reachable),
+          rss: "rss" in item ? item.rss : Boolean(item.crawlable),
+          latency: item.latency,
+          fails: Number(item.fails ?? item.fail_count ?? 0),
+          backlink: "backlink" in item ? item.backlink : item.has_backlink,
+          updated: item.updated || item.last_post_published || "",
+          stale_days: item.stale_days ?? item.last_post_days_ago ?? null,
+        }));
+      }
+
+      function normalizeLinkStats(payload) {
+        const stats = payload.stats || payload.statistical_data || {};
+        return {
+          total: stats.total ?? stats.link_total_num,
+          ok: stats.ok ?? stats.link_reachable_num,
+          rss: stats.rss ?? stats.crawl_allowed_num,
+          backlink: stats.backlink ?? stats.has_author_link_num,
+          checked: stats.checked ?? stats.link_last_checked_time,
+        };
+      }
+
+      function render() {
+        const config = viewConfig[state.view];
+        document.getElementById("view-description").textContent = config.description;
+        document.getElementById("section-title").textContent = config.title;
+        renderSummary();
+        renderFilters();
+        renderContent();
+        renderTime();
+      }
+
+      function renderSummary() {
+        const items = state.view === "links" ? linkMetrics() : articleMetrics();
+        document.getElementById("summary").innerHTML = items.map(([label, value, icon]) => `
+          <article class="panel metric">
+            <span class="metric-label"><i class="${icon}"></i>${escapeHTML(label)}</span>
+            <strong class="metric-value">${escapeHTML(value)}</strong>
+          </article>
+        `).join("");
+      }
+
+      function linkMetrics() {
+        const stats = state.linkStats;
+        return [
+          ["友链总数", stats.total ?? state.links.length, "fa-solid fa-users"],
+          ["可达友链", stats.ok ?? state.links.filter((item) => item.ok).length, "fa-solid fa-circle-check"],
+          ["可抓取 RSS", stats.rss ?? state.links.filter((item) => item.rss).length, "fa-solid fa-rss"],
+          ["有反链", stats.backlink ?? state.links.filter((item) => item.backlink).length, "fa-solid fa-heart-circle-check"],
+        ];
+      }
+
+      function articleMetrics() {
+        const stats = state.articleStats;
+        const authors = new Set(state.articles.map((item) => item.author).filter(Boolean));
+        return [
+          ["友链总数", stats.friends_num ?? state.links.length, "fa-solid fa-users"],
+          ["活跃站点", stats.active_num ?? authors.size, "fa-solid fa-bolt"],
+          ["文章数量", stats.article_num ?? state.articles.length, "fa-solid fa-newspaper"],
+          ["异常站点", stats.error_num ?? 0, "fa-solid fa-triangle-exclamation"],
+        ];
+      }
+
+      function renderFilters() {
+        const filters = viewConfig[state.view].filters;
+        document.getElementById("filters").innerHTML = filters.map(([key, label]) => `
+          <button class="filter-button ${key === state.filter ? "active" : ""}" data-filter="${key}" type="button">${label}</button>
+        `).join("");
+        document.querySelectorAll("[data-filter]").forEach((button) => {
+          button.addEventListener("click", () => {
+            state.filter = button.dataset.filter;
+            renderFilters();
+            renderContent();
+          });
+        });
+      }
+
+      function renderContent() {
+        const content = document.getElementById("content");
+        content.className = `content-grid ${state.view === "links" ? "is-links" : "is-articles"}`;
+        if (state.view === "links") {
+          renderLinks();
+        } else {
+          renderArticles();
+        }
       }
 
       function renderLinks() {
-        const containerError = document.getElementById("status-container-error");
-        const containerOther = document.getElementById("status-container-other");
-        const sortedLinks = state.links
+        const links = state.links
           .filter(matchKeywordForLink)
-          .filter(matchFilter)
-          .sort((a, b) => linkPriority(a) - linkPriority(b) || (b.latency ?? -1) - (a.latency ?? -1));
-
-        let errorLinksHTML = "";
-        let otherLinksHTML = "";
-
-        sortedLinks.forEach((link) => {
-          const card = buildLinkCard(link);
-          if (!link.reachable) {
-            errorLinksHTML += card;
-          } else {
-            otherLinksHTML += card;
-          }
-        });
-
-        containerError.innerHTML = errorLinksHTML || `<div class="empty-state">当前没有失效友链</div>`;
-        containerOther.innerHTML = otherLinksHTML || `<div class="empty-state">当前筛选下没有其他友链</div>`;
+          .filter(matchLinkFilter)
+          .sort(sortLinks);
+        const content = document.getElementById("content");
+        content.innerHTML = links.map(renderLinkCard).join("") ||
+          `<div class="empty">当前条件下没有友链数据</div>`;
       }
 
-      function buildLinkCard(link) {
-        const status = getLinkStatus(link);
-        const backlinkIcon = buildBacklinkIcon(link);
-        const failCount = !link.reachable
-          ? `<span class="fail_counts">已持续${link.fail_count || 0}次</span>`
-          : "";
-        return `<div class="status-card">
-          <a class="status-link" href="${escapeAttr(link.link)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(link.name)}">${escapeHTML(link.name)}</a>
-          <div class="status-indicators">
-            ${failCount}
-            ${backlinkIcon}
-            <span class="status-dot ${status.className}" title="${escapeAttr(status.title)}"></span>
+      function renderLinkCard(link) {
+        const featured = isFeatured(link);
+        const insight = primaryInsight(link);
+        const cardClass = [
+          "link-card",
+          featured ? "featured" : "",
+          !link.ok ? "is-unreachable" : link.rss && link.stale_days !== null ? "is-stale" : "is-healthy",
+        ].filter(Boolean).join(" ");
+        return `
+          <article class="${cardClass}">
+            <div class="link-main">
+              <img class="avatar" src="${escapeAttr(link.avatar || "./favicon.ico")}" alt="" loading="lazy" />
+              <div>
+                <a class="name" href="${escapeAttr(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(link.name)}</a>
+                <a class="url" href="${escapeAttr(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(link.url)}</a>
+              </div>
+            </div>
+            <span class="link-status"><i class="${insight.icon}"></i>${escapeHTML(insight.status)}</span>
+            <div class="link-insight">
+              <span class="insight-label">${escapeHTML(insight.label)}</span>
+              <strong class="insight-value">${escapeHTML(insight.value)}</strong>
+            </div>
+            ${renderSurfaceFacts(link)}
+            ${featured ? renderLinkDetails(link) : ""}
+          </article>
+        `;
+      }
+
+      function primaryInsight(link) {
+        if (!link.ok) {
+          return { status: "暂不可达", label: "可用性", value: "离线", icon: "fa-solid fa-cloud" };
+        }
+        if (link.rss && link.stale_days !== null && link.stale_days !== undefined) {
+          return { status: "RSS 可解析", label: "最近更新", value: `${link.stale_days} 天未更`, icon: "fa-solid fa-rss" };
+        }
+        if (link.rss) {
+          return { status: "RSS 可解析", label: "最近更新", value: compactUpdateAge(link), icon: "fa-solid fa-rss" };
+        }
+        return { status: "站点可达", label: "可用性", value: "在线", icon: "fa-solid fa-water" };
+      }
+
+      function renderSurfaceFacts(link) {
+        return `
+          <div class="surface-facts">
+            ${surfaceFacts(link).map(([label, value]) => `
+              <span class="surface-fact">
+                <span class="surface-label">${escapeHTML(label)}</span>
+                <strong class="surface-value">${escapeHTML(value)}</strong>
+              </span>
+            `).join("")}
           </div>
-        </div>`;
+        `;
       }
 
-      function buildBacklinkIcon(link) {
-        if (!link.link_page) return "";
-        if (link.has_backlink === true) {
-          return `<a href="${escapeAttr(link.link_page)}" target="_blank" rel="noopener noreferrer" class="backlink-status" title="查看友链页面"><i class="fa-solid fa-heart-circle-check backlink-icon backlink-true"></i></a>`;
+      function surfaceFacts(link) {
+        if (!link.ok) {
+          return [
+            ["RSS", formatRss(link)],
+            ["反链", formatBacklink(link)],
+            ["文章", compactUpdateAge(link)],
+          ];
         }
-        if (link.has_backlink === false) {
-          return `<a href="${escapeAttr(link.link_page)}" target="_blank" rel="noopener noreferrer" class="backlink-status" title="查看友链页面"><i class="fa-solid fa-heart-circle-xmark backlink-icon backlink-false"></i></a>`;
+        if (link.rss && link.stale_days !== null && link.stale_days !== undefined) {
+          return [
+            ["状态", "在线"],
+            ["反链", formatBacklink(link)],
+            ["延迟", formatLatency(link.latency)],
+          ];
         }
-        return "";
+        return [
+          ["RSS", formatRss(link)],
+          ["更新", compactUpdateAge(link)],
+          ["反链", formatBacklink(link)],
+        ];
+      }
+
+      function renderLinkDetails(link) {
+        return `
+          <div class="link-detail">
+            ${visibleDetails(link).map(([label, value, icon]) => `
+              <span class="detail-chip">
+                <span class="detail-label"><i class="${icon}"></i>${escapeHTML(label)}</span>
+                <strong class="detail-value">${escapeHTML(value)}</strong>
+              </span>
+            `).join("")}
+          </div>
+        `;
+      }
+
+      function visibleDetails(link) {
+        if (state.filter === "unreachable") {
+          return [
+            ["RSS", formatRss(link), "fa-solid fa-rss"],
+            ["友链页", link.page ? "已记录" : "暂无记录", "fa-solid fa-link"],
+            ["文章", compactUpdateAge(link), "fa-regular fa-newspaper"],
+          ];
+        }
+        if (state.filter === "stale") {
+          return [
+            ["未更新", formatStaleDays(link), "fa-regular fa-calendar-xmark"],
+            ["最新", link.updated || "暂无记录", "fa-regular fa-newspaper"],
+            ["站点", link.ok ? "在线" : "离线", "fa-solid fa-water"],
+          ];
+        }
+        if (state.filter === "crawlable") {
+          return [
+            ["RSS", formatRss(link), "fa-solid fa-rss"],
+            ["最新", link.updated || "暂无记录", "fa-regular fa-newspaper"],
+            ["延迟", formatLatency(link.latency), "fa-regular fa-clock"],
+          ];
+        }
+        if (state.filter === "backlink") {
+          return [
+            ["反链", formatBacklink(link), "fa-solid fa-heart"],
+            ["友链页", link.page || "暂无记录", "fa-solid fa-link"],
+            ["状态", link.ok ? "站点可达" : "站点不可达", "fa-solid fa-signal"],
+          ];
+        }
+        return [];
       }
 
       function renderArticles() {
-        const container = document.getElementById("article-container");
-        const articles = state.articles.filter(matchKeywordForArticle).slice(0, 120);
-        container.innerHTML = articles.map((article) => `<article class="article-card">
-          <a class="article-link" href="${escapeAttr(article.link)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(article.title)}">${escapeHTML(article.title || "无标题")}</a>
-          <div class="article-meta">
-            <span class="article-author"><i class="fa-solid fa-feather-pointed"></i> ${escapeHTML(article.author || "未知作者")}</span>
-            <span><i class="fa-regular fa-clock"></i> ${escapeHTML((article.created || "").slice(0, 10))}</span>
-          </div>
-        </article>`).join("") || `<div class="empty-state">当前没有匹配文章</div>`;
+        let articles = state.articles
+          .filter(matchKeywordForArticle)
+          .filter(matchArticleFilter);
+        if (state.filter === "first24") {
+          articles = articles.slice(0, 24);
+        }
+        document.getElementById("content").innerHTML = articles.map(renderArticleCard).join("") ||
+          `<div class="empty">当前条件下没有友圈文章</div>`;
       }
 
-      function getLinkStatus(link) {
-        if (!link.reachable) return { className: "status-error", title: "不可达" };
-        if (link.method === "api") return { className: "status-api", title: "仅 API 可达" };
-        if (link.latency > 4) return { className: "status-slow", title: "响应较慢" };
-        if (link.method === "proxy") return { className: "status-api", title: "代理可达" };
-        return { className: "status-normal", title: "直连可达" };
-      }
-
-      function matchFilter(link) {
-        if (state.filter === "error") return !link.reachable;
-        if (state.filter === "crawlable") return link.crawlable;
-        return true;
+      function renderArticleCard(article) {
+        return `
+          <article class="article-card">
+            <span class="article-avatar-mark" title="作者头像：${escapeAttr(article.author || "未知作者")}">
+              <img class="article-avatar" src="${escapeAttr(article.avatar || "./favicon.ico")}" alt="" loading="lazy" />
+            </span>
+            <a class="article-title" href="${escapeAttr(article.link)}" target="_blank" rel="noopener noreferrer">${escapeHTML(article.title || "无标题")}</a>
+            <div class="article-meta">
+              <span class="author"><i class="fa-solid fa-feather-pointed"></i>${escapeHTML(article.author || "未知作者")}</span>
+              <span class="date"><i class="fa-regular fa-clock"></i> ${escapeHTML(article.created || "")}</span>
+            </div>
+          </article>
+        `;
       }
 
       function matchKeywordForLink(link) {
         if (!state.keyword) return true;
-        return [link.name, link.link, link.link_page, link.reason]
-          .some((value) => String(value || "").toLowerCase().includes(state.keyword));
+        return [link.name, link.url, link.page].some((value) =>
+          String(value || "").toLowerCase().includes(state.keyword)
+        );
       }
 
       function matchKeywordForArticle(article) {
         if (!state.keyword) return true;
-        return [article.title, article.author, article.link]
-          .some((value) => String(value || "").toLowerCase().includes(state.keyword));
+        return [article.title, article.author, article.link].some((value) =>
+          String(value || "").toLowerCase().includes(state.keyword)
+        );
       }
 
-      function linkPriority(link) {
-        if (!link.reachable) return 0;
-        if (link.method === "api") return 1;
-        if (link.latency > 4) return 2;
-        return 3;
+      function matchLinkFilter(link) {
+        if (state.filter === "unreachable") return !link.ok;
+        if (state.filter === "stale") return link.rss && link.stale_days !== null;
+        if (state.filter === "crawlable") return link.rss;
+        if (state.filter === "backlink") return link.backlink === true;
+        return true;
       }
 
-      function formatLatency(latency) {
-        return latency >= 0 ? `${latency}s` : "--";
+      function matchArticleFilter(article) {
+        if (state.filter === "all" || state.filter === "first24") return true;
+        const date = parseArticleDate(article.created);
+        if (!date) return false;
+        const now = new Date();
+        const diffDays = (now - date) / 86400000;
+        if (state.filter === "today") return diffDays >= 0 && diffDays < 1;
+        if (state.filter === "week") return diffDays >= 0 && diffDays <= 7;
+        if (state.filter === "month") return diffDays >= 0 && diffDays <= 30;
+        return true;
+      }
+
+      function parseArticleDate(value) {
+        if (!value) return null;
+        const date = new Date(String(value).replace(" ", "T"));
+        return Number.isNaN(date.getTime()) ? null : date;
+      }
+
+      function sortLinks(left, right) {
+        if (state.filter === "unreachable") {
+          return Number(right.fails || 0) - Number(left.fails || 0) || left.name.localeCompare(right.name, "zh-Hans-CN");
+        }
+        if (state.filter === "stale") {
+          return Number(right.stale_days ?? -1) - Number(left.stale_days ?? -1) || left.name.localeCompare(right.name, "zh-Hans-CN");
+        }
+        if (state.filter === "crawlable") {
+          return normalizeSortLatency(left.latency) - normalizeSortLatency(right.latency) ||
+            Number(left.stale_days ?? 99999) - Number(right.stale_days ?? 99999);
+        }
+        if (state.filter === "backlink") {
+          return Number(right.ok) - Number(left.ok) || left.name.localeCompare(right.name, "zh-Hans-CN");
+        }
+        return linkRank(left) - linkRank(right) || left.name.localeCompare(right.name, "zh-Hans-CN");
+      }
+
+      function normalizeSortLatency(value) {
+        const latency = Number(value);
+        return Number.isFinite(latency) && latency >= 0 ? latency : 99999;
+      }
+
+      function linkRank(link) {
+        if (!link.ok) return 0;
+        if (!link.rss) return 1;
+        return 2;
+      }
+
+      function isFeatured(link) {
+        if (state.filter === "unreachable") return !link.ok;
+        if (state.filter === "stale") return link.rss && link.stale_days !== null;
+        if (state.filter === "crawlable") return link.rss;
+        if (state.filter === "backlink") return link.backlink === true;
+        return false;
+      }
+
+      function formatLatency(value) {
+        const latency = Number(value);
+        if (!Number.isFinite(latency) || latency < 0) return "无延迟";
+        return `${latency.toFixed(2)} 秒`;
+      }
+
+      function compactUpdateAge(link) {
+        if (link.stale_days !== null && link.stale_days !== undefined) return `${link.stale_days} 天未更`;
+        if (link.updated) return "有记录";
+        return "暂无记录";
+      }
+
+      function formatRss(link) {
+        return link.rss ? "可解析" : "未解析";
+      }
+
+      function formatStaleDays(link) {
+        if (link.stale_days === null || link.stale_days === undefined) return "暂无记录";
+        return `${link.stale_days} 天`;
+      }
+
+      function formatBacklink(link) {
+        if (link.backlink === true) return "已确认";
+        if (link.backlink === false) return "未发现";
+        return "未检测";
+      }
+
+      function renderTime() {
+        const time = state.view === "links"
+          ? state.linkStats.checked
+          : state.articleStats.last_updated_time;
+        document.getElementById("footer-time").textContent = time || "暂无更新时间";
       }
 
       function escapeHTML(value) {
-        return String(value || "").replace(/[&<>'"]/g, (char) => ({
+        return String(value || "").replace(/[&<>"']/g, (char) => ({
           "&": "&amp;",
           "<": "&lt;",
           ">": "&gt;",
+          '"': "&quot;",
           "'": "&#39;",
-          "\"": "&quot;",
         }[char]));
       }
 

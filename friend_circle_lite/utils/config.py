@@ -6,7 +6,7 @@ import logging
 
 import yaml
 
-from friend_circle_lite.app_config import ApplicationConfig
+from friend_circle_lite.config.models import ApplicationConfig
 
 def load_raw_config(config_file: str) -> dict:
     """Load the raw YAML config dictionary from disk."""
