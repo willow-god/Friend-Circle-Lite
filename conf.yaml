@@ -33,7 +33,7 @@ proxy_settings:
 #   merge_link_check_data: 是否合并友链可达性数据
 merge_settings:
   enable: false
-  remote_base_url: "https://fc.liushen.fun"
+  remote_base_url: "https://fc.mingcy.cn"
   merge_article_data: true
   merge_link_check_data: true
 
@@ -83,7 +83,7 @@ smtp:
 # 特殊 RSS 地址指定
 # 说明：用于指定特殊 RSS 地址，比如 B 站专栏等不常见 RSS 地址后缀。可以置空，但不要删除此项。
 specific_RSS:
-  - name: "阮一峰"
-    url: "http://feeds.feedburner.com/ruanyifeng"
+  # - name: "阮一峰"
+  #   url: "http://feeds.feedburner.com/ruanyifeng"
   # - name: "无名小栈"
   #   url: "https://blog.imsyy.top/rss.xml"
