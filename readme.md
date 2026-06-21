@@ -1,15 +1,15 @@
 <div align="center">
   <img src="./static/favicon.ico" width="200" alt="fclite">
-
-  [前端展示](https://fc.liushen.fun) | [详细文档](https://blog.liushen.fun/posts/4dc716ec/)
-
+  [前端展示](https://fc.qixz.cn) | [详细文档](https://blog.liushen.fun/posts/4dc716ec/)
   # Friend-Circle-Lite
-
 </div>
 
 友链朋友圈简单版，实现了[友链朋友圈](https://github.com/Rock-Candy-Tea/hexo-circle-of-friends)的基本功能，能够定时爬取rss文章并输出有序内容，为了较好的兼容性，输入格式与友链朋友圈的json格式一致，为了轻量化，暂不支持从友链页面自动爬取，下面会附带`hexo-theme-butterfly`主题的解决方案，其他主题可以类比。
 
 ## 开发进度
+
+### 2026-06-21
+* 2026-06-21 添加友链状态检测功能
 
 ### 2025-07-23
 
@@ -95,11 +95,11 @@
 
 * [清羽飞扬の友链朋友圈](https://blog.liushen.fun/fcircle/)
 
+* [青序栈-鱼塘](https://www.qixz.cn/fcircle)
+
 * [❖星港◎Star☆ 的友链朋友圈](https://blog.starsharbor.com/fcircle/)
 
 * [梦爱吃鱼的友链朋友圈](https://blog.bsgun.cn/fcircle/)
-
-* 欢迎在issue中[提交](https://github.com/willow-god/Friend-Circle-Lite/issues/20)以展示你独特的设计！
 
 ## 项目介绍
 
@@ -107,6 +107,7 @@
 - **邮箱推送更新(对作者推送所有友链更新)**: 作者可以通过邮箱订阅所有rss的更新（未来开发）。
 - **issue邮箱订阅(对访客实时推送最新文章邮件)**: 基于`GitHub issue`的博客更新邮件订阅功能，游客可以通过简单的提交`issue`进行邮箱订阅站点更新，删除对应`issue`即可取消订阅。
 - **文件分离**: 将前后端分离，前端文件放在page分支，后端文件放在主分支
+- **友链状态检测**: 定时检测友链可访问性与反链情况，结果输出到 `result.json`，并生成可视化展示页面
 
 ## 特点介绍
 
@@ -126,6 +127,7 @@
 * 美观邮箱模板
 * 自部署(2024-08-11添加)
 * 前端单开分支(2024-09-05添加) @CCKNBC
+* 友链状态检测(2026-06-21添加)
 
 ## action部署使用方法
 
@@ -138,6 +140,9 @@
 2. **配置 Secrets:**
    在你 Fork 的仓库中，依次进入 `Settings` -> `Secrets` -> `New repository secret`，添加以下 Secrets：
    - `SMTP_PWD`(可选): SMTP 服务器的密码，用于发送电子邮件，如果你不需要，可以不进行配置。
+   - `SOURCE_URL`(可选): 友链状态检测数据源地址，若已填写 `conf.yaml` 可忽略。
+   - `AUTHOR_URL`(可选): 友链状态检测用的作者域名，若已填写 `conf.yaml` 可忽略。
+   - `PROXY_URL`(可选): 友链状态检测代理地址，若已填写 `conf.yaml` 可忽略。
 
    ![](./static/1.png)
    
@@ -149,7 +154,7 @@
    GitHub Actions 已经配置好在仓库的 `.github/workflows/*.yml` 文件中，当到一定时间时将自动执行，也可以手动运行。
    其中，每个action功能如下：
    
-   - `friend_circle_lite.yml`实现核心功能，爬取并发送邮箱，需要在Action中启用；
+   - `friend_circle_lite.yml`实现核心功能，爬取文章、发送邮箱以及友链状态检测，需要在Action中启用；
    - `deal_subscribe_issue.yml`处理固定格式的issue，打上固定标签，评论，并关闭issue；
    
 5. **设置issue格式：**
@@ -165,11 +170,11 @@
      ```yaml
      spider_settings:
        enable: true
-       json_url: "https://blog.qyliu.top/friend.json"
+       json_url: "https://www.qixz.cn/friend.json"
        article_count: 5
        merge_result:
          enable: true
-         merge_json_url: "https://fc.liushen.fun"
+         merge_json_url: "https://fc.qixz.cn"
      ```
      
      `enable`：开启或关闭，默认开启；
@@ -203,9 +208,9 @@
      ```yaml
      rss_subscribe:
        enable: true
-       github_username: willow-god
+       github_username: scfcn
        github_repo: Friend-Circle-Lite
-       your_blog_url: https://blog.qyliu.top/
+       your_blog_url: https://www.qixz.cn/
      ```
      
      `enable`：开启或关闭，默认开启，如果没有配置请关闭。
@@ -243,8 +248,6 @@
 
      ```yaml
      specific_RSS:
-       - name: "Redish101"
-         url: "https://reblog.redish101.top/api/feed"
       # - name: "無名小栈"
       #   url: "https://blog.imsyy.top/rss.xml"
      ```
@@ -255,6 +258,45 @@
 
      可以添加多个，如果不需要也可以置空。
 
+   - **友链状态检测配置**
+
+     检测友链站点是否可访问，并检测对方友链页是否包含你的反链，结果输出到 `result.json`，同时生成展示页面。
+
+     ```yaml
+     check_links:
+       enable: false
+       source_url: "https://www.qixz.cn/flink_count.json"
+       author_url: "www.qixz.cn"
+       proxy_url: ""
+       max_workers: 10
+       specific_linkpage:
+         # - name: "無名小栈"
+         #   url: "https://blog.imsyy.top/link/"
+     ```
+
+     `enable`：是否启用友链状态检测，默认关闭；
+
+     `source_url`：友链数据源地址，支持以下格式：
+     - **留空**：默认与 RSS 抓取共用 `spider_settings.json_url`，自动解析 `friends` 数组格式
+     - JSON 对象格式（含 `link_list` 数组），示例见 `https://blog.liushen.fun/flink_count.json`
+     - JSON `friends` 数组格式（如 `[ [name, link, avatar], ... ]`），与 RSS 抓取数据源一致
+     - JSON 数组格式（每个元素为 `{"name": "...", "link": "...", "linkpage": "..."}`）
+     - CSV 格式（`name,link,linkpage`，`linkpage` 可选），可参考仓库根目录 `link.example.csv`
+
+     `author_url`：你的站点域名（如 `www.qixz.cn`），用于检测对方友链页是否包含你的反链。留空则跳过反链检测；
+
+     `proxy_url`：可选代理地址（如 `https://nginx.example.com/`），用于绕过部分站点的访问限制。不填则直接请求；
+
+     `max_workers`：并发检测线程数，默认 10；
+
+     `specific_linkpage`：特殊友链页映射。当数据源未提供 `linkpage`、且自动探测失败时使用，按 `name` 严格匹配。
+
+     **友链页自动探测**：若数据源未提供 `linkpage`，程序会按常见路径扫描（如 `/link/`、`/links/`、`/friend/`、`/flink/`、`/pyq/` 等），并通过页面关键词（友链、友情链接、friends、links 等）判断是否为友链页。探测结果会缓存到 `result.json`，下次运行时优先使用。
+
+     **环境变量兼容**：`SOURCE_URL`、`AUTHOR_URL`、`PROXY_URL` 也支持通过 GitHub Secrets 设置，优先级高于 `conf.yaml`，方便不想把代理等敏感信息写入配置文件的用户。
+
+     **查看结果**：Action 运行后，可访问 `page` 分支的 `/check-links.html` 查看可视化结果，或直接请求 `/result.json`。
+
 2. **贡献与定制:**
    欢迎对仓库进行贡献或根据需要进行定制。
 
@@ -262,7 +304,7 @@
 
 ### 友圈json生成
 
-**注意，以下可能仅适用于hexo-theme-butterfly或部分类butterfly主题，如果你是其他主题，可以自行适配，理论上只要存在友链数据文件都可以整理为该类型，甚至可以自行整理为对应json格式后放到 `/source` 目录下即可，格式可以参考：`https://blog.qyliu.top/friend.json` **
+**注意，以下可能仅适用于hexo-theme-butterfly或部分类butterfly主题，如果你是其他主题，可以自行适配，理论上只要存在友链数据文件都可以整理为该类型，甚至可以自行整理为对应json格式后放到 `/source` 目录下即可，格式可以参考：`https://www.qixz.cn/friend.json` **
 
 1. 将以下文件放置到博客根目录：
 
@@ -336,7 +378,7 @@
 
 部署完成后，你将获得一个地址，如果是通过vercel部署的，建议自行绑定域名。
 
-检查 `https://example.com/all.json` 是否有数据，如果有，则部署成功。
+检查 `https://fc.qixz.cn/all.json` 是否有数据，如果有，则部署成功。
 
 ## 部署到你的页面
 
@@ -348,16 +390,16 @@
     if (typeof UserConfig === 'undefined') {
         var UserConfig = {
             // 填写你的fc Lite地址
-            private_api_url: 'https://fc.liushen.fun/',
+            private_api_url: 'https://fc.qixz.cn/',
             // 点击加载更多时，一次最多加载几篇文章，默认20
             page_turning_number: 20,
             // 头像加载失败时，默认头像地址
-            error_img: 'https://i.p-i.vip/30/20240815-66bced9226a36.webp',
+            error_img: 'https://ywtypic.wuxit.cn/pic/2026/06/21/6a37be501dbdd.png',
         }
     }
 </script>
-<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/willow-god/Friend-Circle-Lite/main/fclite.min.css">
-<script src="https://fastly.jsdelivr.net/gh/willow-god/Friend-Circle-Lite/main/fclite.min.js"></script>
+<link rel="stylesheet" href="https://fastjs.qixz.cn/gh/willow-god/Friend-Circle-Lite/main/fclite.min.css">
+<script src="https://fastjs.qixz.cn/gh/willow-god/Friend-Circle-Lite/main/fclite.min.js"></script>
 ```
 
 其中第一个地址填入你自己的地址即可，**注意**尾部带`/`，不要遗漏。
@@ -379,7 +421,7 @@
 首先克隆仓库并进入对应路径：
 
 ```bash
-git clone https://github.com/willow-god/Friend-Circle-Lite.git
+git clone https://github.com/scfcn/Friend-Circle-Lite.git
 cd Friend-Circle-Lite
 ```
 
@@ -449,7 +491,7 @@ pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && pip 
 ```yaml
 merge_result:
     enable: true
-    merge_json_url: "https://fc.liushen.fun"
+    merge_json_url: "https://fc.qixz.cn"
 ```
 其中地址项不要添加最后的斜杠，这样就会在本地爬取结束后合并远程的数据，以做到更高的准确率！
 
@@ -482,8 +524,8 @@ docker restart Friend-Circle-Lite
 
 ## 问题与贡献
 
-如果遇到任何问题或有建议，请[提交一个 issue](https://github.com/willow-god/Friend-Circle-Lite/issues)。欢迎贡献代码！
+如果遇到任何问题或有建议，请[提交一个 issue](https://github.com/scfcn/Friend-Circle-Lite/issues)。欢迎贡献代码！
 
 ## Star增长曲线
 
-[![Star History Chart](https://api.star-history.com/svg?repos=willow-god/Friend-Circle-Lite&type=Timeline)](https://star-history.com/#willow-god/Friend-Circle-Lite&Timeline)
+[![Star History Chart](https://api.star-history.com/svg?repos=scfcn/Friend-Circle-Lite&type=Timeline)](https://star-history.com/#scfcn/Friend-Circle-Lite&Timeline)

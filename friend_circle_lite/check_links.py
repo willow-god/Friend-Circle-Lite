@@ -210,6 +210,15 @@ def _fetch_origin_data(origin_path):
         if isinstance(data, dict) and "link_list" in data:
             logging.info("成功解析 JSON 格式数据")
             return data["link_list"]
+        elif isinstance(data, dict) and "friends" in data and isinstance(data["friends"], list):
+            logging.info("成功解析 friend.json 数组格式数据")
+            result = []
+            for friend in data["friends"]:
+                if isinstance(friend, list) and len(friend) >= 2:
+                    result.append({"name": friend[0], "link": friend[1]})
+                elif isinstance(friend, dict) and friend.get("name") and friend.get("link"):
+                    result.append(friend)
+            return result
         elif isinstance(data, list):
             logging.info("成功解析 JSON 数组格式数据")
             return data

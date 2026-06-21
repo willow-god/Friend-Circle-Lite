@@ -175,6 +175,16 @@ if config.get("check_links", {}).get("enable", False):
     result_file = check_links_conf.get("result_file", "./result.json")
     specific_linkpage = check_links_conf.get("specific_linkpage", [])
 
+    # 未指定检测数据源时，默认复用 RSS 抓取的友链数据源
+    if not source_url:
+        spider_conf = config.get("spider_settings", {})
+        if spider_conf.get("enable") and spider_conf.get("json_url"):
+            source_url = spider_conf["json_url"]
+            logging.info(f"📋 check_links 未指定 source_url，默认复用 RSS 数据源: {source_url}")
+        else:
+            logging.error("❌ check_links 未配置 source_url，且 spider_settings.json_url 不可用，跳过友链检测")
+            sys.exit(1)
+
     logging.info("🔍 友链状态检测已启用")
     check_and_save(
         source_url=source_url,
