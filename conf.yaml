@@ -79,5 +79,15 @@ check_links:
   proxy_url: ""
   max_workers: 10
   specific_linkpage:
-    # - name: "無名小栈"
-    #   url: "https://blog.imsyy.top/link/"
+    - name: "LanM"
+      url: "https://bluelanm.github.io/my-website/friend"
+    - name: "snows-l"
+      url: "https://snows-l.site/about/friends"
+    - name: "开往"
+      url: "https://list.travellings.cn/"
+    - name: "BlogsClub"
+      url: "https://www.blogsclub.org/members.html"
+    - name: "揪蝉"
+      url: "https://hi.jiuchan.org/discover"
+    - name: "笔墨迹"
+      url: "https://blogscn.fun/blogs.html"

@@ -49,13 +49,6 @@ LINKPAGE_CANDIDATES = [
     "/friend.html", "/friends.html",
 ]
 
-# 用于判断页面是否为友链页的内容关键词
-LINKPAGE_INDICATORS = [
-    "友链", "友情链接", "交换链接",
-    "friends", "links", "friend list", "link list",
-    "友链朋友圈", "link-list", "friend-list",
-]
-
 
 def _request_url(session, url, headers=HEADERS, desc="", timeout=15, verify=True, **kwargs):
     """统一封装的 GET 请求函数"""
@@ -132,7 +125,7 @@ def _check_author_link_in_page(session, linkpage_url, author_url):
 
 
 def _detect_linkpage(session, link):
-    """根据常见路径自动探测友链页面"""
+    """根据常见路径自动探测友链页面，首个返回 200 的路径即视为友链页"""
     try:
         parsed = urlparse(link)
         base = f"{parsed.scheme}://{parsed.netloc}"
@@ -146,11 +139,7 @@ def _detect_linkpage(session, link):
             session, candidate_url, headers=RAW_HEADERS,
             desc="友链页探测", timeout=10
         )
-        if not response or response.status_code != 200:
-            continue
-
-        content = response.text.lower()
-        if any(indicator.lower() in content for indicator in LINKPAGE_INDICATORS):
+        if response and response.status_code == 200:
             logging.info(f"自动探测到友链页: {link} -> {candidate_url}")
             return candidate_url
 

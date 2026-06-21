@@ -291,7 +291,7 @@
 
      `specific_linkpage`：特殊友链页映射。当数据源未提供 `linkpage`、且自动探测失败时使用，按 `name` 严格匹配。
 
-     **友链页自动探测**：若数据源未提供 `linkpage`，程序会按常见路径扫描（如 `/link/`、`/links/`、`/friend/`、`/flink/` 等），并通过页面关键词（友链、友情链接、friends、links 等）判断是否为友链页。探测结果会缓存到 `result.json`，下次运行时优先使用。
+     **友链页自动探测**：若数据源未提供 `linkpage`，程序会按常见路径扫描（如 `/link/`、`/links/`、`/friend/`、`/flink/` 等），首个返回 200 的路径即视为友链页。探测结果会缓存到 `result.json`，下次运行时优先使用。
 
      **环境变量兼容**：`SOURCE_URL`、`AUTHOR_URL`、`PROXY_URL` 也支持通过 GitHub Secrets 设置，优先级高于 `conf.yaml`，方便不想把代理等敏感信息写入配置文件的用户。
 
