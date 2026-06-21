@@ -1,12 +1,12 @@
 import logging
 import sys
 import os
+import json
 
 from friend_circle_lite.all_friends import fetch_and_process_data, marge_data_from_json_url, marge_errors_from_json_url, deal_with_large_data
 from friend_circle_lite.utils.json import write_json
 from friend_circle_lite.utils.config import load_config
 from friend_circle_lite.utils.mail import send_emails
-from friend_circle_lite.single_friend import get_latest_articles_from_link
 from friend_circle_lite.utils.github import extract_emails_from_issues
 
 FUTURE_ARTICLE_TOLERANCE_DAYS = 2
@@ -103,20 +103,50 @@ if config["rss_subscribe"]["enable"] and SMTP_isReady:
     logging.info(f"👤 GitHub 用户名：{github_username}")
     logging.info(f"📁 GitHub 仓库：{github_repo}")
 
-    your_blog_url = config["rss_subscribe"]["your_blog_url"]
     email_template = config["rss_subscribe"]["email_template"]
     website_title = config["rss_subscribe"]["website_info"]["title"]
 
-    latest_articles = get_latest_articles_from_link(
-        url=your_blog_url,
-        count=5,
-        last_articles_path="./temp/newest_posts.json" # 存储上一次的文章
-    )
+    # 从 all.json 读取所有朋友圈最新文章
+    all_json_path = "./all.json"
+    if not os.path.exists(all_json_path):
+        logging.error("❌ 未找到 all.json，请确保 spider_settings.enable 为 true 且爬虫已成功运行")
+        sys.exit(1)
 
-    if not latest_articles:
+    with open(all_json_path, "r", encoding="utf-8") as f:
+        all_data = json.load(f)
+
+    all_articles = all_data.get("article_data", [])
+    if not all_articles:
+        logging.info("📭 朋友圈暂无文章，无需推送")
+        sys.exit(0)
+
+    # 按发布时间倒序排序并取前 N 篇用于判断新文章
+    article_count = config["spider_settings"].get("article_count", 5)
+    all_articles.sort(key=lambda x: x.get("created", ""), reverse=True)
+    latest_articles = all_articles[:article_count]
+
+    # 读取本地缓存的上次文章
+    last_articles_path = "./temp/newest_posts.json"
+    os.makedirs(os.path.dirname(last_articles_path), exist_ok=True)
+    if os.path.exists(last_articles_path):
+        with open(last_articles_path, "r", encoding="utf-8") as f:
+            last_data = json.load(f)
+    else:
+        last_data = {"articles": []}
+
+    last_links = {a.get("link") for a in last_data.get("articles", [])}
+
+    # 找出更新的文章
+    updated_articles = [a for a in latest_articles if a.get("link") not in last_links]
+
+    # 更新本地缓存
+    with open(last_articles_path, "w", encoding="utf-8") as f:
+        json.dump({"articles": latest_articles}, f, ensure_ascii=False, indent=4)
+
+    if not updated_articles:
         logging.info("📭 无新文章，无需推送")
     else:
-        logging.info(f"🆕 获取到的最新文章：{latest_articles}")
+        logging.info(f"🆕 获取到的最新文章：{updated_articles}")
 
         github_api_url = (
             f"https://api.github.com/repos/{github_username}/{github_repo}/issues"
@@ -131,12 +161,13 @@ if config["rss_subscribe"]["enable"] and SMTP_isReady:
 
         logging.info(f"📬 获取到邮箱列表：{email_list}")
 
-        for article in latest_articles:
+        for article in updated_articles:
             template_data = {
                 "title": article["title"],
-                "summary": article["summary"],
-                "published": article["published"],
+                "summary": article.get("summary", ""),
+                "published": article.get("created", ""),
                 "link": article["link"],
+                "author": article.get("author", ""),
                 "website_title": website_title,
                 "github_issue_url": (
                     f"https://github.com/{github_username}/{github_repo}"
@@ -153,9 +184,10 @@ if config["rss_subscribe"]["enable"] and SMTP_isReady:
                 subject=f"{website_title} の最新文章：{article['title']}",
                 body=(
                     f"📄 文章标题：{article['title']}\n"
+                    f"👤 作者：{article.get('author', '')}\n"
                     f"🔗 链接：{article['link']}\n"
-                    f"📝 简介：{article['summary']}\n"
-                    f"🕒 发布时间：{article['published']}"
+                    f"📝 简介：{article.get('summary', '')}\n"
+                    f"🕒 发布时间：{article.get('created', '')}"
                 ),
                 template_path=email_template,
                 template_data=template_data,

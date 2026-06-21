@@ -45,7 +45,6 @@ LINKPAGE_CANDIDATES = [
     "/friend/", "/friend",
     "/friends/", "/friends",
     "/flink/", "/flink",
-    "/pyq/", "/pyq",
     "/link.html", "/links.html",
     "/friend.html", "/friends.html",
 ]

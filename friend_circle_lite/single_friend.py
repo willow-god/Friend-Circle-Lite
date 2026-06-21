@@ -194,6 +194,7 @@ def process_friend(friend, session: requests.Session, count: int, specific_and_c
                         'link': a['link'],
                         'author': name,
                         'avatar': avatar,
+                        'summary': a.get('summary', ''),
                     }
                     for a in feed_info['articles']
                 ]
@@ -208,7 +209,7 @@ def process_friend(friend, session: requests.Session, count: int, specific_and_c
 
     # ---- 4. 如果缓存 RSS 无效则重新探测 ----
     if parse_error and source_used in ('cache', 'unknown'):
-        logging.info(f"缓存 RSS 无效，重新探测：{name} ({blog_url})。")
+        logging.info(f"缓存 RSS 无效，重新探测：{name} ({blog_url}) 。")
         new_type, new_url = check_feed(blog_url, session)
         if new_type != 'none' and new_url:
             try:
@@ -221,6 +222,7 @@ def process_friend(friend, session: requests.Session, count: int, specific_and_c
                             'link': a['link'],
                             'author': name,
                             'avatar': avatar,
+                            'summary': a.get('summary', ''),
                         }
                         for a in feed_info['articles']
                     ]
