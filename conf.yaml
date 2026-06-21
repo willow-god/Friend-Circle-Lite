@@ -61,6 +61,6 @@ smtp:
 #   url:                指定的RSS地址
 specific_RSS:
    - name: "如形の博客"
-     url: "https://blog.rusin.lol/atom.xsl"
+     url: "https://blog.rusin.lol/atom.xml"
   # - name: "無名小栈"
   #   url: "https://blog.imsyy.top/rss.xml"
