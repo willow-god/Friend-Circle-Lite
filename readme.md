@@ -295,7 +295,7 @@
 
      **环境变量兼容**：`SOURCE_URL`、`AUTHOR_URL`、`PROXY_URL` 也支持通过 GitHub Secrets 设置，优先级高于 `conf.yaml`，方便不想把代理等敏感信息写入配置文件的用户。
 
-     **查看结果**：Action 运行后，可访问 `page` 分支的 `/check-links.html` 查看可视化结果，或直接请求 `/result.json`。
+     **查看结果**：Action 运行后，友链状态会自动展示在主页底部；也可直接请求 `/result.json` 获取原始数据。
 
 2. **贡献与定制:**
    欢迎对仓库进行贡献或根据需要进行定制。

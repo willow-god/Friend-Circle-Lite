@@ -4,7 +4,6 @@ import time
 import logging
 import requests
 import warnings
-from queue import Queue
 from datetime import datetime
 from urllib.parse import urlparse, urljoin
 from concurrent.futures import ThreadPoolExecutor
@@ -241,37 +240,43 @@ def _fetch_origin_data(origin_path):
         return []
 
 
-def _check_one_link(item, proxy_url_template, author_url, specific_map, previous_map):
-    """单个链接检测（每个线程独立 session，避免线程安全问题）"""
+def _check_backlink(session, item, author_url, specific_map, previous_map):
+    """解析/探测友链页，并检测是否包含作者反链"""
+    if not author_url:
+        return False
+
+    linkpage = _resolve_linkpage(session, item, specific_map, previous_map)
+    if linkpage:
+        item["linkpage"] = linkpage
+        return _check_author_link_in_page(session, linkpage, author_url)
+    return False
+
+
+def _check_link_round(item, proxy_url_template, author_url, specific_map, previous_map, method):
+    """单轮主 URL 检测：method 为 'direct' 或 'proxy'"""
     link = item["link"]
-    has_author_link = False
+
+    if method == "direct":
+        url = link
+        desc = "直接访问"
+    else:
+        url = proxy_url_template.format(link) if proxy_url_template else None
+        desc = "代理访问"
+
+    if not url or not _is_url(url):
+        logging.warning(f"[{desc}] 无效链接: {link}")
+        return item, -1, False
 
     with requests.Session() as session:
-        # 解析/探测友链页地址
-        linkpage = _resolve_linkpage(session, item, specific_map, previous_map)
-        if linkpage:
-            item["linkpage"] = linkpage
-
-        for method, url in [
-            ("直接访问", link),
-            ("代理访问", proxy_url_template.format(link) if proxy_url_template else None),
-        ]:
-            if not url or not _is_url(url):
-                logging.warning(f"[{method}] 无效链接: {link}")
-                continue
-
-            response, latency = _request_url(session, url, desc=method)
-            if response and response.status_code == 200:
-                logging.info(f"[{method}] 成功访问: {link} ，延迟 {latency} 秒")
-
-                if item.get("linkpage") and author_url:
-                    has_author_link = _check_author_link_in_page(session, item["linkpage"], author_url)
-
-                return item, latency, has_author_link
-            elif response and response.status_code != 200:
-                logging.warning(f"[{method}] 状态码异常: {link} -> {response.status_code}")
-            else:
-                logging.warning(f"[{method}] 请求失败，Response 无效: {link}")
+        response, latency = _request_url(session, url, desc=desc)
+        if response and response.status_code == 200:
+            logging.info(f"[{desc}] 成功访问: {link} ，延迟 {latency} 秒")
+            has_author_link = _check_backlink(session, item, author_url, specific_map, previous_map)
+            return item, latency, has_author_link
+        elif response and response.status_code != 200:
+            logging.warning(f"[{desc}] 状态码异常: {link} -> {response.status_code}")
+        else:
+            logging.warning(f"[{desc}] 请求失败，Response 无效: {link}")
 
     return item, -1, False
 
@@ -287,20 +292,13 @@ def _handle_api_requests(failed_items, author_url, specific_map, previous_map):
             response, latency = _request_url(session, api_url, headers=RAW_HEADERS, desc="API 检查", timeout=30)
             has_author_link = False
 
-            # API 路径下同样解析/探测友链页
-            linkpage = _resolve_linkpage(session, item, specific_map, previous_map)
-            if linkpage:
-                item["linkpage"] = linkpage
-
             if response:
                 try:
                     res_json = response.json()
                     if int(res_json.get("code")) == 200 and int(res_json.get("data")) == 200:
                         logging.info(f"[API] 成功访问: {link} ，状态码 200")
                         item["latency"] = latency
-
-                        if item.get("linkpage") and author_url:
-                            has_author_link = _check_author_link_in_page(session, item["linkpage"], author_url)
+                        has_author_link = _check_backlink(session, item, author_url, specific_map, previous_map)
                     else:
                         logging.warning(f"[API] 状态异常: {link} -> [{res_json.get('code')}, {res_json.get('data')}]")
                         item["latency"] = -1
@@ -355,27 +353,46 @@ def check_and_save(
         if entry.get("link") and entry.get("linkpage")
     }
 
-    api_request_queue = Queue()
-
+    # 第一轮：直接访问
+    logging.info("开始第一轮检测：直接访问")
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        results = list(
+        direct_results = list(
             executor.map(
-                lambda item: _check_one_link(item, proxy_url_template, author_url, specific_map, previous_map),
+                lambda item: _check_link_round(item, proxy_url_template, author_url, specific_map, previous_map, "direct"),
                 link_list,
             )
         )
 
-    # 收集需要 API 兜底的项
-    for item, latency, _ in results:
-        if latency == -1:
-            api_request_queue.put(item)
+    success_results = [r for r in direct_results if r[1] != -1]
+    proxy_pool = [r[0] for r in direct_results if r[1] == -1]
+    logging.info(f"直接访问完成：成功 {len(success_results)} 个，进入第二轮 {len(proxy_pool)} 个")
 
-    updated_api_results = _handle_api_requests(list(api_request_queue.queue), author_url, specific_map, previous_map)
-    for updated_item in updated_api_results:
-        for idx, (item, latency, has_author) in enumerate(results):
-            if item["link"] == updated_item[0]["link"]:
-                results[idx] = updated_item
-                break
+    # 第二轮：代理访问（仅当配置了代理时）
+    if proxy_pool and proxy_url_template:
+        logging.info("开始第二轮检测：代理访问")
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            proxy_results = list(
+                executor.map(
+                    lambda item: _check_link_round(item, proxy_url_template, author_url, specific_map, previous_map, "proxy"),
+                    proxy_pool,
+                )
+            )
+        proxy_successes = [r for r in proxy_results if r[1] != -1]
+        success_results.extend(proxy_successes)
+        api_pool = [r[0] for r in proxy_results if r[1] == -1]
+        logging.info(f"代理访问完成：成功 {len(proxy_successes)} 个，进入第三轮 {len(api_pool)} 个")
+    else:
+        if proxy_pool and not proxy_url_template:
+            logging.info("未配置代理 URL，跳过第二轮代理访问")
+        api_pool = proxy_pool
+
+    # 第三轮：API 兜底
+    if api_pool:
+        logging.info(f"开始第三轮检测：API 兜底，共 {len(api_pool)} 个")
+        api_results = _handle_api_requests(api_pool, author_url, specific_map, previous_map)
+        success_results.extend(api_results)
+
+    results = success_results
 
     current_links = {item["link"] for item in link_list}
     link_status = []

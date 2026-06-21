@@ -78,7 +78,6 @@ jobs:
         mkdir pages
         cp -r main ./static/edgeone.json ./static/_headers ./static/index.html ./static/readme.md ./static/favicon.ico ./static/bg-light.webp ./temp/cache.json ./static/bg-dark.webp all.json errors.json pages/
         [ -f result.json ] && cp result.json pages/
-        [ -f static/check-links.html ] && cp static/check-links.html pages/
 
     - name: Publish static assets to branches
       run: |
