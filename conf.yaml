@@ -71,6 +71,7 @@ specific_RSS:
 #   author_url:         作者站点域名，用于检测对方友链页是否包含你的反链，留空则跳过反链检测
 #   proxy_url:          可选代理地址，如 https://nginx.example.com/，用于绕过部分站点的访问限制
 #   max_workers:        并发检测线程数
+#   render_js:          是否使用无头浏览器渲染友链页以检测懒加载内容（会显著增加耗时），默认 false
 #   specific_linkpage:  特殊友链页映射，当自动探测失败或数据源未提供时使用，按 name 匹配
 check_links:
   enable: true
@@ -78,6 +79,7 @@ check_links:
   author_url: "www.qixz.cn"
   proxy_url: ""
   max_workers: 10
+  render_js: true
   specific_linkpage:
     - name: "LanM"
       url: "https://bluelanm.github.io/my-website/friend"

@@ -4,3 +4,4 @@ requests
 feedparser==6.0.11
 PyYAML==6.0.1
 jinja2==3.1.2
+playwright

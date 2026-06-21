@@ -34,7 +34,11 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    
+
+    - name: Install Playwright browsers
+      run: |
+        playwright install chromium
+
     - name: Ensure temp folder is not empty
       run: |
         mkdir -p ./temp

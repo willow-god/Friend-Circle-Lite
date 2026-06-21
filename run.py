@@ -181,7 +181,7 @@ if config["rss_subscribe"]["enable"] and SMTP_isReady:
                 smtp_server=server,
                 port=port,
                 password=password,
-                subject=f"{website_title} の最新文章：{article['title']}",
+                subject=f"{article.get('author', website_title)} の最新文章：{article['title']}",
                 body=(
                     f"📄 文章标题：{article['title']}\n"
                     f"👤 作者：{article.get('author', '')}\n"
@@ -206,6 +206,7 @@ if config.get("check_links", {}).get("enable", False):
     max_workers = check_links_conf.get("max_workers", 10)
     result_file = check_links_conf.get("result_file", "./result.json")
     specific_linkpage = check_links_conf.get("specific_linkpage", [])
+    render_js = check_links_conf.get("render_js", False)
 
     # 未指定检测数据源时，默认复用 RSS 抓取的友链数据源
     if not source_url:
@@ -225,4 +226,5 @@ if config.get("check_links", {}).get("enable", False):
         max_workers=max_workers,
         result_file=result_file,
         specific_linkpage=specific_linkpage,
+        render_js=render_js,
     )

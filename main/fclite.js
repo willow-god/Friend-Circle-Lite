@@ -36,6 +36,16 @@ function initialize_fc_lite() {
 
     let start = 0; // 记录加载起始位置
     let allArticles = []; // 存储所有文章
+    let linkStatusMap = {}; // 存储友链状态检测结果
+
+    function buildLinkStatusMap(data) {
+        linkStatusMap = {};
+        if (data && data.link_status) {
+            data.link_status.forEach(item => {
+                if (item.name) linkStatusMap[item.name] = item;
+            });
+        }
+    }
 
     function loadMoreArticles() {
         const cacheKey = 'friend-circle-lite-cache';
@@ -43,19 +53,27 @@ function initialize_fc_lite() {
         const cacheTime = localStorage.getItem(cacheTimeKey);
         const now = new Date().getTime();
 
+        const fetchAllJson = () => fetch(`${UserConfig.private_api_url}all.json`).then(response => response.json());
+        const fetchResultJson = () => fetch(`${UserConfig.private_api_url}result.json`)
+            .then(response => response.ok ? response.json() : null)
+            .catch(() => null);
+
         if (cacheTime && (now - cacheTime < 10 * 60 * 1000)) { // 缓存时间小于10分钟
             const cachedData = JSON.parse(localStorage.getItem(cacheKey));
             if (cachedData) {
-                processArticles(cachedData);
+                fetchResultJson().then(linkData => {
+                    if (linkData) buildLinkStatusMap(linkData);
+                    processArticles(cachedData);
+                });
                 return;
             }
         }
 
-        fetch(`${UserConfig.private_api_url}all.json`)
-            .then(response => response.json())
-            .then(data => {
+        Promise.all([fetchAllJson(), fetchResultJson()])
+            .then(([data, linkData]) => {
                 localStorage.setItem(cacheKey, JSON.stringify(data));
                 localStorage.setItem(cacheTimeKey, now.toString());
+                if (linkData) buildLinkStatusMap(linkData);
                 processArticles(data);
             })
             .finally(() => {
@@ -81,6 +99,22 @@ function initialize_fc_lite() {
         articles.forEach(article => {
             const card = document.createElement('div');
             card.className = 'card';
+
+            const status = linkStatusMap[article.author];
+            const statusEl = document.createElement('div');
+            statusEl.className = 'card-status';
+            if (status) {
+                const ok = status.latency !== -1;
+                const dotClass = ok ? 'status-ok' : 'status-fail';
+                const latencyText = ok ? `延迟 ${(status.latency * 1000).toFixed(0)}ms` : '不可访问';
+                const backlinkText = status.has_author_link ? '已反链' : '未反链';
+                statusEl.innerHTML = `<span class="status-dot ${dotClass}"></span>`;
+                statusEl.title = `${status.name || article.author} · ${latencyText} · ${backlinkText} · 连续失败 ${status.fail_count || 0} 次`;
+            } else {
+                statusEl.innerHTML = `<span class="status-dot status-unknown"></span>`;
+                statusEl.title = '暂无状态数据';
+            }
+            card.appendChild(statusEl);
 
             const title = document.createElement('div');
             title.className = 'card-title';

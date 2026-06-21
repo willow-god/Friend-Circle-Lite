@@ -70,7 +70,50 @@ def _is_url(path):
     return urlparse(path).scheme in ("http", "https")
 
 
-def _check_author_link_in_page(session, linkpage_url, author_url):
+def _find_author_link(content, variants):
+    """在 HTML 内容中查找是否包含作者链接"""
+    for variant in variants:
+        if (
+            f'href="{variant}"' in content
+            or f"href='{variant}'" in content
+            or f'href="{variant}/"' in content
+            or f"href='{variant}/'" in content
+        ):
+            return "href"
+        if variant in content:
+            return "text"
+    return None
+
+
+def _render_with_playwright(url, scroll_times=3, scroll_delay=800):
+    """使用 Playwright 渲染页面并模拟滚动，返回最终 HTML"""
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        logging.warning("未安装 playwright，跳过 JS 渲染")
+        return ""
+
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            page.goto(url, wait_until="networkidle", timeout=30000)
+
+            for _ in range(scroll_times):
+                page.evaluate("window.scrollBy(0, window.innerHeight)")
+                page.wait_for_timeout(scroll_delay)
+
+            # 再等待一下确保懒加载完成
+            page.wait_for_timeout(1000)
+            content = page.content()
+            browser.close()
+            return content
+    except Exception as e:
+        logging.warning(f"Playwright 渲染失败: {url}, 错误: {e}")
+        return ""
+
+
+def _check_author_link_in_page(session, linkpage_url, author_url, render_js=False):
     """检测友链页面是否包含作者链接"""
     if not author_url:
         return False
@@ -97,31 +140,28 @@ def _check_author_link_in_page(session, linkpage_url, author_url):
     }
 
     content = response.text
-    found_in_href = False
-    found_as_text = False
-
-    for variant in variants:
-        if (
-            f'href="{variant}"' in content
-            or f"href='{variant}'" in content
-            or f'href="{variant}/"' in content
-            or f"href='{variant}/'" in content
-        ):
-            found_in_href = True
-            break
-
-        if variant in content:
-            found_as_text = True
-
-    if found_in_href:
+    result = _find_author_link(content, variants)
+    if result == "href":
         logging.info(f"友链页面 {linkpage_url} 中找到作者链接: {normalized}")
         return True
-    elif found_as_text:
+    elif result == "text":
         logging.info(f"友链页面 {linkpage_url} 中包含作者URL文本但非链接")
         return True
-    else:
-        logging.info(f"友链页面 {linkpage_url} 中未找到作者链接")
-        return False
+
+    if render_js:
+        logging.info(f"初始 HTML 未找到作者链接，尝试 JS 渲染: {linkpage_url}")
+        rendered_content = _render_with_playwright(linkpage_url)
+        if rendered_content:
+            rendered_result = _find_author_link(rendered_content, variants)
+            if rendered_result == "href":
+                logging.info(f"JS 渲染后找到作者链接: {linkpage_url}")
+                return True
+            elif rendered_result == "text":
+                logging.info(f"JS 渲染后找到作者URL文本: {linkpage_url}")
+                return True
+
+    logging.info(f"友链页面 {linkpage_url} 中未找到作者链接")
+    return False
 
 
 def _detect_linkpage(session, link):
@@ -228,7 +268,7 @@ def _fetch_origin_data(origin_path):
         return []
 
 
-def _check_backlink(session, item, author_url, specific_map, previous_map):
+def _check_backlink(session, item, author_url, specific_map, previous_map, render_js=False):
     """解析/探测友链页，并检测是否包含作者反链"""
     if not author_url:
         return False
@@ -236,11 +276,11 @@ def _check_backlink(session, item, author_url, specific_map, previous_map):
     linkpage = _resolve_linkpage(session, item, specific_map, previous_map)
     if linkpage:
         item["linkpage"] = linkpage
-        return _check_author_link_in_page(session, linkpage, author_url)
+        return _check_author_link_in_page(session, linkpage, author_url, render_js)
     return False
 
 
-def _check_link_round(item, proxy_url_template, author_url, specific_map, previous_map, method):
+def _check_link_round(item, proxy_url_template, author_url, specific_map, previous_map, method, render_js=False):
     """单轮主 URL 检测：method 为 'direct' 或 'proxy'"""
     link = item["link"]
 
@@ -259,7 +299,7 @@ def _check_link_round(item, proxy_url_template, author_url, specific_map, previo
         response, latency = _request_url(session, url, desc=desc)
         if response and response.status_code == 200:
             logging.info(f"[{desc}] 成功访问: {link} ，延迟 {latency} 秒")
-            has_author_link = _check_backlink(session, item, author_url, specific_map, previous_map)
+            has_author_link = _check_backlink(session, item, author_url, specific_map, previous_map, render_js)
             return item, latency, has_author_link
         elif response and response.status_code != 200:
             logging.warning(f"[{desc}] 状态码异常: {link} -> {response.status_code}")
@@ -269,7 +309,7 @@ def _check_link_round(item, proxy_url_template, author_url, specific_map, previo
     return item, -1, False
 
 
-def _handle_api_requests(failed_items, author_url, specific_map, previous_map):
+def _handle_api_requests(failed_items, author_url, specific_map, previous_map, render_js=False):
     """使用第三方 API 兜底检测失败的链接"""
     results = []
     with requests.Session() as session:
@@ -286,7 +326,7 @@ def _handle_api_requests(failed_items, author_url, specific_map, previous_map):
                     if int(res_json.get("code")) == 200 and int(res_json.get("data")) == 200:
                         logging.info(f"[API] 成功访问: {link} ，状态码 200")
                         item["latency"] = latency
-                        has_author_link = _check_backlink(session, item, author_url, specific_map, previous_map)
+                        has_author_link = _check_backlink(session, item, author_url, specific_map, previous_map, render_js)
                     else:
                         logging.warning(f"[API] 状态异常: {link} -> [{res_json.get('code')}, {res_json.get('data')}]")
                         item["latency"] = -1
@@ -308,6 +348,7 @@ def check_and_save(
     max_workers=10,
     result_file="./result.json",
     specific_linkpage=None,
+    render_js=False,
 ):
     """执行友链检测并保存结果"""
     specific_linkpage = specific_linkpage or []
@@ -346,7 +387,7 @@ def check_and_save(
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         direct_results = list(
             executor.map(
-                lambda item: _check_link_round(item, proxy_url_template, author_url, specific_map, previous_map, "direct"),
+                lambda item: _check_link_round(item, proxy_url_template, author_url, specific_map, previous_map, "direct", render_js),
                 link_list,
             )
         )
@@ -361,7 +402,7 @@ def check_and_save(
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             proxy_results = list(
                 executor.map(
-                    lambda item: _check_link_round(item, proxy_url_template, author_url, specific_map, previous_map, "proxy"),
+                    lambda item: _check_link_round(item, proxy_url_template, author_url, specific_map, previous_map, "proxy", render_js),
                     proxy_pool,
                 )
             )
@@ -377,7 +418,7 @@ def check_and_save(
     # 第三轮：API 兜底
     if api_pool:
         logging.info(f"开始第三轮检测：API 兜底，共 {len(api_pool)} 个")
-        api_results = _handle_api_requests(api_pool, author_url, specific_map, previous_map)
+        api_results = _handle_api_requests(api_pool, author_url, specific_map, previous_map, render_js)
         success_results.extend(api_results)
 
     results = success_results
