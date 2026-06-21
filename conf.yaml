@@ -73,8 +73,8 @@ specific_RSS:
 #   max_workers:        并发检测线程数
 #   specific_linkpage:  特殊友链页映射，当自动探测失败或数据源未提供时使用，按 name 匹配
 check_links:
-  enable: false
-  source_url: ""
+  enable: true
+  source_url: "https://www.qixz.cn/friend.json"
   author_url: "www.qixz.cn"
   proxy_url: ""
   max_workers: 10
