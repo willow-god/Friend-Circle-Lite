@@ -53,6 +53,9 @@ jobs:
       env:
         SMTP_PWD: ${{ secrets.SMTP_PWD }}
         FCL_REPO: ${{ github.repository }}
+        SOURCE_URL: ${{ secrets.SOURCE_URL }}
+        AUTHOR_URL: ${{ secrets.AUTHOR_URL }}
+        PROXY_URL: ${{ secrets.PROXY_URL }}
       run: |
         echo "Checking RSS feeds..."
         python run.py
@@ -74,6 +77,8 @@ jobs:
       run: |
         mkdir pages
         cp -r main ./static/edgeone.json ./static/_headers ./static/index.html ./static/readme.md ./static/favicon.ico ./static/bg-light.webp ./temp/cache.json ./static/bg-dark.webp all.json errors.json pages/
+        [ -f result.json ] && cp result.json pages/
+        [ -f static/check-links.html ] && cp static/check-links.html pages/
 
     - name: Publish static assets to branches
       run: |

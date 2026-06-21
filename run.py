@@ -161,3 +161,26 @@ if config["rss_subscribe"]["enable"] and SMTP_isReady:
                 template_data=template_data,
                 use_tls=use_tls
             )
+
+# ========== 友链状态检测 ==========
+if config.get("check_links", {}).get("enable", False):
+    from friend_circle_lite.check_links import check_and_save
+
+    check_links_conf = config["check_links"]
+    # 兼容原 check-flink-main 的环境变量配置
+    source_url = os.getenv("SOURCE_URL") or check_links_conf.get("source_url")
+    author_url = os.getenv("AUTHOR_URL") or check_links_conf.get("author_url", "")
+    proxy_url = os.getenv("PROXY_URL") or check_links_conf.get("proxy_url", "")
+    max_workers = check_links_conf.get("max_workers", 10)
+    result_file = check_links_conf.get("result_file", "./result.json")
+    specific_linkpage = check_links_conf.get("specific_linkpage", [])
+
+    logging.info("🔍 友链状态检测已启用")
+    check_and_save(
+        source_url=source_url,
+        author_url=author_url,
+        proxy_url=proxy_url,
+        max_workers=max_workers,
+        result_file=result_file,
+        specific_linkpage=specific_linkpage,
+    )

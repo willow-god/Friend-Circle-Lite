@@ -62,3 +62,21 @@ smtp:
 specific_RSS:
   # - name: "無名小栈"
   #   url: "https://blog.imsyy.top/rss.xml"
+
+# 友链状态检测配置
+# 解释：定时检测友链是否可访问，并输出 result.json，支持展示页面查看状态
+#   enable:             是否启用友链检测
+#   source_url:         友链数据源地址，支持 JSON（link_list 格式或数组）或 CSV（name,link,linkpage）
+#   author_url:         作者站点域名，用于检测对方友链页是否包含你的反链，留空则跳过反链检测
+#   proxy_url:          可选代理地址，如 https://nginx.example.com/，用于绕过部分站点的访问限制
+#   max_workers:        并发检测线程数
+#   specific_linkpage:  特殊友链页映射，当自动探测失败或数据源未提供时使用，按 name 匹配
+check_links:
+  enable: false
+  source_url: "https://www.qixz.cn/flink_count.json"
+  author_url: "www.qixz.cn"
+  proxy_url: ""
+  max_workers: 10
+  specific_linkpage:
+    # - name: "無名小栈"
+    #   url: "https://blog.imsyy.top/link/"
