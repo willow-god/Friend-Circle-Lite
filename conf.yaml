@@ -79,7 +79,7 @@ check_links:
   author_url: "www.qixz.cn"
   proxy_url: ""
   max_workers: 10
-  render_js: true
+  render_js: false
   specific_linkpage:
     - name: "LanM"
       url: "https://bluelanm.github.io/my-website/friend"

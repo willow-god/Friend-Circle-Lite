@@ -208,6 +208,155 @@
     color: #4dabff;
 }
 
+/* 友链状态检测 */
+.check-links-section {
+    width: 100%;
+    margin: 40px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 16px;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+[data-theme="dark"] .check-links-section {
+    background: rgba(30, 30, 30, 0.85);
+    color: #ffffff;
+}
+
+.check-links-section h2 {
+    margin: 0 0 16px;
+    font-size: 22px;
+    text-align: center;
+}
+
+.check-links-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.check-links-summary .summary-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .check-links-summary .summary-card {
+    background: rgba(50, 50, 50, 0.9);
+}
+
+.summary-card .number {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007BFF;
+}
+
+.summary-card .label {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+}
+
+[data-theme="dark"] .summary-card .label {
+    color: #aaaaaa;
+}
+
+.check-links-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+}
+
+.check-link-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+}
+
+.check-link-card:hover {
+    transform: translateY(-2px);
+}
+
+[data-theme="dark"] .check-link-card {
+    background: rgba(50, 50, 50, 0.95);
+}
+
+.check-link-status {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.status-ok { background-color: #28a745; }
+.status-fail { background-color: #dc3545; }
+.status-unknown { background-color: #6c757d; }
+
+.check-link-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.check-link-name {
+    font-weight: bold;
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.check-link-meta {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+}
+
+[data-theme="dark"] .check-link-meta {
+    color: #aaaaaa;
+}
+
+.check-link-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: #e9ecef;
+    color: #495057;
+    white-space: nowrap;
+}
+
+[data-theme="dark"] .check-link-badge {
+    background: #444;
+    color: #ddd;
+}
+
+.check-link-badge.backlink-ok {
+    background: #d4edda;
+    color: #155724;
+}
+
+[data-theme="dark"] .check-link-badge.backlink-ok {
+    background: #1e4620;
+    color: #d4edda;
+}
+
+.check-links-empty {
+    text-align: center;
+    color: #888;
+    padding: 30px;
+}
+
+[data-theme="dark"] .check-links-empty {
+    color: #aaaaaa;
+}
 </style>
 
 <body>
@@ -222,6 +371,13 @@
     </div>
     <div class="root-container">
         <div id="friend-circle-lite-root"></div>
+        <section class="check-links-section" id="check-links-section">
+            <h2>友链状态检测</h2>
+            <div id="check-links-summary" class="check-links-summary"></div>
+            <div id="check-links-list" class="check-links-list">
+                <div class="check-links-empty">正在加载友链状态...</div>
+            </div>
+        </section>
     </div>
     <button id="theme-toggle">暗色模式</button>
     <footer class="beian-footer">
@@ -259,6 +415,60 @@
         button.textContent = newTheme === 'light' ? '暗色模式' : '亮色模式';
     });
 
+    // 加载并渲染友链状态
+    async function loadCheckLinks() {
+        const sectionEl = document.getElementById('check-links-section');
+        const listEl = document.getElementById('check-links-list');
+        const summaryEl = document.getElementById('check-links-summary');
+        try {
+            const response = await fetch('./result.json');
+            if (!response.ok) {
+                throw new Error('未找到 result.json');
+            }
+            const data = await response.json();
+            const total = data.total_count || 0;
+            const accessible = data.accessible_count || 0;
+            const inaccessible = data.inaccessible_count || 0;
+            const backlinkCount = data.has_author_link_count || 0;
+
+            summaryEl.innerHTML = `
+                <div class="summary-card"><div class="number">${total}</div><div class="label">总计</div></div>
+                <div class="summary-card"><div class="number">${accessible}</div><div class="label">可访问</div></div>
+                <div class="summary-card"><div class="number">${inaccessible}</div><div class="label">不可访问</div></div>
+                <div class="summary-card"><div class="number">${backlinkCount}</div><div class="label">含反链</div></div>
+            `;
+
+            if (!data.link_status || data.link_status.length === 0) {
+                listEl.innerHTML = '<div class="check-links-empty">暂无友链状态数据</div>';
+                return;
+            }
+
+            listEl.innerHTML = data.link_status.map(item => {
+                const ok = item.latency !== -1;
+                const statusClass = ok ? 'status-ok' : 'status-fail';
+                const meta = ok
+                    ? `延迟 ${(item.latency * 1000).toFixed(0)}ms · 连续失败 ${item.fail_count || 0} 次`
+                    : `连续失败 ${item.fail_count || 0} 次`;
+                const backlinkBadge = item.has_author_link
+                    ? '<span class="check-link-badge backlink-ok">已反链</span>'
+                    : '<span class="check-link-badge">未反链</span>';
+                return `
+                    <a class="check-link-card" href="${item.link}" target="_blank" rel="noopener noreferrer" title="${item.link}">
+                        <div class="check-link-status ${statusClass}"></div>
+                        <div class="check-link-info">
+                            <div class="check-link-name">${item.name || '未知'}</div>
+                            <div class="check-link-meta">${meta}</div>
+                        </div>
+                        ${backlinkBadge}
+                    </a>
+                `;
+            }).join('');
+        } catch (error) {
+            sectionEl.style.display = 'none';
+        }
+    }
+
+    loadCheckLinks();
 </script>
 <link rel="stylesheet" href="./main/fclite.css">
 <script src="./main/fclite.js"></script>

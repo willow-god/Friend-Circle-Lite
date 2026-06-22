@@ -304,36 +304,6 @@
     text-decoration: underline;
 }
 
-.card-status {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    cursor: default;
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    display: inline-block;
-}
-
-.status-ok {
-    background-color: #28a745;
-}
-
-.status-fail {
-    background-color: #dc3545;
-}
-
-.status-unknown {
-    background-color: #6c757d;
-}
-
 .card-author,
 .card-date {
     font-size: 12px;

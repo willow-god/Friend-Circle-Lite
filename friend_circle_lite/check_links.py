@@ -164,14 +164,25 @@ def _check_author_link_in_page(session, linkpage_url, author_url, render_js=Fals
     return False
 
 
+# 友链页探测缓存：{域名: 友链页URL 或 ""}
+_linkpage_cache = {}
+
+
 def _detect_linkpage(session, link):
-    """根据常见路径自动探测友链页面，首个返回 200 的路径即视为友链页"""
+    """根据常见路径自动探测友链页面，首个返回 200 的路径即视为友链页。同域名结果会被缓存。"""
     try:
         parsed = urlparse(link)
         base = f"{parsed.scheme}://{parsed.netloc}"
     except Exception as e:
         logging.warning(f"解析链接失败: {link}, 错误: {e}")
         return ""
+
+    # 缓存命中则直接返回
+    if base in _linkpage_cache:
+        cached = _linkpage_cache[base]
+        if cached:
+            logging.info(f"友链页缓存命中: {link} -> {cached}")
+        return cached
 
     for path in LINKPAGE_CANDIDATES:
         candidate_url = urljoin(base, path)
@@ -181,9 +192,11 @@ def _detect_linkpage(session, link):
         )
         if response and response.status_code == 200:
             logging.info(f"自动探测到友链页: {link} -> {candidate_url}")
+            _linkpage_cache[base] = candidate_url
             return candidate_url
 
     logging.info(f"未能自动探测到 {link} 的友链页")
+    _linkpage_cache[base] = ""
     return ""
 
 
@@ -280,7 +293,7 @@ def _check_backlink(session, item, author_url, specific_map, previous_map, rende
     return False
 
 
-def _check_link_round(item, proxy_url_template, author_url, specific_map, previous_map, method, render_js=False):
+def _check_link_round(item, proxy_url_template, author_url, specific_map, previous_map, method, render_js=False, session=None):
     """单轮主 URL 检测：method 为 'direct' 或 'proxy'"""
     link = item["link"]
 
@@ -295,7 +308,10 @@ def _check_link_round(item, proxy_url_template, author_url, specific_map, previo
         logging.warning(f"[{desc}] 无效链接: {link}")
         return item, -1, False
 
-    with requests.Session() as session:
+    own_session = session is None
+    if own_session:
+        session = requests.Session()
+    try:
         response, latency = _request_url(session, url, desc=desc)
         if response and response.status_code == 200:
             logging.info(f"[{desc}] 成功访问: {link} ，延迟 {latency} 秒")
@@ -305,38 +321,51 @@ def _check_link_round(item, proxy_url_template, author_url, specific_map, previo
             logging.warning(f"[{desc}] 状态码异常: {link} -> {response.status_code}")
         else:
             logging.warning(f"[{desc}] 请求失败，Response 无效: {link}")
+    finally:
+        if own_session:
+            session.close()
 
     return item, -1, False
 
 
-def _handle_api_requests(failed_items, author_url, specific_map, previous_map, render_js=False):
-    """使用第三方 API 兜底检测失败的链接"""
-    results = []
+def _check_single_api(item, author_url, specific_map, previous_map, render_js=False):
+    """使用第三方 API 检测单个链接"""
     with requests.Session() as session:
-        for item in failed_items:
-            time.sleep(0.2)
-            link = item["link"]
-            api_url = API_URL_TEMPLATE.format(link)
-            response, latency = _request_url(session, api_url, headers=RAW_HEADERS, desc="API 检查", timeout=30)
-            has_author_link = False
+        link = item["link"]
+        api_url = API_URL_TEMPLATE.format(link)
+        response, latency = _request_url(session, api_url, headers=RAW_HEADERS, desc="API 检查", timeout=30)
+        has_author_link = False
 
-            if response:
-                try:
-                    res_json = response.json()
-                    if int(res_json.get("code")) == 200 and int(res_json.get("data")) == 200:
-                        logging.info(f"[API] 成功访问: {link} ，状态码 200")
-                        item["latency"] = latency
-                        has_author_link = _check_backlink(session, item, author_url, specific_map, previous_map, render_js)
-                    else:
-                        logging.warning(f"[API] 状态异常: {link} -> [{res_json.get('code')}, {res_json.get('data')}]")
-                        item["latency"] = -1
-                except Exception as e:
-                    logging.error(f"[API] 解析响应失败: {link}，错误: {e}")
+        if response:
+            try:
+                res_json = response.json()
+                if int(res_json.get("code")) == 200 and int(res_json.get("data")) == 200:
+                    logging.info(f"[API] 成功访问: {link} ，状态码 200")
+                    item["latency"] = latency
+                    has_author_link = _check_backlink(session, item, author_url, specific_map, previous_map, render_js)
+                else:
+                    logging.warning(f"[API] 状态异常: {link} -> [{res_json.get('code')}, {res_json.get('data')}]")
                     item["latency"] = -1
-            else:
+            except Exception as e:
+                logging.error(f"[API] 解析响应失败: {link}，错误: {e}")
                 item["latency"] = -1
+        else:
+            item["latency"] = -1
 
-            results.append((item, item.get("latency", -1), has_author_link))
+        return (item, item.get("latency", -1), has_author_link)
+
+
+def _handle_api_requests(failed_items, author_url, specific_map, previous_map, render_js=False, max_workers=5):
+    """使用第三方 API 并发检测失败的链接"""
+    if not failed_items:
+        return []
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [
+            executor.submit(_check_single_api, item, author_url, specific_map, previous_map, render_js)
+            for item in failed_items
+        ]
+        results = [f.result() for f in futures]
 
     return results
 
@@ -382,6 +411,9 @@ def check_and_save(
         if entry.get("link") and entry.get("linkpage")
     }
 
+    # 清除上次运行的探测缓存，确保每次运行干净
+    _linkpage_cache.clear()
+
     # 第一轮：直接访问
     logging.info("开始第一轮检测：直接访问")
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -423,6 +455,13 @@ def check_and_save(
 
     results = success_results
 
+    # 预构建历史映射，避免后续 O(n²) 查找
+    previous_by_link = {
+        entry.get("link", "").strip(): entry
+        for entry in previous_results.get("link_status", [])
+        if entry.get("link")
+    }
+
     current_links = {item["link"] for item in link_list}
     link_status = []
 
@@ -434,10 +473,7 @@ def check_and_save(
                 logging.warning(f"跳过无效项: {item}")
                 continue
 
-            prev_entry = next(
-                (x for x in previous_results.get("link_status", []) if x.get("link") == link),
-                {},
-            )
+            prev_entry = previous_by_link.get(link, {})
             prev_fail_count = prev_entry.get("fail_count", 0)
             fail_count = prev_fail_count + 1 if latency == -1 else 0
 
