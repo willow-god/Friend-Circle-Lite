@@ -400,3 +400,86 @@
     color: var(--author-color);
     text-decoration: none;
 }
+
+/* ===== 友链状态融合 · 仅追加，原有类零改动 ===== */
+
+/* 右上角状态点容器：绝对定位，与 .card-date(bottom: 10px) 错开轨道 */
+.card-status {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--author-color);
+    pointer-events: none; /* 不拦截标题点击 */
+    line-height: 1;
+}
+
+.card-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border-color);
+    box-shadow: 0 0 0 2px var(--shadow-color);
+    flex: none;
+}
+
+.card-status-dot--ok { background: #2ecc71; box-shadow: 0 0 0 2px rgba(46, 204, 113, .2); }
+.card-status-dot--warn { background: #f1c40f; box-shadow: 0 0 0 2px rgba(241, 196, 15, .2); }
+.card-status-dot--fail { background: #e74c3c; box-shadow: 0 0 0 2px rgba(231, 76, 60, .2); }
+.card-status-dot--unknown { background: var(--border-color); }
+
+.card-status-text {
+    font-variant-numeric: tabular-nums;
+    color: var(--author-color);
+}
+
+.card-status--warn .card-status-text { color: #b97a00; }
+.card-status--fail .card-status-text { color: #c0392b; }
+
+/* 行内元信息：放在卡片正文，挤在 .card-author 与 .card-date 之间的空隙 */
+.card-meta {
+    position: absolute;
+    bottom: 30px;
+    left: 10px;
+    right: 10px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--author-color);
+    pointer-events: none;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-meta-date {
+    color: var(--author-color);
+}
+
+.card-meta-sep {
+    opacity: .5;
+}
+
+.card-meta-badge {
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+.card-meta-badge--ok { background: rgba(46, 204, 113, .15); color: #2ecc71; }
+.card-meta-badge--warn { background: rgba(241, 196, 15, .18); color: #b97a00; }
+.card-meta-badge--fail { background: rgba(231, 76, 60, .15); color: #c0392b; }
+.card-meta-badge--unknown { background: var(--background-color); color: var(--author-color); }
+
+.card-meta-fail {
+    color: var(--author-color);
+    opacity: .75;
+}

@@ -36,6 +36,110 @@ function initialize_fc_lite() {
 
     let start = 0; // 记录加载起始位置
     let allArticles = []; // 存储所有文章
+    // 友链状态索引：host -> { state, latency, failCount, hasAuthorLink }
+    let linkStatusMap = new Map();
+
+    // 取 URL 主机名并归一化（去 www. 前缀，转小写）
+    function getHost(url) {
+        try {
+            return new URL(url).hostname.toLowerCase().replace(/^www\./, '');
+        } catch (e) {
+            return '';
+        }
+    }
+
+    // 异步加载友链状态检测结果；失败/缺失/异常统一返回空 Map
+    async function loadLinkStatus() {
+        try {
+            const res = await fetch(`${UserConfig.private_api_url}result.json`, { cache: 'no-cache' });
+            if (!res.ok) return;
+            const data = await res.json();
+            if (!data || !Array.isArray(data.link_status)) return;
+            data.link_status.forEach(item => {
+                const host = getHost(item.link || '');
+                if (!host) return;
+                let state = 'unknown';
+                const latency = Number(item.latency);
+                if (latency === -1) {
+                    state = 'fail';
+                } else if (Number.isFinite(latency) && latency >= 0) {
+                    state = latency < 0.3 ? 'ok' : 'warn';
+                }
+                linkStatusMap.set(host, {
+                    state,
+                    latency,
+                    failCount: Number.isFinite(Number(item.fail_count)) ? Number(item.fail_count) : 0,
+                    hasAuthorLink: item.has_author_link === true
+                });
+            });
+        } catch (e) {
+            // 静默吞错，所有卡片走 unknown 分支
+            linkStatusMap = new Map();
+        }
+    }
+
+    // 取作者 host：优先 article.link，否则用 avatar 所在域
+    function getArticleHost(article) {
+        const linkHost = getHost(article.link || '');
+        if (linkHost) return linkHost;
+        return getHost(article.avatar || '');
+    }
+
+    // 构造右上角状态点 DOM
+    function buildStatusBadge(status) {
+        const wrap = document.createElement('div');
+        wrap.className = `card-status card-status--${status.state}`;
+        const dot = document.createElement('span');
+        dot.className = `card-status-dot card-status-dot--${status.state}`;
+        const text = document.createElement('span');
+        text.className = 'card-status-text';
+        if (status.state === 'fail') {
+            text.textContent = '超时';
+        } else if (status.state === 'unknown') {
+            text.textContent = '未知';
+        } else {
+            text.textContent = `${Math.round(status.latency * 1000)}ms`;
+        }
+        wrap.appendChild(dot);
+        wrap.appendChild(text);
+        return wrap;
+    }
+
+    // 构造行内元信息 DOM
+    function buildMetaLine(status) {
+        const meta = document.createElement('div');
+        meta.className = 'card-meta';
+
+        const date = document.createElement('span');
+        date.className = 'card-meta-date';
+        date.textContent = '🗓️';
+        meta.appendChild(date);
+
+        const sep = document.createElement('span');
+        sep.className = 'card-meta-sep';
+        sep.textContent = '·';
+        meta.appendChild(sep);
+
+        let badgeText = '未检测';
+        let badgeState = 'unknown';
+        if (status.state !== 'unknown') {
+            badgeState = status.hasAuthorLink ? 'ok' : 'fail';
+            badgeText = status.hasAuthorLink ? '已反链' : '未反链';
+        }
+        const badge = document.createElement('span');
+        badge.className = `card-meta-badge card-meta-badge--${badgeState}`;
+        badge.textContent = badgeText;
+        meta.appendChild(badge);
+
+        if (status.failCount >= 1) {
+            const fail = document.createElement('span');
+            fail.className = 'card-meta-fail';
+            fail.textContent = `失败 ${status.failCount} 次`;
+            meta.appendChild(fail);
+        }
+
+        return meta;
+    }
 
     function loadMoreArticles() {
         const cacheKey = 'friend-circle-lite-cache';
@@ -107,6 +211,12 @@ function initialize_fc_lite() {
             date.className = 'card-date';
             date.innerText = "🗓️" + article.created.substring(0, 10);
             card.appendChild(date);
+
+            // 友链状态融合：右上角状态点 + 行内元信息
+            const host = getArticleHost(article);
+            const status = linkStatusMap.get(host) || { state: 'unknown', latency: -1, failCount: 0, hasAuthorLink: false };
+            card.appendChild(buildStatusBadge(status));
+            card.appendChild(buildMetaLine(status));
 
             const bgImg = document.createElement('img');
             bgImg.className = 'card-bg no-lightbox';
@@ -219,12 +329,12 @@ function initialize_fc_lite() {
         }, { once: true });
     }
 
-    // 初始加载
-    loadMoreArticles();
+    // 初始加载：先等友链状态，再拉文章；后续点击"再来亿点"跳过状态等待
+    loadLinkStatus().then(() => loadMoreArticles());
 
     // 加载更多按钮点击事件
     loadMoreBtn.addEventListener('click', loadMoreArticles);
-
+    
     // 点击遮罩层关闭模态框
     window.onclick = function(event) {
         const modal = document.getElementById('modal');
