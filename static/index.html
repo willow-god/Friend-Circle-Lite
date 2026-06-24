@@ -954,9 +954,9 @@
           defaultFilter: "unreachable",
           filters: [
             ["unreachable", "不可达"],
+            ["uncrawlable", "不可抓取"],
+            ["noBacklink", "无反链"],
             ["stale", "久未更新"],
-            ["crawlable", "可抓取"],
-            ["backlink", "反链"],
             ["all", "全部"],
           ],
         },
@@ -1145,7 +1145,8 @@
 
       function primaryInsight(link) {
         if (!link.ok) {
-          return { status: "暂不可达", label: "可用性", value: "离线", icon: "fa-solid fa-cloud" };
+          const unreachableDays = formatUnreachableDays(link);
+          return { status: "暂不可达", label: "不可达时长", value: unreachableDays, icon: "fa-solid fa-cloud" };
         }
         if (link.rss && link.stale_days !== null && link.stale_days !== undefined) {
           return { status: "RSS 可解析", label: "最近更新", value: `${link.stale_days} 天未更`, icon: "fa-solid fa-rss" };
@@ -1172,7 +1173,7 @@
       function surfaceFacts(link) {
         if (!link.ok) {
           return [
-            ["RSS", formatRss(link)],
+            ["不可达", formatUnreachableDays(link)],
             ["反链", formatBacklink(link)],
             ["文章", compactUpdateAge(link)],
           ];
@@ -1207,7 +1208,7 @@
       function visibleDetails(link) {
         if (state.filter === "unreachable") {
           return [
-            ["RSS", formatRss(link), "fa-solid fa-rss"],
+            ["不可达时长", formatUnreachableDays(link), "fa-regular fa-calendar-xmark"],
             ["友链页", link.page ? "已记录" : "暂无记录", "fa-solid fa-link"],
             ["文章", compactUpdateAge(link), "fa-regular fa-newspaper"],
           ];
@@ -1219,14 +1220,14 @@
             ["站点", link.ok ? "在线" : "离线", "fa-solid fa-water"],
           ];
         }
-        if (state.filter === "crawlable") {
+        if (state.filter === "uncrawlable") {
           return [
             ["RSS", formatRss(link), "fa-solid fa-rss"],
             ["最新", link.updated || "暂无记录", "fa-regular fa-newspaper"],
             ["延迟", formatLatency(link.latency), "fa-regular fa-clock"],
           ];
         }
-        if (state.filter === "backlink") {
+        if (state.filter === "noBacklink") {
           return [
             ["反链", formatBacklink(link), "fa-solid fa-heart"],
             ["友链页", link.page || "暂无记录", "fa-solid fa-link"],
@@ -1279,8 +1280,8 @@
       function matchLinkFilter(link) {
         if (state.filter === "unreachable") return !link.ok;
         if (state.filter === "stale") return link.rss && link.stale_days !== null;
-        if (state.filter === "crawlable") return link.rss;
-        if (state.filter === "backlink") return link.backlink === true;
+        if (state.filter === "uncrawlable") return !link.rss;
+        if (state.filter === "noBacklink") return link.backlink !== true;
         return true;
       }
 
@@ -1309,11 +1310,11 @@
         if (state.filter === "stale") {
           return Number(right.stale_days ?? -1) - Number(left.stale_days ?? -1) || left.name.localeCompare(right.name, "zh-Hans-CN");
         }
-        if (state.filter === "crawlable") {
+        if (state.filter === "uncrawlable") {
           return normalizeSortLatency(left.latency) - normalizeSortLatency(right.latency) ||
             Number(left.stale_days ?? 99999) - Number(right.stale_days ?? 99999);
         }
-        if (state.filter === "backlink") {
+        if (state.filter === "noBacklink") {
           return Number(right.ok) - Number(left.ok) || left.name.localeCompare(right.name, "zh-Hans-CN");
         }
         return linkRank(left) - linkRank(right) || left.name.localeCompare(right.name, "zh-Hans-CN");
@@ -1333,8 +1334,8 @@
       function isFeatured(link) {
         if (state.filter === "unreachable") return !link.ok;
         if (state.filter === "stale") return link.rss && link.stale_days !== null;
-        if (state.filter === "crawlable") return link.rss;
-        if (state.filter === "backlink") return link.backlink === true;
+        if (state.filter === "uncrawlable") return !link.rss;
+        if (state.filter === "noBacklink") return link.backlink !== true;
         return false;
       }
 
@@ -1342,6 +1343,12 @@
         const latency = Number(value);
         if (!Number.isFinite(latency) || latency < 0) return "无延迟";
         return `${latency.toFixed(2)} 秒`;
+      }
+
+      function formatUnreachableDays(link) {
+        const days = Math.floor(Number(link.fails));
+        if (!Number.isFinite(days) || days <= 0) return "暂无记录";
+        return `${days} 天`;
       }
 
       function compactUpdateAge(link) {

@@ -48,7 +48,21 @@ class RefactorContractsTest(unittest.TestCase):
         self.assertIn('data-view="articles"', html)
         self.assertIn('["first24", "前 24 条"]', html)
         link_config_start = html.index("links:", html.index("viewConfig"))
-        self.assertIn('defaultFilter: "unreachable"', html[link_config_start:html.index("articles:", link_config_start)])
+        link_config = html[link_config_start:html.index("articles:", link_config_start)]
+        self.assertIn('defaultFilter: "unreachable"', link_config)
+        expected_link_filters = [
+            '["unreachable", "不可达"]',
+            '["uncrawlable", "不可抓取"]',
+            '["noBacklink", "无反链"]',
+            '["stale", "久未更新"]',
+            '["all", "全部"]',
+        ]
+        for item in expected_link_filters:
+            self.assertIn(item, link_config)
+        positions = [link_config.index(item) for item in expected_link_filters]
+        self.assertEqual(positions, sorted(positions))
+        self.assertNotIn('["crawlable", "可抓取"]', link_config)
+        self.assertNotIn('["backlink", "反链"]', link_config)
         self.assertLess(
             html.index('["unreachable", "不可达"]', link_config_start),
             html.index('["all", "全部"]', link_config_start),
@@ -75,11 +89,15 @@ class RefactorContractsTest(unittest.TestCase):
         self.assertIn(".content-grid.is-links {\n        grid-template-columns: repeat(3, minmax(0, 1fr));", html)
         self.assertIn('content.className = `content-grid ${state.view === "links" ? "is-links" : "is-articles"}`;', html)
         self.assertIn(".link-card.featured", html)
-        self.assertIn('["stale", "久未更新"]', html)
+        self.assertIn('if (state.filter === "uncrawlable") return !link.rss;', html)
+        self.assertIn('if (state.filter === "noBacklink") return link.backlink !== true;', html)
         self.assertIn("sortLinks", html)
         self.assertIn("visibleDetails", html)
         self.assertIn("renderSurfaceFacts", html)
         self.assertIn("primaryInsight", html)
+        self.assertIn("formatUnreachableDays", html)
+        self.assertIn("const unreachableDays = formatUnreachableDays(link);", html)
+        self.assertIn('label: "不可达时长"', html)
         self.assertNotIn("formatFailureAge", html)
         self.assertNotIn("fa-solid fa-rotate", html)
         self.assertNotIn("--leaf", html)

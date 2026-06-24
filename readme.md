@@ -136,11 +136,13 @@
 
 ## 展示页面
 
-* [清羽飞扬の友链朋友圈](https://blog.liushen.fun/fcircle/)
+* [清羽飞扬](https://blog.liushen.fun/fcircle/)
 
-* [❖星港◎Star☆ 的友链朋友圈](https://blog.starsharbor.com/fcircle/)
+* [星港](https://blog.starsharbor.com/fcircle/)
 
-* [梦爱吃鱼的友链朋友圈](https://blog.bsgun.cn/fcircle/)
+* [梦爱吃鱼](https://blog.bsgun.cn/fcircle)
+
+* [Aroes](https://homulilly.com/friends/)
 
 * 欢迎在issue中[提交](https://github.com/willow-god/Friend-Circle-Lite/issues/20)以展示你独特的设计！
 
