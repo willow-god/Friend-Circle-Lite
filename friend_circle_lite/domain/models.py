@@ -9,12 +9,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
+from math import ceil
 from urllib.parse import urlsplit, urlunsplit
 from zoneinfo import ZoneInfo
 
 
 SHANGHAI_TZ = ZoneInfo("Asia/Shanghai")
 MIN_RECORDED_LATENCY = 0.01
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 def normalize_latency(value: float | int | str | None, default: float = MIN_RECORDED_LATENCY) -> float:
@@ -41,6 +43,18 @@ def normalize_homepage_url(url: str) -> str:
     except Exception:
         pass
     return value.rstrip("/") + "/"
+
+
+def calculate_elapsed_days(started_at: str) -> int | None:
+    """Return rounded-up elapsed days for a persisted timestamp."""
+    if not started_at:
+        return None
+    try:
+        since = datetime.strptime(started_at, DATETIME_FORMAT)
+    except ValueError:
+        return None
+    elapsed_seconds = max(0, (datetime.now() - since).total_seconds())
+    return max(1, ceil(elapsed_seconds / 86400))
 
 
 @dataclass(slots=True)
@@ -118,12 +132,13 @@ class LinkCheckRecord:
     crawl_allowed: bool = False
     best_method: str = "none"
     best_latency: float = -1
-    fail_count: int = 0
     backlink_checked: bool = False
     has_author_link: bool = False
     rss_crawl_reason: str = "blocked_unreachable"
     last_post_published: str = ""
     last_post_days_ago: int | None = None
+    unreachable_since: str = ""
+    rss_unavailable_since: str = ""
     direct: LinkMethodStatus = field(default_factory=LinkMethodStatus)
     proxy: LinkMethodStatus = field(default_factory=LinkMethodStatus)
     api: LinkMethodStatus = field(default_factory=LinkMethodStatus)
@@ -146,18 +161,36 @@ class LinkCheckRecord:
             "crawl_allowed": self.crawl_allowed,
             "best_method": self.best_method,
             "best_latency": self.best_latency,
-            "fail_count": self.fail_count,
             "backlink_checked": self.backlink_checked,
             "has_author_link": self.has_author_link,
             "rss_crawl_reason": self.rss_crawl_reason,
             "last_post_published": self.last_post_published,
             "last_post_days_ago": self.last_post_days_ago,
+            "unreachable_since": self.unreachable_since,
+            "unreachable_days": self.unreachable_days,
+            "rss_unavailable_since": self.rss_unavailable_since,
+            "rss_unavailable_days": self.rss_unavailable_days,
             "methods": {
                 "direct": self.direct.to_dict(),
                 "proxy": self.proxy.to_dict(),
                 "api": self.api.to_dict(),
             },
         }
+
+    @property
+    def unreachable_days(self) -> int | None:
+        """Return rounded-up calendar duration for the current unreachable period."""
+        if self.reachable:
+            return None
+        return calculate_elapsed_days(self.unreachable_since)
+
+    @property
+    def rss_unavailable_days(self) -> int | None:
+        """Return rounded-up duration for continuous RSS unavailability."""
+        if not self.reachable or self.crawl_allowed:
+            return None
+        return calculate_elapsed_days(self.rss_unavailable_since)
+
     def to_link_dict(self) -> dict[str, object]:
         latency = normalize_latency(self.best_latency) if self.reachable else -1
         return {
@@ -168,7 +201,8 @@ class LinkCheckRecord:
             "reachable": self.reachable,
             "crawlable": self.crawl_allowed,
             "latency": latency,
-            "fail_count": self.fail_count,
+            "unreachable_days": self.unreachable_days,
+            "unreachable_since": self.unreachable_since if not self.reachable else "",
             "has_backlink": self.has_author_link if self.backlink_checked else None,
             "updated": self.last_post_published,
             "stale_days": self.last_post_days_ago,

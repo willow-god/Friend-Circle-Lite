@@ -330,6 +330,7 @@ class LinkCheckStore:
                     SELECT url, name, avatar, linkpage, checked_at, reachable, crawl_allowed,
                            best_method, best_latency, fail_count, backlink_checked, has_author_link,
                            rss_crawl_reason, last_post_published, last_post_days_ago,
+                           unreachable_since, rss_unavailable_since,
                            direct_success, direct_status_code, direct_latency,
                            proxy_success, proxy_status_code, proxy_latency, api_success,
                            api_status_code, api_latency
@@ -345,8 +346,9 @@ class LinkCheckStore:
         for row in rows:
             (
                 url, name, avatar, linkpage, checked_at, reachable, crawl_allowed,
-                best_method, best_latency, fail_count, backlink_checked, has_author_link,
+                best_method, best_latency, _legacy_fail_count, backlink_checked, has_author_link,
                 rss_crawl_reason, last_post_published, last_post_days_ago,
+                unreachable_since, rss_unavailable_since,
                 direct_success, direct_status_code, direct_latency,
                 proxy_success, proxy_status_code, proxy_latency, api_success,
                 api_status_code, api_latency,
@@ -364,12 +366,13 @@ class LinkCheckStore:
                 crawl_allowed=bool(crawl_allowed),
                 best_method=best_method or "none",
                 best_latency=best_latency if best_latency is not None else -1,
-                fail_count=fail_count or 0,
                 backlink_checked=bool(backlink_checked),
                 has_author_link=bool(has_author_link),
                 rss_crawl_reason=rss_crawl_reason or "blocked_unreachable",
                 last_post_published=last_post_published or "",
                 last_post_days_ago=last_post_days_ago,
+                unreachable_since=unreachable_since or (checked_at or "" if not bool(reachable) else ""),
+                rss_unavailable_since=rss_unavailable_since or (checked_at or "" if bool(reachable) and not bool(crawl_allowed) else ""),
                 direct=LinkMethodStatus(bool(direct_success), direct_status_code, direct_latency if direct_latency is not None else -1),
                 proxy=LinkMethodStatus(bool(proxy_success), proxy_status_code, proxy_latency if proxy_latency is not None else -1),
                 api=LinkMethodStatus(bool(api_success), api_status_code, api_latency if api_latency is not None else -1),
@@ -390,10 +393,11 @@ class LinkCheckStore:
                         url, name, avatar, linkpage, checked_at, reachable, crawl_allowed,
                         best_method, best_latency, fail_count, backlink_checked, has_author_link,
                         rss_crawl_reason, last_post_published, last_post_days_ago,
+                        unreachable_since, rss_unavailable_since,
                         direct_success, direct_status_code, direct_latency,
                         proxy_success, proxy_status_code, proxy_latency, api_success,
                         api_status_code, api_latency
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ON CONFLICT(url) DO UPDATE SET
                         name = excluded.name,
                         avatar = excluded.avatar,
@@ -409,6 +413,8 @@ class LinkCheckStore:
                         rss_crawl_reason = excluded.rss_crawl_reason,
                         last_post_published = excluded.last_post_published,
                         last_post_days_ago = excluded.last_post_days_ago,
+                        unreachable_since = excluded.unreachable_since,
+                        rss_unavailable_since = excluded.rss_unavailable_since,
                         direct_success = excluded.direct_success,
                         direct_status_code = excluded.direct_status_code,
                         direct_latency = excluded.direct_latency,
@@ -451,12 +457,14 @@ class LinkCheckStore:
             int(record.crawl_allowed),
             record.best_method,
             record.best_latency,
-            record.fail_count,
+            0,
             int(record.backlink_checked),
             int(record.has_author_link),
             record.rss_crawl_reason,
             record.last_post_published,
             record.last_post_days_ago,
+            record.unreachable_since,
+            record.rss_unavailable_since,
             int(record.direct.success),
             record.direct.status_code,
             record.direct.latency,
@@ -488,6 +496,8 @@ class LinkCheckStore:
                 rss_crawl_reason TEXT NOT NULL DEFAULT '',
                 last_post_published TEXT DEFAULT '',
                 last_post_days_ago INTEGER,
+                unreachable_since TEXT DEFAULT '',
+                rss_unavailable_since TEXT DEFAULT '',
                 direct_success INTEGER NOT NULL DEFAULT 0,
                 direct_status_code INTEGER,
                 direct_latency REAL DEFAULT -1,
@@ -505,3 +515,7 @@ class LinkCheckStore:
             connection.execute("ALTER TABLE link_check_state ADD COLUMN last_post_published TEXT DEFAULT ''")
         if "last_post_days_ago" not in columns:
             connection.execute("ALTER TABLE link_check_state ADD COLUMN last_post_days_ago INTEGER")
+        if "unreachable_since" not in columns:
+            connection.execute("ALTER TABLE link_check_state ADD COLUMN unreachable_since TEXT DEFAULT ''")
+        if "rss_unavailable_since" not in columns:
+            connection.execute("ALTER TABLE link_check_state ADD COLUMN rss_unavailable_since TEXT DEFAULT ''")

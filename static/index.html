@@ -1022,7 +1022,8 @@
           ok: "ok" in item ? item.ok : Boolean(item.reachable),
           rss: "rss" in item ? item.rss : Boolean(item.crawlable),
           latency: item.latency,
-          fails: Number(item.fails ?? item.fail_count ?? 0),
+          unreachable_days: item.unreachable_days ?? null,
+          unreachable_since: item.unreachable_since || "",
           backlink: "backlink" in item ? item.backlink : item.has_backlink,
           updated: item.updated || item.last_post_published || "",
           stale_days: item.stale_days ?? item.last_post_days_ago ?? null,
@@ -1305,7 +1306,7 @@
 
       function sortLinks(left, right) {
         if (state.filter === "unreachable") {
-          return Number(right.fails || 0) - Number(left.fails || 0) || left.name.localeCompare(right.name, "zh-Hans-CN");
+          return Number(right.unreachable_days || 0) - Number(left.unreachable_days || 0) || left.name.localeCompare(right.name, "zh-Hans-CN");
         }
         if (state.filter === "stale") {
           return Number(right.stale_days ?? -1) - Number(left.stale_days ?? -1) || left.name.localeCompare(right.name, "zh-Hans-CN");
@@ -1346,7 +1347,7 @@
       }
 
       function formatUnreachableDays(link) {
-        const days = Math.floor(Number(link.fails));
+        const days = Math.ceil(Number(link.unreachable_days));
         if (!Number.isFinite(days) || days <= 0) return "暂无记录";
         return `${days} 天`;
       }

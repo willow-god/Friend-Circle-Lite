@@ -5,6 +5,8 @@ functions keep the existing public API stable for `run.py` and external users.
 """
 
 import logging
+from datetime import datetime
+from math import ceil
 
 import requests
 
@@ -172,10 +174,11 @@ def _merge_single_link(local, remote):
         base['backlink'] = False
     # 否则保持 base 的值
 
-    # 失败次数取最小值
-    local_fail = local.get('fails', 0)
-    remote_fail = remote.get('fails', 0)
-    base['fails'] = min(local_fail, remote_fail)
+    unreachable_since_values = [
+        value for value in (local.get("unreachable_since"), remote.get("unreachable_since"))
+        if value
+    ]
+    base["unreachable_since"] = min(unreachable_since_values) if unreachable_since_values else ""
 
     # 最新文章时间取更新的一侧，天数取更小的一侧
     if remote.get("updated", "") > local.get("updated", ""):
@@ -215,7 +218,8 @@ def _to_public_link(link):
         "reachable": bool(normalized.get("ok")),
         "crawlable": bool(normalized.get("rss")),
         "latency": latency,
-        "fail_count": int(normalized.get("fails", 0) or 0),
+        "unreachable_days": _calculate_unreachable_days(normalized.get("unreachable_since")) if not normalized.get("ok") else None,
+        "unreachable_since": normalized.get("unreachable_since", "") if not normalized.get("ok") else "",
         "has_backlink": normalized.get("backlink"),
         "updated": normalized.get("updated", ""),
         "stale_days": normalized.get("stale_days"),
@@ -244,13 +248,25 @@ def _normalize_merge_link(link):
         "ok": bool(ok),
         "rss": bool(rss),
         "latency": link.get("latency", link.get("best_latency", -1)),
-        "fails": int(link.get("fails", link.get("fail_count", 0)) or 0),
+        "unreachable_since": link.get("unreachable_since", ""),
         "backlink": link.get("backlink") if "backlink" in link else link.get("has_backlink"),
         "updated": link.get("updated") or link.get("last_post_published", ""),
         "stale_days": link.get("stale_days", link.get("last_post_days_ago")),
         "_method": link.get("method") or link.get("best_method", ""),
         "_checked": link.get("checked_at", ""),
     }
+
+
+def _calculate_unreachable_days(unreachable_since: str) -> int | None:
+    """Calculate rounded-up unreachable days from a persisted start time."""
+    if not unreachable_since:
+        return None
+    try:
+        since = datetime.strptime(unreachable_since, "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        return None
+    elapsed_seconds = max(0, (datetime.now() - since).total_seconds())
+    return max(1, ceil(elapsed_seconds / 86400))
 
 
 def _recalculate_link_statistics(links):

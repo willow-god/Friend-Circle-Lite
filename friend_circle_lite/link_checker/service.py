@@ -21,7 +21,16 @@ import requests
 from friend_circle_lite.config.models import LinkCheckConfig, ProxySettings
 from friend_circle_lite.crawler.feed_service import FeedDiscoveryService, FeedParserService
 from friend_circle_lite.crawler.http_client import WebFetchClient
-from friend_circle_lite.domain.models import Article, CacheRecord, FeedEndpoint, LinkCheckRecord, LinkMethodStatus, Website, normalize_latency
+from friend_circle_lite.domain.models import (
+    Article,
+    CacheRecord,
+    FeedEndpoint,
+    LinkCheckRecord,
+    LinkMethodStatus,
+    Website,
+    calculate_elapsed_days,
+    normalize_latency,
+)
 from friend_circle_lite.storage.sqlite_store import LinkCheckStore
 
 
@@ -42,6 +51,21 @@ RAW_HEADERS = {
     "User-Agent": LINK_CHECK_HEADERS["User-Agent"],
     "X-Friend-Circle-Link-Check": "1.0",
 }
+
+
+class RetryBackoffPolicy:
+    """Compute dynamic recheck windows for long-term failures."""
+
+    @staticmethod
+    def effective_max_age_hours(since: str, default_hours: int) -> int:
+        days = calculate_elapsed_days(since)
+        if days is None or days < 10:
+            return default_hours
+        if days >= 60:
+            return 15 * 24
+        if days >= 30:
+            return 10 * 24
+        return 5 * 24
 
 
 class LinkReachabilityService:
@@ -185,10 +209,11 @@ class LinkReachabilityService:
             crawl_allowed=True,
             best_method=method,
             best_latency=latency,
-            fail_count=0,
             rss_crawl_reason=f"allowed_by_{method}",
             last_post_published=last_post_published,
             last_post_days_ago=last_post_days_ago,
+            unreachable_since="",
+            rss_unavailable_since="",
         )
 
     @staticmethod
@@ -258,29 +283,23 @@ class LinkReachabilityService:
             best_latency = -1
             reason = "blocked_unreachable"
 
-        fail_count = 0 if reachable else ((cached.fail_count if cached else 0) + 1)
+        checked_at = self._now_text()
         return LinkCheckRecord(
             name=website.name,
             url=website.url,
             avatar=website.avatar,
             linkpage=website.linkpage,
-            checked_at=self._now_text(),
+            checked_at=checked_at,
             reachable=reachable,
             crawl_allowed=False,
             best_method=best_method,
             best_latency=best_latency,
-            fail_count=fail_count,
             rss_crawl_reason=reason,
+            unreachable_since="" if reachable else self._unreachable_since(cached, checked_at),
+            rss_unavailable_since=self._rss_unavailable_since(cached, checked_at) if reachable else "",
             direct=homepage,
             api=api,
         )
-
-    @staticmethod
-    def _first_measured_latency(*statuses: LinkMethodStatus) -> float:
-        for status in statuses:
-            if status.latency > 0:
-                return normalize_latency(status.latency)
-        return normalize_latency(None)
 
     def _check_author_link_in_page(self, session: requests.Session, linkpage_url: str) -> bool:
         fetcher = self.fetcher or WebFetchClient(session, self.proxy_settings)
@@ -316,15 +335,16 @@ class LinkReachabilityService:
         return False
 
     def _can_reuse_cached_record(self, cached: LinkCheckRecord, website: Website) -> bool:
+        max_age_hours = self._effective_recheck_hours(cached)
         try:
             has_measured_latency = float(cached.best_latency) > 0
         except (TypeError, ValueError):
             has_measured_latency = False
         if not has_measured_latency:
-            return False
+            return not cached.reachable and self.store.is_fresh(cached, max_age_hours)
         if cached.crawl_allowed and website.name not in self.feed_lookup:
             return False
-        return self.store.is_fresh(cached, self.config.max_age_hours)
+        return self.store.is_fresh(cached, max_age_hours)
 
     @staticmethod
     def _refresh_cached_metadata(cached: LinkCheckRecord, website: Website) -> LinkCheckRecord:
@@ -351,9 +371,38 @@ class LinkReachabilityService:
             self.store.save_records([record for _, record in items])
 
     def _build_failed_record(self, website: Website, cached: LinkCheckRecord | None) -> LinkCheckRecord:
-        record = LinkCheckRecord.unchecked(website, self._now_text())
-        record.fail_count = (cached.fail_count if cached else 0) + 1
+        checked_at = self._now_text()
+        record = LinkCheckRecord.unchecked(website, checked_at)
+        record.unreachable_since = self._unreachable_since(cached, checked_at)
+        record.rss_unavailable_since = ""
         return record
+
+    @staticmethod
+    def _unreachable_since(cached: LinkCheckRecord | None, checked_at: str) -> str:
+        if cached and not cached.reachable and cached.unreachable_since:
+            return cached.unreachable_since
+        if cached and not cached.reachable and cached.checked_at:
+            return cached.checked_at
+        return checked_at
+
+    @staticmethod
+    def _rss_unavailable_since(cached: LinkCheckRecord | None, checked_at: str) -> str:
+        if cached and cached.reachable and not cached.crawl_allowed and cached.rss_unavailable_since:
+            return cached.rss_unavailable_since
+        if cached and cached.reachable and not cached.crawl_allowed and cached.checked_at:
+            return cached.checked_at
+        return checked_at
+
+    def _effective_recheck_hours(self, cached: LinkCheckRecord) -> int:
+        if not cached.reachable:
+            return RetryBackoffPolicy.effective_max_age_hours(cached.unreachable_since, self.config.max_age_hours)
+        if self._is_rss_unavailable_record(cached):
+            return RetryBackoffPolicy.effective_max_age_hours(cached.rss_unavailable_since, self.config.max_age_hours)
+        return self.config.max_age_hours
+
+    @staticmethod
+    def _is_rss_unavailable_record(record: LinkCheckRecord) -> bool:
+        return record.reachable and not record.crawl_allowed
 
     @staticmethod
     def _build_disabled_record(website: Website, checked_at: str) -> LinkCheckRecord:

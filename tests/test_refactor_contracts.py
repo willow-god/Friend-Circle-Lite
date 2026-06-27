@@ -16,7 +16,7 @@ from friend_circle_lite.crawler.service import FeedResolver, FriendCircleCrawlSe
 from friend_circle_lite.all_friends import deal_with_large_data, merge_link_data_from_json_url
 from friend_circle_lite.app_config import ApplicationConfig
 from friend_circle_lite.cli import FriendCircleLiteApplication
-from friend_circle_lite.link_checker.service import LinkReachabilityService
+from friend_circle_lite.link_checker.service import LinkReachabilityService, RetryBackoffPolicy
 from friend_circle_lite.models import Article, CacheRecord, FeedEndpoint, LinkCheckRecord, LinkMethodStatus, Website
 from friend_circle_lite.outputs.legacy_api import _to_public_link
 from friend_circle_lite.storage.diagnostics import SQLiteDebugDumper
@@ -98,6 +98,9 @@ class RefactorContractsTest(unittest.TestCase):
         self.assertIn("formatUnreachableDays", html)
         self.assertIn("const unreachableDays = formatUnreachableDays(link);", html)
         self.assertIn('label: "不可达时长"', html)
+        self.assertIn("unreachable_days", html)
+        self.assertNotIn("fail_count", html)
+        self.assertNotIn("fails:", html)
         self.assertNotIn("formatFailureAge", html)
         self.assertNotIn("fa-solid fa-rotate", html)
         self.assertNotIn("--leaf", html)
@@ -197,9 +200,149 @@ class RefactorContractsTest(unittest.TestCase):
             "reachable": False,
             "crawl_allowed": False,
             "best_latency": 0.31,
+            "unreachable_since": "2026-06-26 12:00:00",
         })
 
         self.assertEqual(public_link["latency"], -1)
+        self.assertNotIn("fail_count", public_link)
+        self.assertEqual(public_link["unreachable_since"], "2026-06-26 12:00:00")
+
+    def test_unreachable_record_tracks_since_time_and_rounds_days_up(self):
+        record = LinkCheckRecord(
+            name="Blocked",
+            url="https://blocked.example/",
+            checked_at="2026-06-27 10:00:00",
+            reachable=False,
+            unreachable_since="2026-06-26 12:00:00",
+        )
+
+        with patch("friend_circle_lite.domain.models.datetime") as fake_datetime:
+            fake_datetime.now.return_value = datetime(2026, 6, 27, 10, 0, 0)
+            fake_datetime.strptime.side_effect = datetime.strptime
+            public_link = record.to_link_dict()
+
+        self.assertEqual(public_link["unreachable_days"], 1)
+        self.assertEqual(public_link["unreachable_since"], "2026-06-26 12:00:00")
+        self.assertNotIn("fail_count", public_link)
+
+    def test_first_unreachable_check_uses_current_time_as_since_time(self):
+        class Store:
+            def load_records(self, urls):
+                return {}
+
+            def save_records(self, records):
+                return True
+
+        service = LinkReachabilityService(
+            config=ApplicationConfig.from_dict({"link_check": {"enable": True}}).link_check,
+            proxy_settings=ProxySettings(),
+            store=Store(),
+        )
+        website = Website(name="Blocked", url="https://blocked.example/", avatar="avatar.png")
+
+        with patch.object(service, "_now_text", return_value="2026-06-27 10:00:00"):
+            record = service._compose_non_rss_record(
+                website,
+                cached=None,
+                homepage=LinkMethodStatus(False, None, -1),
+                api=LinkMethodStatus(False, None, -1),
+            )
+
+        self.assertFalse(record.reachable)
+        self.assertEqual(record.unreachable_since, "2026-06-27 10:00:00")
+
+    def test_unreachable_cache_can_be_reused_within_max_age(self):
+        class Store:
+            def is_fresh(self, record, max_age_hours):
+                return True
+
+        service = LinkReachabilityService(
+            config=ApplicationConfig.from_dict({"link_check": {"max_age_hours": 24}}).link_check,
+            proxy_settings=ProxySettings(),
+            store=Store(),
+        )
+        cached = LinkCheckRecord(
+            name="Blocked",
+            url="https://blocked.example/",
+            checked_at="2026-06-27 08:00:00",
+            reachable=False,
+            best_latency=-1,
+            unreachable_since="2026-06-26 12:00:00",
+        )
+
+        self.assertTrue(service._can_reuse_cached_record(cached, Website(name="Blocked", url="https://blocked.example/")))
+
+    def test_retry_backoff_policy_scales_with_continuous_failure_days(self):
+        with patch("friend_circle_lite.domain.models.datetime") as fake_datetime:
+            fake_datetime.now.return_value = datetime(2026, 6, 27, 12, 0, 0)
+            fake_datetime.strptime.side_effect = datetime.strptime
+
+            self.assertEqual(RetryBackoffPolicy.effective_max_age_hours("2026-06-18 12:00:00", 24), 24)
+            self.assertEqual(RetryBackoffPolicy.effective_max_age_hours("2026-06-17 12:00:00", 24), 120)
+            self.assertEqual(RetryBackoffPolicy.effective_max_age_hours("2026-05-28 12:00:00", 24), 240)
+            self.assertEqual(RetryBackoffPolicy.effective_max_age_hours("2026-04-28 12:00:00", 24), 360)
+
+    def test_rss_unavailable_record_tracks_since_time_without_public_json_output(self):
+        class Store:
+            def load_records(self, urls):
+                return {}
+
+            def save_records(self, records):
+                return True
+
+        service = LinkReachabilityService(
+            config=ApplicationConfig.from_dict({"link_check": {"enable": True}}).link_check,
+            proxy_settings=ProxySettings(),
+            store=Store(),
+        )
+        website = Website(name="NoRSS", url="https://norss.example/", avatar="avatar.png")
+
+        with patch.object(service, "_now_text", return_value="2026-06-27 10:00:00"):
+            record = service._compose_non_rss_record(
+                website,
+                cached=None,
+                homepage=LinkMethodStatus(True, 200, 0.2),
+                api=LinkMethodStatus(False, None, -1),
+            )
+
+        self.assertTrue(record.reachable)
+        self.assertFalse(record.crawl_allowed)
+        self.assertEqual(record.rss_unavailable_since, "2026-06-27 10:00:00")
+        self.assertEqual(record.unreachable_since, "")
+        public_link = record.to_link_dict()
+        self.assertNotIn("rss_unavailable_since", public_link)
+
+    def test_rss_unavailable_cache_uses_dynamic_backoff_interval(self):
+        class Store:
+            calls = []
+
+            def is_fresh(self, record, max_age_hours):
+                self.calls.append(max_age_hours)
+                return max_age_hours == 120
+
+        service = LinkReachabilityService(
+            config=ApplicationConfig.from_dict({"link_check": {"max_age_hours": 24}}).link_check,
+            proxy_settings=ProxySettings(),
+            store=Store(),
+        )
+        cached = LinkCheckRecord(
+            name="NoRSS",
+            url="https://norss.example/",
+            checked_at="2026-06-26 08:00:00",
+            reachable=True,
+            crawl_allowed=False,
+            best_method="homepage",
+            best_latency=0.2,
+            rss_unavailable_since="2026-06-17 08:00:00",
+        )
+
+        with patch("friend_circle_lite.link_checker.service.datetime") as fake_datetime:
+            fake_datetime.now.return_value = datetime(2026, 6, 27, 8, 0, 0)
+            fake_datetime.strptime.side_effect = datetime.strptime
+            reused = service._can_reuse_cached_record(cached, Website(name="NoRSS", url="https://norss.example/"))
+
+        self.assertTrue(reused)
+        self.assertEqual(service.store.calls, [120])
 
     def test_link_check_logs_total_cached_and_actual_check_counts(self):
         class Store:
@@ -718,7 +861,6 @@ class RefactorContractsTest(unittest.TestCase):
             crawl_allowed=True,
             best_method="proxy",
             best_latency=1.2,
-            fail_count=0,
             backlink_checked=True,
             has_author_link=True,
             rss_crawl_reason="allowed_by_proxy",
@@ -734,7 +876,8 @@ class RefactorContractsTest(unittest.TestCase):
             "reachable": True,
             "crawlable": True,
             "latency": 1.2,
-            "fail_count": 0,
+            "unreachable_days": None,
+            "unreachable_since": "",
             "has_backlink": True,
             "updated": "",
             "stale_days": None,
@@ -819,7 +962,8 @@ class RefactorContractsTest(unittest.TestCase):
                 "crawlable": False,
                 "method": "api",
                 "latency": 3.0,
-                "fail_count": 2,
+                "unreachable_since": "2026-06-05 12:00:00",
+                "unreachable_days": 2,
                 "checked_at": "2026-06-05 12:00:00",
                 "has_backlink": None,
                 "reason": "blocked_api_only",
@@ -836,7 +980,8 @@ class RefactorContractsTest(unittest.TestCase):
                 "crawlable": True,
                 "method": "proxy",
                 "latency": 1.0,
-                "fail_count": 0,
+                "unreachable_since": "",
+                "unreachable_days": None,
                 "checked_at": "2026-06-06 12:00:00",
                 "has_backlink": True,
                 "reason": "allowed_by_proxy",
@@ -854,7 +999,8 @@ class RefactorContractsTest(unittest.TestCase):
         self.assertNotIn("checked_at", merged["link_data"][0])
         self.assertNotIn("reason", merged["link_data"][0])
         self.assertEqual(merged["link_data"][0]["latency"], 1.0)
-        self.assertEqual(merged["link_data"][0]["fail_count"], 0)
+        self.assertNotIn("fail_count", merged["link_data"][0])
+        self.assertIsNone(merged["link_data"][0]["unreachable_days"])
         self.assertTrue(merged["link_data"][0]["has_backlink"])
         self.assertEqual(merged["statistical_data"]["link_total_num"], 1)
         self.assertNotIn("stats", merged)
@@ -1022,9 +1168,9 @@ class RefactorContractsTest(unittest.TestCase):
             self.assertIn("缺少当前字段", output)
             with closing(sqlite3.connect(db_path)) as connection:
                 row = connection.execute(
-                    "SELECT url, name, checked_at, crawl_allowed, best_method FROM link_check_state"
+                    "SELECT url, name, checked_at, crawl_allowed, best_method, rss_unavailable_since FROM link_check_state"
                 ).fetchone()
-            self.assertEqual(row, ("https://site.example", "Site", "", 0, "none"))
+            self.assertEqual(row, ("https://site.example", "Site", "", 0, "none", ""))
 
 
 if __name__ == "__main__":
