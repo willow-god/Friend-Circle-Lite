@@ -910,8 +910,8 @@
           <header class="panel board-head">
             <h2 class="board-title" id="section-title">友链可达性数据</h2>
             <nav class="source-links" aria-label="数据源">
-              <a href="/link.json" target="_blank" rel="noopener noreferrer">link.json</a>
-              <a href="/all.json" target="_blank" rel="noopener noreferrer">all.json</a>
+              <a href="./link.json" target="_blank" rel="noopener noreferrer">link.json</a>
+              <a href="./all.json" target="_blank" rel="noopener noreferrer">all.json</a>
               <a href="https://github.com/willow-god/Friend-Circle-Lite" target="_blank" rel="noopener noreferrer">GitHub</a>
             </nav>
           </header>
@@ -975,8 +975,8 @@
       };
 
       Promise.all([
-        fetchJSON("/link.json"),
-        fetchJSON("/all.json"),
+        fetchJSON("./link.json"),
+        fetchJSON("./all.json"),
       ])
         .then(([linkPayload, articlePayload]) => {
           state.links = normalizeLinks(linkPayload);
