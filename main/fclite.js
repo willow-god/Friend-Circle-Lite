@@ -95,7 +95,8 @@ function initialize_fc_lite() {
     }
 
     function processArticles(data) {
-        allArticles = data.article_data;
+        allArticles = data.article_data || [];
+
         // 处理统计数据
         const stats = data.statistical_data;
         
@@ -159,6 +160,14 @@ function initialize_fc_lite() {
     // 显示随机文章的逻辑
     function displayRandomArticle(stats) {
         const randomArticle = allArticles[Math.floor(Math.random() * allArticles.length)];
+        if (!randomArticle) {
+            randomArticleContainer.innerHTML = `
+                <div class="error-placeholder">
+                    <div class="error-text">暂无可展示文章</div>
+                </div>
+            `;
+            return;
+        }
         randomArticleContainer.innerHTML = `
             <div class="random-top">
                 <div class="random-stats">

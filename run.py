@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 
-from friend_circle_lite.application import FriendCircleLiteApplication
+from friend_circle_lite.cli import FriendCircleLiteApplication
 from friend_circle_lite.utils.config import load_config
 
 

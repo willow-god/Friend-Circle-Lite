@@ -4,8 +4,8 @@ The crawler now stores feed cache records as YAML through `FeedCacheStore`.
 These wrappers keep the old function names available for any external callers.
 """
 
-from friend_circle_lite.cache_store import FeedCacheStore
-from friend_circle_lite.models import CacheRecord
+from friend_circle_lite.domain.models import CacheRecord
+from friend_circle_lite.storage.sqlite_store import FeedCacheStore
 
 
 def load_cache(cache_file: str):

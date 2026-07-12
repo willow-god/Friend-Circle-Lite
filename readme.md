@@ -11,6 +11,63 @@
 
 ## 开发进度
 
+### 2026-06-27 - 检测缓存与重试节奏整理
+
+本次主要整理了友链检测缓存和重试节奏，目标是减少长期异常站点带来的重复请求，尤其是 RSS 探测请求。
+
+- **不可达时长改为按时间计算**：不再把失败次数当作“不可达天数”。SQLite 记录 `unreachable_since`，`link.json` 输出 `unreachable_days`，按持续时间向上取整，首次不可达显示为 1 天。
+- **RSS 不可用状态单独入库**：新增 `rss_unavailable_since`，用于记录“站点可达，但 RSS 探测或解析失败”的持续起点。该字段只用于内部缓存和重试判断，不输出到 `link.json`。
+- **动态降低重试频率**：长期异常站点会逐步降低检测频率：未满 10 天按默认缓存周期，10 天后 5 天检测一次，30 天后 10 天检测一次，60 天后最多 15 天检测一次。
+- **减少 RSS 探测请求**：缓存复用发生在 RSS 探测之前。只要站点已有“RSS 不可用”缓存，并且未到动态重试窗口，就不会再次扫描 `/feed`、`/rss.xml`、`/atom.xml` 等候选地址。
+- **输出保持克制**：`link.json` 继续面向前端展示，只保留可达性、可抓取性、不可达天数、最近文章时间等字段；RSS 不可用起点不暴露给前端。
+- **SQLite 兼容升级**：旧缓存库会自动补齐新增字段；旧的 `fail_count` 列仅作为兼容遗留列保留，不再参与业务逻辑和 public JSON 输出。
+
+<details>
+<summary>查看更多</summary>
+
+### 2026-06-08 - v2.1.0 优化更新
+
+* **友链检测逻辑简化**：RSS 探测、主页可达性、反链检测统一由友链可达性检测流程维护，友圈抓取只读取可抓取 RSS 的缓存结果，减少重复请求。
+* **配置项整理**：代理配置独立为 `proxy_settings.proxy_url`，建议通过仓库环境变量 `PROXY_URL` 覆盖；`link_check.enable` 旧字段仍兼容读取，但当前检测流程始终启用。
+* **数据输出稳定**：`all.json` 保持友链朋友圈文章格式不变，友链可达性数据集中输出到 `link.json`；`link.json` 移除冗余的 `method`、`reason`、单站 `checked_at` 等展示字段。
+* **调试能力增强**：新增 `debug` / `FCL_DEBUG` 开关，开启后会全量打印 SQLite 缓存并清理核心表残留旧字段，便于定位缓存问题。
+* **首页展示重写**：`static/index.html` 改为国风单文件展示页，可在顶部切换友链可达性与友链朋友圈；`main/fclite.js` 和 `main/fclite.css` 保持不变，外部引用不受影响。
+
+### 🎉 2026-05-31 - v2.0.0 重大更新
+
+> **⚠️ 重要更新**：本次更新包含**数据结构变更**和**配置文件调整**，请查看 **[完整更新日志 (CHANGELOG.md)](./CHANGELOG.md)** 了解详情。
+> 
+> **✅ 兼容性更新**：保持向后兼容，旧版引用者无需修改代码，`all.json` 结构保持兼容，`main/fclite.js` 和 `main/fclite.css` 不变。
+
+* **✨ 新增友链可达性检测功能**：合并 [check-flink](https://github.com/willow-god/check-flink) 项目，支持直连、代理、API 三种检测方式，并支持反链检测。
+* **📊 数据结构重构**：友链可达性数据独立输出到 `link.json`，`all.json` 仅保留友圈文章数据，实现数据分离。
+* **⚙️ 配置优化**：`merge_settings` 独立配置，友圈文章和友链可达性数据分别控制合并。
+* **🎨 前端页面重写**：新首页继承 check-flink 风格，同时展示友链状态和友圈文章。
+* **🔄 智能数据合并**：支持国内外数据源智能合并，可达性优先级、延迟、反链、失败次数均智能选择最优结果。
+
+**详细说明**：[查看完整更新日志 →](./CHANGELOG.md)
+
+### 请求节奏说明
+
+默认 GitHub Actions 每 4 小时执行一次友链朋友圈任务，但友链可达性检测与 RSS 探测结果会按 `link_check.max_age_hours` 缓存，默认 24 小时。
+
+也就是说：
+
+- 友链可达性检测、RSS 探测、主页可达性、反链检测默认每天才会对同一站点重新检查一次。
+- 如果某个站点没有 RSS，检测结果会缓存为不可抓取，接下来 24 小时内的友圈任务会直接跳过它，不会每 4 小时重复探测。
+- 每 4 小时执行一次的友圈抓取会复用这份检测缓存，只请求 `crawlable=true` 且有 RSS 缓存的站点。
+- 新增友链如果还没有进入缓存，会在当前轮次按友链数据单独参与匹配；完整检测结果会等到下一个 24 小时检测窗口统一写入缓存。
+
+这样可以保留较高的文章更新频率，同时尽量减少对友链站点、RSS 地址和代理/API 的请求数量。
+
+### 2026-05-25
+
+* 合并友链可达性检测能力，检测结果会写入独立的 `link.json` 供前端按需获取，不可达或仅 API 可达的友链会跳过 RSS 抓取。
+
+### 2026-05-24
+
+* 移除原先基于 FastAPI 的简陋后端部署方式，后续自部署统一采用生成静态文件后作为纯静态网站托管的纯净态方式。
+
 ### 2025-07-23
 
 * 添加缓存文件，防止由于缓存导致多次请求
@@ -29,9 +86,6 @@
 
 * 添加随机文章刷新按钮
 * 完善邮件通知模板自定义程度
-
-<details>
-<summary>查看更多</summary>
 
 <h3>2024-10-07</h3>
 
@@ -93,24 +147,27 @@
 
 ## 展示页面
 
-* [清羽飞扬の友链朋友圈](https://blog.liushen.fun/fcircle/)
+* [清羽飞扬](https://blog.liushen.fun/fcircle/)
 
-* [❖星港◎Star☆ 的友链朋友圈](https://blog.starsharbor.com/fcircle/)
+* [星港](https://blog.starsharbor.com/fcircle/)
 
-* [梦爱吃鱼的友链朋友圈](https://blog.bsgun.cn/fcircle/)
+* [梦爱吃鱼](https://blog.bsgun.cn/fcircle)
+
+* [Aroes](https://homulilly.com/friends/)
 
 * 欢迎在issue中[提交](https://github.com/willow-god/Friend-Circle-Lite/issues/20)以展示你独特的设计！
 
 ## 项目介绍
 
-- **爬取文章**: 爬取所有友链的文章，结果放置在根目录的all.json文件中，方便读取并部署到前端。
+- **爬取文章**: 爬取可抓取 RSS 的友链文章，结果放置在根目录的 `all.json` 文件中，方便读取并部署到前端。
+- **友链可达性检测**: 抓取前会统一维护 RSS 探测、主页可达性和反链检测缓存；检测结果单独输出到 `link.json`，友圈抓取会根据 `crawlable` 与 RSS 缓存决定是否抓取。
 - **邮箱推送更新(对作者推送所有友链更新)**: 作者可以通过邮箱订阅所有rss的更新（未来开发）。
 - **issue邮箱订阅(对访客实时推送最新文章邮件)**: 基于`GitHub issue`的博客更新邮件订阅功能，游客可以通过简单的提交`issue`进行邮箱订阅站点更新，删除对应`issue`即可取消订阅。
-- **文件分离**: 将前后端分离，前端文件放在page分支，后端文件放在主分支
+- **文件分离**: 将生成任务和静态展示分离，前端文件与生成后的 `all.json`、`link.json` 可直接作为静态网站托管。
 
 ## 特点介绍
 
-* **轻量化**：对比原版友链朋友圈的功能，该友圈功能简洁，去掉了设置和fastAPI的臃肿，仅保留关键内容。
+* **轻量化**：对比原版友链朋友圈的功能，该友圈功能简洁，去掉了设置和 FastAPI 的臃肿，仅保留关键内容。
 * **无数据库**：因为内容较少，我采用`json`直接存储文章信息，减少数据库操作，提升`action`运行效率。
 * **部署简单**：原版友链朋友圈由于功能多，导致部署较为麻烦，本方案仅需简单的部署action即可使用，vercel仅用于部署前端静态页面和实时获取最新内容。
 * **文件占用**：对比原版`4MB`的`bundle.js`文件大小，本项目仅需要`5.50KB`的`fclite.min.js`文件即可轻量的展示到前端。
@@ -118,6 +175,8 @@
 ## 功能概览
 
 * 文章爬取
+* 友链可达性检测
+* 友链状态前端展示
 * 暗色适配
 * 显示作者所有文章
 * 获取丢失友链数据
@@ -157,103 +216,165 @@
 
 ### 配置选项
 
-1. 如果需要修改爬虫设置或邮件模板等配置，需要修改仓库中的 `config.yaml` 文件：
+如果需要修改爬虫、合并、友链检测或邮件模板等配置，请修改仓库中的 `conf.yaml` 文件。下面只列常用项，完整注释可以直接查看 `conf.yaml`。
 
-   - **爬虫相关配置**
-     使用 `requests` 库实现友链文章的爬取，并将结果存储到根目录下的 `all.json` 文件中。
-     
-     ```yaml
-     spider_settings:
-       enable: true
-       json_url: "https://blog.qyliu.top/friend.json"
-       article_count: 5
-       merge_result:
-         enable: true
-         merge_json_url: "https://fc.liushen.fun"
-     ```
-     
-     `enable`：开启或关闭，默认开启；
-     
-     `json_url`：友链朋友圈通用爬取格式第一种（下方有配置方法）;
-     
-     `article_count`：每个作者留存文章个数。
+- **调试开关**
 
-     `marge_result`：是否合并多个json文件，若为true则会合并指定网络地址和本地地址的json文件并去重
-     
-     - `enable`：是否启用合并功能，该功能提供与自部署的友链合并功能，可以解决服务器部分国外网站，服务器无法访问的问题
-     
-     - `marge_json_path`：请填写网络地址的json文件，用于合并，不带空格！！！
-     
-   - **邮箱推送功能配置**
-     暂未实现，预留用于将每天的友链文章更新推送给指定邮箱。
-     
-     ```yaml
-     email_push:
-       enable: false
-       to_email: recipient@example.com
-       subject: "今天的 RSS 订阅更新"
-       body_template: "rss_template.html"
-     ```
-     
-     **暂未实现**：该部分暂未实现，由于感觉用处不大，保留接口后期酌情更新。
-     
-   - **邮箱 issue 订阅功能配置**
-     通过 GitHub issue 实现向提取的所有邮箱推送博客更新的功能。
-     
-     ```yaml
-     rss_subscribe:
-       enable: true
-       github_username: willow-god
-       github_repo: Friend-Circle-Lite
-       your_blog_url: https://blog.qyliu.top/
-     ```
-     
-     `enable`：开启或关闭，默认开启，如果没有配置请关闭。
-     
-     `github_username`：github用户名，用来拼接github api地址
-     
-     `github_repo`：仓库名称，作用同上。
-     
-     `your_blog_url`：用来定时检测是否有最新文章，请确保你的网站可以被FCLite抓取到
-     
-   - **SMTP 配置**
-     使用配置中的相关信息实现邮件发送功能。
-     
-     ```yaml
-     smtp:
-       email: 3162475700@qq.com
-       server: smtp.qq.com
-       port: 587
-       use_tls: true
-     ```
-     
-     `email`：发件人邮箱地址
-     
-     `server`：`SMTP` 服务器地址
-     
-     `port`：`SMTP` 端口号
-     
-     `use_tls`：是否使用 `tls` 加密
-     
-     这部分配置较为复杂，请自行学习使用。
+  ```yaml
+  debug: false
+  ```
 
-   - **特定 RSS 配置**
-   
-     用于指定特定友链特殊RSS，样例如下：
+  默认关闭。开启后，程序结束前会全量打印 SQLite 缓存表结构与所有数据，并保守清理核心表残留旧字段。也可以使用仓库环境变量 `FCL_DEBUG=1` 临时开启。
 
-     ```yaml
-     specific_RSS:
-       - name: "Redish101"
-         url: "https://reblog.redish101.top/api/feed"
-      # - name: "無名小栈"
-      #   url: "https://blog.imsyy.top/rss.xml"
-     ```
+- **爬虫相关配置**
 
-     `name`：友链名称，需要严格匹配
+  ```yaml
+  spider_settings:
+    enable: true
+    json_url: "https://blog.liushen.fun/friend.json"
+    article_count: 5
+  ```
 
-     `url`：该友链对应RSS地址
+  `enable`：是否启用友链朋友圈抓取。
 
-     可以添加多个，如果不需要也可以置空。
+  `json_url`：你的友链 JSON 地址，仅支持网络地址。
+
+  `article_count`：每个站点最多抓取的文章数量。
+
+- **代理配置**
+
+  ```yaml
+  proxy_settings:
+    proxy_url: ""
+  ```
+
+  程序会先直连，请求失败且配置了代理时自动走代理。`proxy_url` 涉及一定违规风险和隐私风险，请尽量不要直接写入配置文件，推荐在仓库环境变量 `PROXY_URL` 中配置。
+
+  推荐填写代理前缀，例如：
+
+  ```text
+  https://proxy.example.com/
+  ```
+
+  程序会自动拼接为：
+
+  ```text
+  https://proxy.example.com/https://example.com/feed.xml
+  ```
+
+  如果需要自行搭建代理，可以参考：[使用 CF Workers 搭建反代加速器](https://blog.liushen.fun/posts/dd89adc9/)。
+
+  也兼容 `https://proxy.example.com?url={url}` 这类高级格式，但普通反代场景不推荐这样写。
+
+- **数据合并配置**
+
+  ```yaml
+  merge_settings:
+    enable: false
+    remote_base_url: "https://fc.liushen.fun"
+    merge_article_data: true
+    merge_link_check_data: true
+  ```
+
+  `enable`：是否启用数据合并。
+
+  `remote_base_url`：远程数据源基础 URL，程序会自动拼接 `/all.json`、`/link.json`、`/errors.json`。
+
+  `merge_article_data`：是否合并友链朋友圈文章数据。
+
+  `merge_link_check_data`：是否合并友链可达性数据。
+
+- **友链可达性检测配置**
+
+  ```yaml
+  link_check:
+    max_age_hours: 24
+    timeout: 15
+    max_workers: 10
+    status_api_url: "https://v2.xxapi.cn/api/status?url={url}"
+    enable_backlink_check: true
+    author_url: "blog.liushen.fun"
+  ```
+
+  友圈抓取依赖友链可达性检测，因此当前检测流程始终启用；旧配置中的 `link_check.enable` 会被兼容读取，但不再作为有效开关。
+
+  `max_age_hours`：同一友链检测结果缓存时间，默认 24 小时。缓存未过期时会复用 RSS、主页可达性、反链等结果；没有 RSS 的站点也会在缓存期内直接跳过，避免每次友圈抓取都重新探测。
+
+  `timeout`：单次网页请求超时时间。
+
+  `max_workers`：并发检测数量。
+
+  `status_api_url`：兜底状态码 API。API 只能确认状态码，无法提供页面内容，所以 API-only 结果只用于可达性展示，不参与 RSS 抓取。
+
+  `enable_backlink_check`：是否检测对方友链页是否包含你的站点链接。
+
+  `author_url`：你的站点域名，用于反链检测，建议只填写域名。
+
+  友链数据兼容旧三字段和新四字段格式：
+
+  ```json
+  ["站点名称", "站点地址", "头像地址"]
+  ["站点名称", "站点地址", "友链页地址", "头像地址"]
+  ```
+
+- **邮箱推送功能配置**
+
+  暂未实现，预留用于将每天的友链文章更新推送给指定邮箱。
+
+  ```yaml
+  email_push:
+    enable: false
+    to_email: recipient@example.com
+    subject: "今天的 RSS 订阅更新"
+    body_template: "rss_template.html"
+  ```
+
+- **邮箱 issue 订阅功能配置**
+
+  通过 GitHub issue 实现向提取的所有邮箱推送博客更新的功能。
+
+  ```yaml
+  rss_subscribe:
+    enable: true
+    github_username: willow-god
+    github_repo: Friend-Circle-Lite
+    your_blog_url: https://blog.liushen.fun/
+    email_template: "./push_templates/default.html"
+    website_info:
+      title: "清羽飞扬"
+  ```
+
+  `enable`：开启或关闭，如果没有配置请关闭。
+
+  `github_username`：GitHub 用户名，用来拼接 GitHub API 地址。
+
+  `github_repo`：仓库名称，作用同上。
+
+  `your_blog_url`：用来定时检测是否有最新文章，请确保你的网站可以被 FCLite 抓取到。
+
+- **SMTP 配置**
+
+  使用配置中的相关信息实现邮件发送功能。SMTP 密码不写入配置文件，Action 部署请使用 `SMTP_PWD` Secret。
+
+  ```yaml
+  smtp:
+    email: notify@example.com
+    server: smtp.example.com
+    port: 465
+    use_tls: true
+  ```
+
+- **特定 RSS 配置**
+
+  用于指定特殊友链 RSS，名称需要与友链名称严格匹配。
+
+  ```yaml
+  specific_RSS:
+    - name: "阮一峰"
+      url: "http://feeds.feedburner.com/ruanyifeng"
+  ```
+
+  如果不需要也可以置空，但不要删除此项。
 
 2. **贡献与定制:**
    欢迎对仓库进行贡献或根据需要进行定制。
@@ -336,7 +457,7 @@
 
 部署完成后，你将获得一个地址，如果是通过vercel部署的，建议自行绑定域名。
 
-检查 `https://example.com/all.json` 是否有数据，如果有，则部署成功。
+检查 `https://example.com/all.json` 和 `https://example.com/link.json` 是否有数据，如果都有，则部署成功。
 
 ## 部署到你的页面
 
@@ -366,15 +487,13 @@
 
 ## 自部署使用方法
 
+自部署后续统一采用纯静态方式：本项目只负责定时生成 `all.json`、`link.json`、`errors.json` 等数据文件，生成完成后把 `static`、`main` 和数据文件作为静态网站托管即可，不再启动 FastAPI 后端服务。友链检测缓存会保存在 `temp/cache.sqlite3` 中，用于判断同一友链是否需要在 24 小时后重新检测；静态网站只需要发布生成后的 JSON 和静态资源。
+
 如果你有一台境内服务器，你也可以通过以下操作将其部署到你的服务器上，操作如下：
 
 ### 前置工作
 
-确保你的服务器有定时任务 `crontab` 功能包，一般是linux自带，如果你没有宝塔等可以管理定时任务的面板工具，可能需要你自行了解定时工具并导入，本教程提供了简单的介绍。
-
-### 宿主机环境
-
-> 适用于宝塔面板等宿主机直接有Python环境的场景下
+确保你的服务器有 Python 运行环境，以及定时任务 `crontab`、宝塔、1Panel 等任意一种可定时执行命令的工具。
 
 首先克隆仓库并进入对应路径：
 
@@ -383,40 +502,40 @@ git clone https://github.com/willow-god/Friend-Circle-Lite.git
 cd Friend-Circle-Lite
 ```
 
-由于不存在issue，所以不支持邮箱推送(主要是懒得分类写了，要不然还得从secret中获取密码的功能剥离QAQ)，请将除第一部分抓取以外的功能均设置为false
+由于不存在 issue，所以不支持邮箱推送(主要是懒得分类写了，要不然还得从secret中获取密码的功能剥离QAQ)，请将除第一部分抓取以外的功能均设置为false。
 
-下载服务相关包，其中 `requirements-server.txt` 是部署API服务所用包， `requirements.txt` 是抓取服务所用包，请均下载一遍。
+安装抓取服务所需依赖：
 
 ```bash
 pip install -r ./requirements.txt
-pip install -r ./server/requirements-server.txt
 ```
 
-#### 部署API服务
+### 生成静态文件
 
-如果环境配置完毕，你可以进入目录路径后直接运行`deploy.sh`脚本启动API服务：
+执行一次抓取命令：
+
+```bash
+python run.py
+```
+
+执行完成后，根目录会生成或更新 `all.json`、`link.json`、`errors.json` 等数据文件。将以下内容放到你的静态网站目录即可：
+
+- `static/` 目录中的静态页面和资源
+- `main/` 目录中的前端样式与脚本
+- `all.json`、`link.json`、`errors.json` 数据文件
+
+如果希望在宿主机上直接整理出可发布目录，也可以运行：
 
 ```bash
 chmod +x ./deploy.sh
 ./deploy.sh
 ```
 
-其中的注释应该是较为详细的，如果部署成功你可以使用以下命令进行测试，如果获取到了首页html内容则成功：
+脚本会执行 `python3 run.py`，并将 `main`、`static`、`all.json`、`link.json`、`errors.json` 复制到 `pages/` 目录。将 `pages/` 目录作为静态网站根目录部署即可。部署完成后，检查 `/all.json` 和 `/link.json` 是否有数据，如果都有，则部署成功。
 
-```bash
-curl 127.0.0.1:1223
-```
+### 1Panel / Docker 环境
 
-这个端口号可以修改，在server.py最后一行修改数字即可，如果你想删除该API服务，可以使用ps找到对应进程并使用Kill命令杀死进程：
-
-```bash
-ps aux | grep python
-kill -9 [这里填写上面查询结果中对应的进程号]
-```
-
-### Docker环境
-
-> 目前Docker部署方式和1Panel强相关，如果有其他需要docker环境部署的，可以参考，但是可能需要自行摸索
+> 目前 Docker 部署方式和 1Panel 强相关；这里的思路是先在面板里跑一次生成命令，把生成后的静态文件放到网站目录，再按静态网站托管。
 
 由于主包也用上了1Panel，所以捣鼓了一下，得益于1Panel可以方便的创建运行环境，所以可以基本做到无占用的API，因为除了执行action的时候，其他时间完全是纯静态的。
 
@@ -437,21 +556,23 @@ kill -9 [这里填写上面查询结果中对应的进程号]
 其中运行目录为刚才看到的以网站命名的文件夹，其中名称可以按照自己的要求随意修改，仅为Docker名称，执行命令如下：
 
 ```bash
-pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && pip install -r requirements.txt && python run.py && mv -f all.json errors.json index/
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && pip install -r requirements.txt && python run.py && mv -f all.json link.json errors.json index/
 ```
 
 点击运行，如果正常，应该会执行一个docker实现抓取，并且在抓取完成后，docker关闭，而你的网站下的index文件夹内，应该就是最新的爬取的内容，直接静态部署即可，后面只需要定时启动docker，会自动执行抓取命令，抓取完成后也会自动关闭。
 
 #### 合并github数据
 
-你是不是以为github数据没用了？并不是！因为有很多站长是使用的GitHub page等服务部署的，这种服务可能无法被你的服务器抓取，此时你就需要合并两个的爬取数据。修改第一个配置中的以下部分：
+你是不是以为 GitHub 数据没用了？并不是！因为有很多站长使用 GitHub Pages 等服务部署博客，这种服务可能无法被你的服务器抓取，此时你可以同时维护国内外两条线路，并合并文章数据与可达性数据。修改 `conf.yaml` 中的以下部分：
 
 ```yaml
-merge_result:
-    enable: true
-    merge_json_url: "https://fc.liushen.fun"
+merge_settings:
+  enable: true
+  remote_base_url: "https://fc.liushen.fun"
+  merge_article_data: true
+  merge_link_check_data: true
 ```
-其中地址项不要添加最后的斜杠，这样就会在本地爬取结束后合并远程的数据，以做到更高的准确率！
+其中 `remote_base_url` 不需要填写具体 JSON 文件名，程序会自动请求 `/all.json`、`/link.json`、`/errors.json` 并合并结果。
 
 ### 定时抓取文章
 
@@ -459,7 +580,7 @@ merge_result:
 
 > 宿主机环境只需要直接执行python ./run.py即可执行抓取
 
-由于原生的crontab可能较为复杂，如果有兴趣可以查看./deploy.sh文件中，屏蔽掉的部分，这里我不会细讲，这里我主要讲解宝塔面板添加定时任务，这样可以最大程度减少内存占用，其他面板服务类似：
+由于原生的 crontab 可能较为复杂，这里主要讲解宝塔面板添加定时任务，这样可以最大程度减少内存占用，其他面板服务类似：
 
 ![](./static/baota.png)
 
