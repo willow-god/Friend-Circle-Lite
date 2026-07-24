@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="googlebot" content="noindex" />
+    <title>友链清册</title>
+    <link rel="icon" href="./favicon.ico" type="image/x-icon" />
+    <link
+      rel="stylesheet"
+      href="https://chinese-fonts-cdn.deno.dev/packages/jhlst/dist/京華老宋体v1_007/result.css"
+    />
+    <link
+      href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=ZCOOL+XiaoWei&display=swap");
+
+      :root {
+        --ink: #14283d;
+        --ink-soft: #38566f;
+        --muted: #6c8298;
+        --paper: #e7f3ff;
+        --paper-strong: #fbfdff;
+        --line: #bfd4e8;
+        --mist: #dcebf8;
+        --cyan: #2f7fa8;
+        --cyan-deep: #1d5577;
+        --blue: #466f9f;
+        --blue-pale: #eef7ff;
+        --blue-wash: #d7e9f8;
+        --blue-quiet: #88aeca;
+        --shadow: 0 18px 42px rgba(30, 70, 104, 0.12);
+        --fine-shadow: 0 8px 22px rgba(30, 70, 104, 0.09);
+        --control-height: 44px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: var(--paper);
+        scrollbar-color: rgba(12, 91, 96, 0.26) transparent;
+        scrollbar-width: thin;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        border: 2px solid transparent;
+        border-radius: 999px;
+        background: rgba(12, 91, 96, 0.22);
+        background-clip: content-box;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(12, 91, 96, 0.34);
+        background-clip: content-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        color: var(--ink);
+        font-family: "KingHwa_OldSong", "Noto Serif SC", "Songti SC", "STSong", serif;
+        line-height: 1.55;
+        background:
+          linear-gradient(90deg, rgba(24, 42, 43, 0.035) 1px, transparent 1px) 0 0 / 38px 38px,
+          linear-gradient(180deg, rgba(24, 42, 43, 0.028) 1px, transparent 1px) 0 0 / 38px 38px,
+          var(--paper);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        background:
+          linear-gradient(115deg, rgba(47, 127, 168, 0.2), transparent 42%),
+          linear-gradient(245deg, rgba(136, 174, 202, 0.15), transparent 44%),
+          url("./bg-light.webp") center / cover no-repeat;
+        opacity: 0.42;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background:
+          linear-gradient(180deg, rgba(247, 252, 255, 0.58), rgba(247, 252, 255, 0.82)),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.25), transparent 22%, transparent 78%, rgba(255, 255, 255, 0.22));
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .shell {
+        position: relative;
+        z-index: 1;
+        width: min(1280px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 26px 0 58px;
+      }
+
+      .masthead {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 22px;
+        align-items: end;
+        padding: 20px 0 20px;
+        border-bottom: 3px double rgba(24, 34, 38, 0.28);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--cyan-deep);
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0;
+      }
+
+      h1 {
+        margin: 5px 0 0;
+        font-family: "ZCOOL XiaoWei", "Noto Serif SC", serif;
+        font-size: clamp(2.25rem, 6vw, 5.6rem);
+        font-weight: 400;
+        letter-spacing: 0;
+        line-height: 0.95;
+      }
+
+      .mastnote {
+        max-width: 740px;
+        margin: 10px 0 0;
+        color: var(--ink-soft);
+        font-size: 1rem;
+      }
+
+      .mode-switch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-width: 320px;
+        padding: 5px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.72);
+        box-shadow: var(--fine-shadow);
+        backdrop-filter: blur(12px);
+      }
+
+      .mode-button {
+        min-height: 46px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--ink-soft);
+        cursor: pointer;
+        font-weight: 700;
+        white-space: nowrap;
+        transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+      }
+
+      .mode-button:hover {
+        color: var(--cyan-deep);
+        transform: translateY(-1px);
+      }
+
+      .mode-button.active {
+        background: var(--cyan-deep);
+        color: #fff;
+      }
+
+      .dashboard {
+        display: grid;
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      .board {
+        min-width: 0;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(14px);
+      }
+
+      .action-strip {
+        display: grid;
+        gap: 12px;
+        padding: 14px;
+      }
+
+      .summary-row {
+        display: grid;
+        grid-template-columns: minmax(190px, 245px) minmax(0, 1fr);
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .control-row {
+        display: grid;
+        grid-template-columns: minmax(280px, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        border-top: 1px solid rgba(24, 34, 38, 0.09);
+        padding-top: 12px;
+      }
+
+      .time-panel {
+        overflow: hidden;
+        padding: 14px 16px;
+        border: 1px solid rgba(20, 125, 128, 0.16);
+        border-radius: 8px;
+        background:
+          linear-gradient(135deg, rgba(20, 125, 128, 0.08), transparent 58%),
+          rgba(255, 255, 255, 0.62);
+      }
+
+      .time-label {
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .time-value {
+        display: block;
+        margin-top: 5px;
+        font-family: "ZCOOL XiaoWei", "Noto Serif SC", serif;
+        font-size: 1.3rem;
+      }
+
+      .metrics {
+        display: grid;
+        gap: 8px;
+      }
+
+      .metrics-row {
+        grid-template-columns: repeat(4, minmax(130px, 1fr));
+        gap: 8px;
+      }
+
+      .metric {
+        position: relative;
+        overflow: hidden;
+        min-width: 0;
+        border: 1px solid rgba(20, 125, 128, 0.16);
+        border-radius: 8px;
+        background:
+          linear-gradient(135deg, rgba(47, 127, 168, 0.1), transparent 62%),
+          rgba(251, 253, 255, 0.66);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+        min-height: 72px;
+        padding: 11px 14px;
+      }
+
+      .metric:nth-child(2) {
+        border-color: rgba(70, 111, 159, 0.18);
+        background:
+          linear-gradient(135deg, rgba(70, 111, 159, 0.09), transparent 62%),
+          rgba(251, 253, 255, 0.66);
+      }
+
+      .metric:nth-child(3) {
+        border-color: rgba(29, 85, 119, 0.18);
+        background:
+          linear-gradient(135deg, rgba(29, 85, 119, 0.08), transparent 62%),
+          rgba(251, 253, 255, 0.68);
+      }
+
+      .metric:nth-child(4) {
+        border-color: rgba(136, 174, 202, 0.32);
+        background:
+          linear-gradient(135deg, rgba(136, 174, 202, 0.14), transparent 62%),
+          rgba(251, 253, 255, 0.68);
+      }
+
+      .metric-label {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      .metric-value {
+        display: block;
+        margin-top: 4px;
+        font-family: "ZCOOL XiaoWei", "Noto Serif SC", serif;
+        font-size: 1.65rem;
+        line-height: 1.1;
+      }
+
+      .toolbar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+      }
+
+      .top-toolbar {
+        grid-template-columns: minmax(280px, 1fr) auto;
+        align-items: center;
+        min-width: 0;
+      }
+
+      .search-wrap {
+        position: relative;
+      }
+
+      .search-wrap i {
+        position: absolute;
+        top: 50%;
+        left: 12px;
+        color: var(--muted);
+        transform: translateY(-50%);
+      }
+
+      .search {
+        width: 100%;
+        height: var(--control-height);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.86);
+        color: var(--ink);
+        padding: 0 12px 0 36px;
+        outline: none;
+      }
+
+      .search:focus {
+        border-color: var(--cyan);
+        box-shadow: 0 0 0 3px rgba(8, 127, 140, 0.12);
+      }
+
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        align-items: center;
+      }
+
+      .filter-button {
+        position: relative;
+        height: var(--control-height);
+        border: 1px solid rgba(20, 125, 128, 0.18);
+        border-radius: 6px 6px 8px 8px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(229, 238, 233, 0.68));
+        color: var(--ink-soft);
+        cursor: pointer;
+        padding: 0 12px;
+        font-size: 0.88rem;
+        box-shadow: inset 0 -3px 0 rgba(20, 125, 128, 0.08);
+        transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+      }
+
+      .filter-button:hover {
+        color: var(--cyan-deep);
+        transform: translateY(-1px);
+      }
+
+      .filter-button.active {
+        border-color: var(--cyan-deep);
+        background:
+          linear-gradient(180deg, var(--cyan), var(--cyan-deep));
+        color: #fff;
+        box-shadow: inset 0 -3px 0 rgba(255, 255, 255, 0.18), 0 8px 18px rgba(12, 91, 96, 0.16);
+      }
+
+      .board {
+        display: grid;
+        align-content: start;
+        gap: 12px;
+      }
+
+      .board-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 16px;
+      }
+
+      .board-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        margin: 0;
+        font-size: 1.08rem;
+      }
+
+      .board-title::before {
+        content: "";
+        width: 8px;
+        height: 22px;
+        border-radius: 999px;
+        background: var(--cyan);
+        box-shadow: 0 0 0 5px rgba(20, 125, 128, 0.12);
+        flex-shrink: 0;
+      }
+
+      .source-links {
+        display: flex;
+        gap: 10px;
+        color: var(--cyan-deep);
+        font-size: 0.86rem;
+        white-space: nowrap;
+      }
+
+      .content-grid {
+        display: grid;
+        align-items: start;
+        gap: 12px;
+      }
+
+      .content-grid.is-links {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .content-grid.is-articles {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      }
+
+      .link-card,
+      .article-card {
+        position: relative;
+        align-self: start;
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(251, 253, 255, 0.84);
+        box-shadow: var(--fine-shadow);
+        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+      }
+
+      .link-card:hover,
+      .article-card:hover {
+        border-color: rgba(8, 127, 140, 0.45);
+        box-shadow: 0 18px 44px rgba(25, 38, 43, 0.13);
+        transform: translateY(-2px);
+      }
+
+      .link-card {
+        overflow: hidden;
+        display: grid;
+        gap: 12px;
+        min-height: 174px;
+        padding: 14px;
+        border-color: rgba(70, 111, 159, 0.18);
+        background:
+          linear-gradient(145deg, rgba(47, 127, 168, 0.11), transparent 54%),
+          linear-gradient(320deg, rgba(136, 174, 202, 0.12), transparent 48%),
+          rgba(251, 253, 255, 0.9);
+      }
+
+      .link-card.is-unreachable {
+        border-color: rgba(29, 85, 119, 0.3);
+        background:
+          linear-gradient(145deg, rgba(29, 85, 119, 0.15), transparent 56%),
+          linear-gradient(320deg, rgba(136, 174, 202, 0.14), transparent 44%),
+          rgba(247, 252, 255, 0.92);
+      }
+
+      .link-card.is-stale {
+        border-color: rgba(70, 111, 159, 0.28);
+        background:
+          linear-gradient(145deg, rgba(70, 111, 159, 0.14), transparent 56%),
+          linear-gradient(320deg, rgba(151, 190, 216, 0.12), transparent 44%),
+          rgba(247, 252, 255, 0.92);
+      }
+
+      .link-card.is-healthy {
+        border-color: rgba(47, 127, 168, 0.22);
+        background:
+          linear-gradient(145deg, rgba(47, 127, 168, 0.1), transparent 56%),
+          rgba(251, 253, 255, 0.9);
+      }
+
+      .link-card.featured {
+        min-height: 248px;
+        border-color: rgba(29, 85, 119, 0.34);
+        background:
+          linear-gradient(150deg, rgba(29, 85, 119, 0.16), transparent 50%),
+          linear-gradient(315deg, rgba(136, 174, 202, 0.16), transparent 46%),
+          rgba(251, 253, 255, 0.94);
+      }
+
+      .link-main {
+        display: grid;
+        grid-template-columns: 44px minmax(0, 1fr);
+        gap: 10px;
+        align-items: center;
+      }
+
+      .avatar {
+        width: 44px;
+        height: 44px;
+        border: 1px solid rgba(70, 111, 159, 0.26);
+        border-radius: 8px;
+        background: var(--blue-wash);
+        object-fit: cover;
+      }
+
+      .name {
+        display: block;
+        overflow: hidden;
+        color: var(--ink);
+        font-weight: 900;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .url {
+        display: block;
+        overflow: hidden;
+        margin-top: 2px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .link-status {
+        justify-self: start;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+        border: 1px solid rgba(47, 127, 168, 0.18);
+        border-radius: 999px;
+        background: rgba(238, 247, 255, 0.76);
+        color: var(--cyan-deep);
+        padding: 4px 9px;
+        font-size: 0.75rem;
+        font-weight: 800;
+      }
+
+      .link-insight {
+        display: grid;
+        gap: 2px;
+        align-self: end;
+        min-height: 52px;
+      }
+
+      .insight-label {
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 800;
+      }
+
+      .insight-value {
+        color: var(--ink);
+        font-family: "ZCOOL XiaoWei", "Noto Serif SC", serif;
+        font-size: 1.62rem;
+        font-weight: 400;
+        line-height: 1.08;
+      }
+
+      .surface-facts {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .surface-fact {
+        min-width: 0;
+        border: 1px solid rgba(70, 111, 159, 0.14);
+        border-radius: 8px;
+        background: rgba(251, 253, 255, 0.58);
+        padding: 7px 8px;
+      }
+
+      .surface-label {
+        display: block;
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 800;
+      }
+
+      .surface-value {
+        display: block;
+        overflow: hidden;
+        margin-top: 2px;
+        color: var(--ink-soft);
+        font-size: 0.82rem;
+        font-weight: 900;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .link-detail {
+        display: none;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+        margin-top: 2px;
+      }
+
+      .link-card.featured .link-detail {
+        display: grid;
+        animation: inkReveal 0.32s ease both;
+      }
+
+      .detail-chip {
+        min-width: 0;
+        border: 1px solid rgba(70, 111, 159, 0.14);
+        border-radius: 8px;
+        background: rgba(238, 247, 255, 0.58);
+        padding: 8px 9px;
+      }
+
+      .detail-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 700;
+      }
+
+      .detail-value {
+        display: block;
+        overflow: hidden;
+        margin-top: 3px;
+        color: var(--ink);
+        font-size: 0.95rem;
+        font-weight: 900;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      @keyframes inkReveal {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .poem-background {
+        position: fixed;
+        bottom: calc(50% - 300px);
+        left: 50%;
+        z-index: 0;
+        width: 2000px;
+        color: #93a1a9;
+        font-family: "KingHwa_OldSong", "Noto Serif SC", serif;
+        line-height: 1.8;
+        opacity: 0.18;
+        pointer-events: none;
+        text-align: left;
+        transform: translateX(-50%);
+      }
+
+      .poem-background p {
+        margin: 0;
+        font-size: clamp(2.4rem, 5.2vw, 4.4rem);
+        white-space: nowrap;
+      }
+
+      .article-card {
+        overflow: hidden;
+        display: grid;
+        align-content: space-between;
+        border-color: rgba(47, 127, 168, 0.14);
+        background:
+          linear-gradient(135deg, rgba(47, 127, 168, 0.08), transparent 54%),
+          rgba(251, 253, 255, 0.86);
+        min-height: 118px;
+        padding: 12px;
+      }
+
+      .article-title {
+        display: -webkit-box;
+        overflow: hidden;
+        padding-right: 50px;
+        color: var(--ink);
+        font-size: 0.96rem;
+        font-weight: 900;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+      }
+
+      .article-avatar-mark {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: inline-flex;
+        width: 38px;
+        height: 38px;
+        border: 1px solid rgba(70, 111, 159, 0.28);
+        border-radius: 999px;
+        background:
+          linear-gradient(135deg, rgba(70, 111, 159, 0.16), rgba(47, 127, 168, 0.12)),
+          rgba(251, 253, 255, 0.76);
+        box-shadow: 0 8px 18px rgba(30, 70, 104, 0.12);
+        padding: 3px;
+        transform: rotate(2deg);
+      }
+
+      .article-avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--blue-wash);
+        object-fit: cover;
+      }
+
+      .article-meta {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .author {
+        display: inline-flex;
+        align-items: center;
+        min-width: 0;
+        gap: 7px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .date {
+        flex-shrink: 0;
+      }
+
+      .empty {
+        grid-column: 1 / -1;
+        border: 1px dashed rgba(24, 34, 38, 0.24);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.68);
+        color: var(--muted);
+        padding: 34px;
+        text-align: center;
+      }
+
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        margin-top: 20px;
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .footer a,
+      .source-links a {
+        color: var(--cyan-deep);
+        font-weight: 700;
+      }
+
+      @media (max-width: 900px) {
+        .masthead,
+        .summary-row,
+        .control-row,
+        .top-toolbar {
+          grid-template-columns: 1fr;
+        }
+
+        .mode-switch {
+          width: 100%;
+          min-width: 0;
+        }
+
+        .metrics-row {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .content-grid.is-links {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 560px) {
+        .shell {
+          width: min(100% - 20px, 1280px);
+          padding-top: 14px;
+        }
+
+        .masthead {
+          gap: 14px;
+        }
+
+        .mode-switch {
+          grid-template-columns: 1fr;
+        }
+
+        .metrics-row,
+        .content-grid.is-links,
+        .content-grid.is-articles,
+        .link-detail {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .board-head,
+        .footer {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .source-links {
+          flex-wrap: wrap;
+        }
+
+        .article-title {
+          padding-right: 42px;
+        }
+
+        .article-avatar-mark {
+          top: 9px;
+          right: 9px;
+          width: 32px;
+          height: 32px;
+          padding: 2px;
+        }
+
+        .poem-background {
+          bottom: calc(50% - 220px);
+          left: 54%;
+          opacity: 0.14;
+        }
+
+        .poem-background p {
+          font-size: 2rem;
+        }
+      }
+
+      @media (max-width: 390px) {
+        .metrics-row,
+        .content-grid.is-links,
+        .content-grid.is-articles,
+        .link-detail {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <div>
+          <span class="eyebrow"><i class="fa-solid fa-feather-pointed"></i> FRIEND CIRCLE LITE</span>
+          <h1>友链清册</h1>
+          <p class="mastnote" id="view-description">正在展开友链清册...</p>
+        </div>
+        <nav class="mode-switch" aria-label="数据视图切换">
+          <button class="mode-button active" data-view="links" type="button">
+            <i class="fa-solid fa-seedling"></i>
+            友链可达性
+          </button>
+          <button class="mode-button" data-view="articles" type="button">
+            <i class="fa-solid fa-newspaper"></i>
+            友链朋友圈
+          </button>
+        </nav>
+      </header>
+
+      <section class="dashboard">
+        <section class="panel action-strip">
+          <div class="summary-row">
+            <section class="time-panel">
+              <span class="time-label">CURRENT VIEW TIME</span>
+              <strong class="time-value" id="footer-time">加载中...</strong>
+            </section>
+            <section class="metrics metrics-row" id="summary"></section>
+          </div>
+          <section class="control-row toolbar top-toolbar">
+            <div class="search-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input class="search" id="search" type="search" placeholder="搜索名称、链接、文章或作者" />
+            </div>
+            <div class="filters" id="filters"></div>
+          </section>
+        </section>
+
+        <section class="board">
+          <header class="panel board-head">
+            <h2 class="board-title" id="section-title">友链可达性数据</h2>
+            <nav class="source-links" aria-label="数据源">
+              <a href="./link.json" target="_blank" rel="noopener noreferrer">link.json</a>
+              <a href="./all.json" target="_blank" rel="noopener noreferrer">all.json</a>
+              <a href="https://github.com/willow-god/Friend-Circle-Lite" target="_blank" rel="noopener noreferrer">GitHub</a>
+            </nav>
+          </header>
+          <section class="content-grid" id="content"></section>
+        </section>
+      </section>
+
+      <footer class="footer">
+        <span>
+          Powered by
+          <a href="https://github.com/willow-god/Friend-Circle-Lite" target="_blank" rel="noopener noreferrer">Friend-Circle-Lite</a>
+        </span>
+        <a href="https://www.liushen.fun/" target="_blank" rel="noopener noreferrer">LiuShen</a>
+      </footer>
+    </main>
+
+    <div class="poem-background" aria-hidden="true">
+      <p>凤凰台上凤凰游，凤去台空江自流。</p>
+      <p>吴宫花草埋幽径，晋代衣冠成古丘。</p>
+      <p>三山半落青天外，二水中分白鹭洲。</p>
+      <p>总为浮云能蔽日，长安不见使人愁。</p>
+      <p>—— 节选自 李白《登金陵凤凰台》</p>
+    </div>
+
+    <script>
+      const state = {
+        view: "links",
+        filter: "unreachable",
+        keyword: "",
+        links: [],
+        articles: [],
+        linkStats: {},
+        articleStats: {},
+      };
+
+      const viewConfig = {
+        links: {
+          title: "友链可达性数据",
+          description: "记录站点连通、RSS 可抓取、反链与参考延迟，轻轻翻看便知近况。",
+          defaultFilter: "unreachable",
+          filters: [
+            ["unreachable", "不可达"],
+            ["uncrawlable", "不可抓取"],
+            ["noBacklink", "无反链"],
+            ["stale", "久未更新"],
+            ["all", "全部"],
+          ],
+        },
+        articles: {
+          title: "友链朋友圈数据",
+          description: "把友链最近的文章汇入同一张稿纸，按时间排列，保留每一位作者的来处。",
+          defaultFilter: "first24",
+          filters: [
+            ["first24", "前 24 条"],
+            ["today", "今日"],
+            ["week", "近 7 天"],
+            ["month", "近 30 天"],
+            ["all", "全部"],
+          ],
+        },
+      };
+
+      Promise.all([
+        fetchJSON("./link.json"),
+        fetchJSON("./all.json"),
+      ])
+        .then(([linkPayload, articlePayload]) => {
+          state.links = normalizeLinks(linkPayload);
+          state.linkStats = normalizeLinkStats(linkPayload);
+          state.articles = articlePayload.article_data || [];
+          state.articleStats = articlePayload.statistical_data || {};
+          render();
+        })
+        .catch((error) => {
+          document.getElementById("content").innerHTML =
+            `<div class="empty">数据加载失败：${escapeHTML(error.message)}</div>`;
+        });
+
+      document.querySelectorAll("[data-view]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.view = button.dataset.view;
+          state.filter = viewConfig[state.view].defaultFilter;
+          document.querySelectorAll("[data-view]").forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+          render();
+        });
+      });
+
+      document.getElementById("search").addEventListener("input", (event) => {
+        state.keyword = event.target.value.trim().toLowerCase();
+        renderContent();
+      });
+
+      function fetchJSON(url) {
+        return fetch(url).then((response) => {
+          if (!response.ok) throw new Error(`${url} ${response.status}`);
+          return response.json();
+        });
+      }
+
+      function normalizeLinks(payload) {
+        const items = payload.links || payload.link_data || [];
+        return items.map((item) => ({
+          name: item.name || "",
+          url: item.url || item.link || "",
+          page: item.page || item.link_page || "",
+          avatar: item.avatar || "",
+          ok: "ok" in item ? item.ok : Boolean(item.reachable),
+          rss: "rss" in item ? item.rss : Boolean(item.crawlable),
+          latency: item.latency,
+          unreachable_days: item.unreachable_days ?? null,
+          unreachable_since: item.unreachable_since || "",
+          backlink: "backlink" in item ? item.backlink : item.has_backlink,
+          updated: item.updated || item.last_post_published || "",
+          stale_days: item.stale_days ?? item.last_post_days_ago ?? null,
+        }));
+      }
+
+      function normalizeLinkStats(payload) {
+        const stats = payload.stats || payload.statistical_data || {};
+        return {
+          total: stats.total ?? stats.link_total_num,
+          ok: stats.ok ?? stats.link_reachable_num,
+          rss: stats.rss ?? stats.crawl_allowed_num,
+          backlink: stats.backlink ?? stats.has_author_link_num,
+          checked: stats.checked ?? stats.link_last_checked_time,
+        };
+      }
+
+      function render() {
+        const config = viewConfig[state.view];
+        document.getElementById("view-description").textContent = config.description;
+        document.getElementById("section-title").textContent = config.title;
+        renderSummary();
+        renderFilters();
+        renderContent();
+        renderTime();
+      }
+
+      function renderSummary() {
+        const items = state.view === "links" ? linkMetrics() : articleMetrics();
+        document.getElementById("summary").innerHTML = items.map(([label, value, icon]) => `
+          <article class="panel metric">
+            <span class="metric-label"><i class="${icon}"></i>${escapeHTML(label)}</span>
+            <strong class="metric-value">${escapeHTML(value)}</strong>
+          </article>
+        `).join("");
+      }
+
+      function linkMetrics() {
+        const stats = state.linkStats;
+        return [
+          ["友链总数", stats.total ?? state.links.length, "fa-solid fa-users"],
+          ["可达友链", stats.ok ?? state.links.filter((item) => item.ok).length, "fa-solid fa-circle-check"],
+          ["可抓取 RSS", stats.rss ?? state.links.filter((item) => item.rss).length, "fa-solid fa-rss"],
+          ["有反链", stats.backlink ?? state.links.filter((item) => item.backlink).length, "fa-solid fa-heart-circle-check"],
+        ];
+      }
+
+      function articleMetrics() {
+        const stats = state.articleStats;
+        const authors = new Set(state.articles.map((item) => item.author).filter(Boolean));
+        return [
+          ["友链总数", stats.friends_num ?? state.links.length, "fa-solid fa-users"],
+          ["活跃站点", stats.active_num ?? authors.size, "fa-solid fa-bolt"],
+          ["文章数量", stats.article_num ?? state.articles.length, "fa-solid fa-newspaper"],
+          ["异常站点", stats.error_num ?? 0, "fa-solid fa-triangle-exclamation"],
+        ];
+      }
+
+      function renderFilters() {
+        const filters = viewConfig[state.view].filters;
+        document.getElementById("filters").innerHTML = filters.map(([key, label]) => `
+          <button class="filter-button ${key === state.filter ? "active" : ""}" data-filter="${key}" type="button">${label}</button>
+        `).join("");
+        document.querySelectorAll("[data-filter]").forEach((button) => {
+          button.addEventListener("click", () => {
+            state.filter = button.dataset.filter;
+            renderFilters();
+            renderContent();
+          });
+        });
+      }
+
+      function renderContent() {
+        const content = document.getElementById("content");
+        content.className = `content-grid ${state.view === "links" ? "is-links" : "is-articles"}`;
+        if (state.view === "links") {
+          renderLinks();
+        } else {
+          renderArticles();
+        }
+      }
+
+      function renderLinks() {
+        const links = state.links
+          .filter(matchKeywordForLink)
+          .filter(matchLinkFilter)
+          .sort(sortLinks);
+        const content = document.getElementById("content");
+        content.innerHTML = links.map(renderLinkCard).join("") ||
+          `<div class="empty">当前条件下没有友链数据</div>`;
+      }
+
+      function renderLinkCard(link) {
+        const featured = isFeatured(link);
+        const insight = primaryInsight(link);
+        const cardClass = [
+          "link-card",
+          featured ? "featured" : "",
+          !link.ok ? "is-unreachable" : link.rss && link.stale_days !== null ? "is-stale" : "is-healthy",
+        ].filter(Boolean).join(" ");
+        return `
+          <article class="${cardClass}">
+            <div class="link-main">
+              <img class="avatar" src="${escapeAttr(link.avatar || "./favicon.ico")}" alt="" loading="lazy" />
+              <div>
+                <a class="name" href="${escapeAttr(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(link.name)}</a>
+                <a class="url" href="${escapeAttr(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(link.url)}</a>
+              </div>
+            </div>
+            <span class="link-status"><i class="${insight.icon}"></i>${escapeHTML(insight.status)}</span>
+            <div class="link-insight">
+              <span class="insight-label">${escapeHTML(insight.label)}</span>
+              <strong class="insight-value">${escapeHTML(insight.value)}</strong>
+            </div>
+            ${renderSurfaceFacts(link)}
+            ${featured ? renderLinkDetails(link) : ""}
+          </article>
+        `;
+      }
+
+      function primaryInsight(link) {
+        if (!link.ok) {
+          const unreachableDays = formatUnreachableDays(link);
+          return { status: "暂不可达", label: "不可达时长", value: unreachableDays, icon: "fa-solid fa-cloud" };
+        }
+        if (link.rss && link.stale_days !== null && link.stale_days !== undefined) {
+          return { status: "RSS 可解析", label: "最近更新", value: `${link.stale_days} 天未更`, icon: "fa-solid fa-rss" };
+        }
+        if (link.rss) {
+          return { status: "RSS 可解析", label: "最近更新", value: compactUpdateAge(link), icon: "fa-solid fa-rss" };
+        }
+        return { status: "站点可达", label: "可用性", value: "在线", icon: "fa-solid fa-water" };
+      }
+
+      function renderSurfaceFacts(link) {
+        return `
+          <div class="surface-facts">
+            ${surfaceFacts(link).map(([label, value]) => `
+              <span class="surface-fact">
+                <span class="surface-label">${escapeHTML(label)}</span>
+                <strong class="surface-value">${escapeHTML(value)}</strong>
+              </span>
+            `).join("")}
+          </div>
+        `;
+      }
+
+      function surfaceFacts(link) {
+        if (!link.ok) {
+          return [
+            ["不可达", formatUnreachableDays(link)],
+            ["反链", formatBacklink(link)],
+            ["文章", compactUpdateAge(link)],
+          ];
+        }
+        if (link.rss && link.stale_days !== null && link.stale_days !== undefined) {
+          return [
+            ["状态", "在线"],
+            ["反链", formatBacklink(link)],
+            ["延迟", formatLatency(link.latency)],
+          ];
+        }
+        return [
+          ["RSS", formatRss(link)],
+          ["更新", compactUpdateAge(link)],
+          ["反链", formatBacklink(link)],
+        ];
+      }
+
+      function renderLinkDetails(link) {
+        return `
+          <div class="link-detail">
+            ${visibleDetails(link).map(([label, value, icon]) => `
+              <span class="detail-chip">
+                <span class="detail-label"><i class="${icon}"></i>${escapeHTML(label)}</span>
+                <strong class="detail-value">${escapeHTML(value)}</strong>
+              </span>
+            `).join("")}
+          </div>
+        `;
+      }
+
+      function visibleDetails(link) {
+        if (state.filter === "unreachable") {
+          return [
+            ["不可达时长", formatUnreachableDays(link), "fa-regular fa-calendar-xmark"],
+            ["友链页", link.page ? "已记录" : "暂无记录", "fa-solid fa-link"],
+            ["文章", compactUpdateAge(link), "fa-regular fa-newspaper"],
+          ];
+        }
+        if (state.filter === "stale") {
+          return [
+            ["未更新", formatStaleDays(link), "fa-regular fa-calendar-xmark"],
+            ["最新", link.updated || "暂无记录", "fa-regular fa-newspaper"],
+            ["站点", link.ok ? "在线" : "离线", "fa-solid fa-water"],
+          ];
+        }
+        if (state.filter === "uncrawlable") {
+          return [
+            ["RSS", formatRss(link), "fa-solid fa-rss"],
+            ["最新", link.updated || "暂无记录", "fa-regular fa-newspaper"],
+            ["延迟", formatLatency(link.latency), "fa-regular fa-clock"],
+          ];
+        }
+        if (state.filter === "noBacklink") {
+          return [
+            ["反链", formatBacklink(link), "fa-solid fa-heart"],
+            ["友链页", link.page || "暂无记录", "fa-solid fa-link"],
+            ["状态", link.ok ? "站点可达" : "站点不可达", "fa-solid fa-signal"],
+          ];
+        }
+        return [];
+      }
+
+      function renderArticles() {
+        let articles = state.articles
+          .filter(matchKeywordForArticle)
+          .filter(matchArticleFilter);
+        if (state.filter === "first24") {
+          articles = articles.slice(0, 24);
+        }
+        document.getElementById("content").innerHTML = articles.map(renderArticleCard).join("") ||
+          `<div class="empty">当前条件下没有友圈文章</div>`;
+      }
+
+      function renderArticleCard(article) {
+        return `
+          <article class="article-card">
+            <span class="article-avatar-mark" title="作者头像：${escapeAttr(article.author || "未知作者")}">
+              <img class="article-avatar" src="${escapeAttr(article.avatar || "./favicon.ico")}" alt="" loading="lazy" />
+            </span>
+            <a class="article-title" href="${escapeAttr(article.link)}" target="_blank" rel="noopener noreferrer">${escapeHTML(article.title || "无标题")}</a>
+            <div class="article-meta">
+              <span class="author"><i class="fa-solid fa-feather-pointed"></i>${escapeHTML(article.author || "未知作者")}</span>
+              <span class="date"><i class="fa-regular fa-clock"></i> ${escapeHTML(article.created || "")}</span>
+            </div>
+          </article>
+        `;
+      }
+
+      function matchKeywordForLink(link) {
+        if (!state.keyword) return true;
+        return [link.name, link.url, link.page].some((value) =>
+          String(value || "").toLowerCase().includes(state.keyword)
+        );
+      }
+
+      function matchKeywordForArticle(article) {
+        if (!state.keyword) return true;
+        return [article.title, article.author, article.link].some((value) =>
+          String(value || "").toLowerCase().includes(state.keyword)
+        );
+      }
+
+      function matchLinkFilter(link) {
+        if (state.filter === "unreachable") return !link.ok;
+        if (state.filter === "stale") return link.rss && link.stale_days !== null;
+        if (state.filter === "uncrawlable") return !link.rss;
+        if (state.filter === "noBacklink") return link.backlink !== true;
+        return true;
+      }
+
+      function matchArticleFilter(article) {
+        if (state.filter === "all" || state.filter === "first24") return true;
+        const date = parseArticleDate(article.created);
+        if (!date) return false;
+        const now = new Date();
+        const diffDays = (now - date) / 86400000;
+        if (state.filter === "today") return diffDays >= 0 && diffDays < 1;
+        if (state.filter === "week") return diffDays >= 0 && diffDays <= 7;
+        if (state.filter === "month") return diffDays >= 0 && diffDays <= 30;
+        return true;
+      }
+
+      function parseArticleDate(value) {
+        if (!value) return null;
+        const date = new Date(String(value).replace(" ", "T"));
+        return Number.isNaN(date.getTime()) ? null : date;
+      }
+
+      function sortLinks(left, right) {
+        if (state.filter === "unreachable") {
+          return Number(right.unreachable_days || 0) - Number(left.unreachable_days || 0) || left.name.localeCompare(right.name, "zh-Hans-CN");
+        }
+        if (state.filter === "stale") {
+          return Number(right.stale_days ?? -1) - Number(left.stale_days ?? -1) || left.name.localeCompare(right.name, "zh-Hans-CN");
+        }
+        if (state.filter === "uncrawlable") {
+          return normalizeSortLatency(left.latency) - normalizeSortLatency(right.latency) ||
+            Number(left.stale_days ?? 99999) - Number(right.stale_days ?? 99999);
+        }
+        if (state.filter === "noBacklink") {
+          return Number(right.ok) - Number(left.ok) || left.name.localeCompare(right.name, "zh-Hans-CN");
+        }
+        return linkRank(left) - linkRank(right) || left.name.localeCompare(right.name, "zh-Hans-CN");
+      }
+
+      function normalizeSortLatency(value) {
+        const latency = Number(value);
+        return Number.isFinite(latency) && latency >= 0 ? latency : 99999;
+      }
+
+      function linkRank(link) {
+        if (!link.ok) return 0;
+        if (!link.rss) return 1;
+        return 2;
+      }
+
+      function isFeatured(link) {
+        if (state.filter === "unreachable") return !link.ok;
+        if (state.filter === "stale") return link.rss && link.stale_days !== null;
+        if (state.filter === "uncrawlable") return !link.rss;
+        if (state.filter === "noBacklink") return link.backlink !== true;
+        return false;
+      }
+
+      function formatLatency(value) {
+        const latency = Number(value);
+        if (!Number.isFinite(latency) || latency < 0) return "无延迟";
+        return `${latency.toFixed(2)} 秒`;
+      }
+
+      function formatUnreachableDays(link) {
+        const days = Math.ceil(Number(link.unreachable_days));
+        if (!Number.isFinite(days) || days <= 0) return "暂无记录";
+        return `${days} 天`;
+      }
+
+      function compactUpdateAge(link) {
+        if (link.stale_days !== null && link.stale_days !== undefined) return `${link.stale_days} 天未更`;
+        if (link.updated) return "有记录";
+        return "暂无记录";
+      }
+
+      function formatRss(link) {
+        return link.rss ? "可解析" : "未解析";
+      }
+
+      function formatStaleDays(link) {
+        if (link.stale_days === null || link.stale_days === undefined) return "暂无记录";
+        return `${link.stale_days} 天`;
+      }
+
+      function formatBacklink(link) {
+        if (link.backlink === true) return "已确认";
+        if (link.backlink === false) return "未发现";
+        return "未检测";
+      }
+
+      function renderTime() {
+        const time = state.view === "links"
+          ? state.linkStats.checked
+          : state.articleStats.last_updated_time;
+        document.getElementById("footer-time").textContent = time || "暂无更新时间";
+      }
+
+      function escapeHTML(value) {
+        return String(value || "").replace(/[&<>"']/g, (char) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        }[char]));
+      }
+
+      function escapeAttr(value) {
+        return escapeHTML(value);
+      }
+    </script>
+  </body>
+</html>
