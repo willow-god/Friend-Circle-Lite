@@ -972,6 +972,35 @@ class RefactorContractsTest(unittest.TestCase):
 
             self.assertEqual(path.read_text(encoding="utf-8"), original)
 
+    def test_write_json_replaces_changed_file_with_minified_json(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "link.json"
+            path.write_text('{"link_data":[]}', encoding="utf-8")
+
+            self.assertTrue(write_json(path, {
+                "statistical_data": {"link_total_num": 1},
+                "link_data": [{"name": "站点"}],
+            }))
+
+            self.assertEqual(
+                path.read_text(encoding="utf-8"),
+                '{"statistical_data":{"link_total_num":1},"link_data":[{"name":"站点"}]}',
+            )
+
+    def test_write_json_replaces_invalid_or_undecodable_file(self):
+        invalid_files = {
+            "truncated": b'{"link_data":',
+            "non_utf8": b'\xff\xfe',
+        }
+
+        for name, existing in invalid_files.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temp_dir:
+                path = Path(temp_dir) / "link.json"
+                path.write_bytes(existing)
+
+                self.assertTrue(write_json(path, {"link_data": []}))
+                self.assertEqual(path.read_text(encoding="utf-8"), '{"link_data":[]}')
+
     def test_link_merge_keeps_best_reachability_shape(self):
         local = {
             "statistical_data": {},
