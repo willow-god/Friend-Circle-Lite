@@ -41,6 +41,15 @@ class RefactorContractsTest(unittest.TestCase):
                 workflow = workflow_path.read_text(encoding="utf-8")
                 self.assertIn("FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true", workflow)
 
+    def test_publish_workflow_skips_unchanged_page_tree(self):
+        workflow = Path(".github/workflows/friend_circle_lite.yml").read_text(encoding="utf-8")
+
+        self.assertIn('git fetch origin "${PAGE_BRANCH}:refs/remotes/origin/${PAGE_BRANCH}"', workflow)
+        self.assertIn('published_tree=$(git rev-parse "origin/${PAGE_BRANCH}^{tree}")', workflow)
+        self.assertIn("generated_tree=$(git write-tree)", workflow)
+        self.assertIn('[ "$generated_tree" = "$published_tree" ]', workflow)
+        self.assertIn("No static asset changes; skipping page branch update.", workflow)
+
     def test_static_index_is_standalone_dashboard_with_view_switch(self):
         html = Path("static/index.html").read_text(encoding="utf-8")
 
@@ -949,6 +958,19 @@ class RefactorContractsTest(unittest.TestCase):
 
         self.assertEqual(text, '{"statistical_data":{"link_total_num":1},"link_data":[{"name":"站点"}]}')
         self.assertEqual(json.loads(text)["link_data"][0]["name"], "站点")
+
+    def test_write_json_preserves_semantically_unchanged_file(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "link.json"
+            original = '{\n  "link_data": [{"name": "站点"}],\n  "statistical_data": {"link_total_num": 1}\n}\n'
+            path.write_text(original, encoding="utf-8")
+
+            self.assertTrue(write_json(path, {
+                "statistical_data": {"link_total_num": 1},
+                "link_data": [{"name": "站点"}],
+            }))
+
+            self.assertEqual(path.read_text(encoding="utf-8"), original)
 
     def test_link_merge_keeps_best_reachability_shape(self):
         local = {

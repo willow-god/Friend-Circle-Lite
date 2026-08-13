@@ -21,8 +21,17 @@ def read_json(file_path: str | Path) -> Optional[dict | list]:
 def write_json(file_path: str | Path, data: Any) -> bool:
     """安全写入 JSON 文件，返回是否写入成功"""
     try:
-        Path(file_path).parent.mkdir(parents=True, exist_ok=True)
-        with open(file_path, 'w', encoding='utf-8') as f:
+        path = Path(file_path)
+        if path.is_file():
+            try:
+                with path.open('r', encoding='utf-8') as f:
+                    if json.load(f) == data:
+                        return True
+            except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+                pass
+
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open('w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, separators=(',', ':'))
         return True
     except Exception as e:
