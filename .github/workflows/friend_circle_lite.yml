@@ -82,9 +82,18 @@ jobs:
 
     - name: Publish static assets to branches
       run: |
+        published_tree=""
+        if git fetch origin "${PAGE_BRANCH}:refs/remotes/origin/${PAGE_BRANCH}"; then
+          published_tree=$(git rev-parse "origin/${PAGE_BRANCH}^{tree}")
+        fi
         cd pages
         git init
         git add .
+        generated_tree=$(git write-tree)
+        if [ -n "$published_tree" ] && [ "$generated_tree" = "$published_tree" ]; then
+          echo "No static asset changes; skipping page branch update."
+          exit 0
+        fi
         git commit -m "⏱️ $(date +"%Y年%m月%d日-%H时%M分") GitHub Actions定时更新"
         git push --force https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:${{ env.PAGE_BRANCH }}
 
