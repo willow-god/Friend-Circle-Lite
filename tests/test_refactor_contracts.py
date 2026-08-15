@@ -1001,6 +1001,79 @@ class RefactorContractsTest(unittest.TestCase):
                 self.assertTrue(write_json(path, {"link_data": []}))
                 self.assertEqual(path.read_text(encoding="utf-8"), '{"link_data":[]}')
 
+    def test_write_json_skips_when_only_volatile_timestamps_change(self):
+        cases = {
+            "all_json_last_updated_time": {
+                "original": (
+                    '{"statistical_data":{"friends_num":1,"article_num":1,'
+                    '"last_updated_time":"2026-08-01 10:00:00"},'
+                    '"article_data":[{"title":"A","created":"2026-08-01 09:00","link":"https://a","author":"x","avatar":""}]}'
+                ),
+                "payload": {
+                    "statistical_data": {
+                        "friends_num": 1,
+                        "article_num": 1,
+                        "last_updated_time": "2026-08-15 23:59:59",
+                    },
+                    "article_data": [{
+                        "title": "A",
+                        "created": "2026-08-01 09:00",
+                        "link": "https://a",
+                        "author": "x",
+                        "avatar": "",
+                    }],
+                },
+            },
+            "link_json_last_checked_time": {
+                "original": (
+                    '{"statistical_data":{"link_total_num":1,"link_last_checked_time":"2026-08-01 10:00:00"},'
+                    '"link_data":[{"name":"站点","link":"https://site.example","reachable":true}]}'
+                ),
+                "payload": {
+                    "statistical_data": {
+                        "link_total_num": 1,
+                        "link_last_checked_time": "2026-08-15 23:59:59",
+                    },
+                    "link_data": [{
+                        "name": "站点",
+                        "link": "https://site.example",
+                        "reachable": True,
+                    }],
+                },
+            },
+        }
+
+        for name, case in cases.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temp_dir:
+                path = Path(temp_dir) / f"{name}.json"
+                path.write_text(case["original"], encoding="utf-8")
+
+                self.assertTrue(write_json(path, case["payload"]))
+                self.assertEqual(path.read_text(encoding="utf-8"), case["original"])
+
+    def test_write_json_rewrites_when_content_changes_even_if_time_matches(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "all.json"
+            path.write_text(
+                '{"statistical_data":{"friends_num":1,"last_updated_time":"2026-08-01 10:00:00"},'
+                '"article_data":[{"title":"Old"}]}',
+                encoding="utf-8",
+            )
+
+            self.assertTrue(write_json(path, {
+                "statistical_data": {
+                    "friends_num": 1,
+                    "last_updated_time": "2026-08-01 10:00:00",
+                },
+                "article_data": [{"title": "New"}],
+            }))
+
+            self.assertEqual(
+                path.read_text(encoding="utf-8"),
+                '{"statistical_data":{"friends_num":1,"last_updated_time":"2026-08-01 10:00:00"},'
+                '"article_data":[{"title":"New"}]}',
+            )
+
     def test_link_merge_keeps_best_reachability_shape(self):
         local = {
             "statistical_data": {},
