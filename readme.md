@@ -218,6 +218,19 @@
 
 如果需要修改爬虫、合并、友链检测或邮件模板等配置，请修改仓库中的 `conf.yaml` 文件。下面只列常用项，完整注释可以直接查看 `conf.yaml`。
 
+#### 使用 Repository variables 覆盖配置
+
+为了避免 fork 后频繁修改公开的 `conf.yaml`，GitHub Actions 支持使用 Repository variable `FCL_CONFIG_OVERRIDES` 在运行时覆盖配置。变量值按“一行一个配置项”填写，使用点号表示嵌套路径，值按 YAML 类型解析：
+
+```text
+merge_settings.enable=true
+merge_settings.remote_base_url=https://fc.liiiu.cn
+spider_settings.article_count=8
+link_check.enable_backlink_check=false
+```
+
+没有写入变量的配置项继续使用 `conf.yaml` 中的值；配置文件本身不会被修改。空行和 `#` 开头的行会被忽略，错误格式的行会跳过并记录警告。
+
 - **调试开关**
 
   ```yaml

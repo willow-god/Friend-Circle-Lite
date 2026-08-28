@@ -58,6 +58,7 @@ jobs:
         SMTP_PWD: ${{ secrets.SMTP_PWD }}
         PROXY_URL: ${{ secrets.PROXY_URL }}
         FCL_REPO: ${{ github.repository }}
+        FCL_CONFIG_OVERRIDES: ${{ vars.FCL_CONFIG_OVERRIDES }}
       run: |
         echo "Checking RSS feeds..."
         python run.py

@@ -21,9 +21,44 @@ from friend_circle_lite.models import Article, CacheRecord, FeedEndpoint, LinkCh
 from friend_circle_lite.outputs.legacy_api import _to_public_link
 from friend_circle_lite.storage.diagnostics import SQLiteDebugDumper
 from friend_circle_lite.utils.json import write_json
+from friend_circle_lite.utils.config import load_raw_config
 
 
 class RefactorContractsTest(unittest.TestCase):
+    def test_repository_variable_overrides_nested_config_without_editing_yaml(self):
+        from friend_circle_lite.utils.config import _apply_config_overrides
+
+        original = {
+            "merge_settings": {
+                "enable": False,
+                "remote_base_url": "https://default.example",
+            },
+            "spider_settings": {"article_count": 5},
+        }
+
+        with patch.dict(
+            "os.environ",
+            {
+                "FCL_CONFIG_OVERRIDES": (
+                    "merge_settings.enable=true\n"
+                    "merge_settings.remote_base_url=https://remote.example\n"
+                    "spider_settings.article_count=8\n"
+                    "# ignored comment\n"
+                )
+            },
+            clear=True,
+        ):
+            loaded = load_raw_config("conf.yaml")
+            overridden = _apply_config_overrides(original, "merge_settings.enable=true\nspider_settings.article_count=8")
+
+        self.assertTrue(loaded["merge_settings"]["enable"])
+        self.assertEqual(loaded["merge_settings"]["remote_base_url"], "https://remote.example")
+        self.assertEqual(loaded["spider_settings"]["article_count"], 8)
+        self.assertFalse(original["merge_settings"]["enable"])
+        self.assertEqual(original["spider_settings"]["article_count"], 5)
+        self.assertTrue(overridden["merge_settings"]["enable"])
+        self.assertEqual(overridden["spider_settings"]["article_count"], 8)
+
     def test_github_action_schedule_uses_22_minute_offset(self):
         workflow = Path(".github/workflows/friend_circle_lite.yml").read_text(encoding="utf-8")
 
