@@ -55,6 +55,7 @@ def print_startup_config(config) -> None:
         logging.info(f"  - 收件邮箱: {config.email_push.to_email or '未配置'}")
         logging.info(f"  - 计划时间(cron): {config.email_push.cron}")
         logging.info(f"  - 邮件模板: {config.email_push.body_template}")
+        logging.info(f"  - 单封最多文章数: {config.email_push.max_articles}")
 
     logging.info("RSS 订阅配置:")
     logging.info(f"  - 启用状态: {'已启用' if config.rss_subscribe.enable else '已禁用'}")

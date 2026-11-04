@@ -150,6 +150,8 @@ class FriendCircleLiteApplication:
             logging.info("📭 本轮没有抓取到文章，跳过邮件推送")
             return
 
+        articles = self.latest_articles[:email_push.max_articles]
+        omitted = len(self.latest_articles) - len(articles)
         subject = email_push.subject
         template_path = self._resolve_template_path(email_push.body_template, DEFAULT_EMAIL_PUSH_TEMPLATE)
         if not template_path.is_file():
@@ -163,14 +165,14 @@ class FriendCircleLiteApplication:
             port=mail_runtime.port,
             password=mail_runtime.password,
             subject=subject,
-            body=self._build_email_push_text_body(subject, due_at),
+            body=self._build_email_push_text_body(subject, due_at, articles, omitted),
             template_path=str(template_path),
-            template_data=self._build_email_push_template_data(subject, due_at),
+            template_data=self._build_email_push_template_data(subject, due_at, articles, omitted),
             use_tls=mail_runtime.use_tls,
         )
         if summary and summary.get("sent_success"):
             self.state_store.set(EMAIL_PUSH_LAST_SENT_KEY, due_at.isoformat())
-            logging.info(f"✅ 邮件推送完成：{len(self.latest_articles)} 篇文章已发送到 {to_email}")
+            logging.info(f"✅ 邮件推送完成：{len(articles)} 篇文章已发送到 {to_email}")
         else:
             logging.error("❌ 邮件推送失败，将在下次运行重试")
 
@@ -203,18 +205,24 @@ class FriendCircleLiteApplication:
             return None
         return due_at
 
-    def _build_email_push_template_data(self, subject: str, due_at: datetime) -> dict:
+    def _build_email_push_template_data(
+        self, subject: str, due_at: datetime, articles: list[dict], omitted: int
+    ) -> dict:
         """Assemble the variables exposed to the email template."""
         return {
             "subject": subject,
             "generated_at": datetime.now(SHANGHAI_TZ).strftime("%Y-%m-%d %H:%M"),
             "due_at": due_at.strftime("%Y-%m-%d %H:%M"),
             "total": len(self.latest_articles),
-            "articles": self.latest_articles,
+            "shown": len(articles),
+            "omitted": omitted,
+            "articles": articles,
             "statistical_data": self.latest_statistics,
         }
 
-    def _build_email_push_text_body(self, subject: str, due_at: datetime) -> str:
+    def _build_email_push_text_body(
+        self, subject: str, due_at: datetime, articles: list[dict], omitted: int
+    ) -> str:
         """Build the plain-text fallback for the digest email."""
         lines = [
             subject,
@@ -222,13 +230,15 @@ class FriendCircleLiteApplication:
             f"文章数量：{len(self.latest_articles)}",
             "",
         ]
-        for article in self.latest_articles:
+        for article in articles:
             lines.append(
                 f"- {article.get('title') or '无标题'}"
                 f"（{article.get('author') or '未知作者'} · {article.get('created') or '未知时间'}）"
             )
             if article.get("link"):
                 lines.append(f"  {article['link']}")
+        if omitted:
+            lines.extend(["", f"另有 {omitted} 篇文章未在邮件中展示。"])
         return "\n".join(lines)
 
     @staticmethod

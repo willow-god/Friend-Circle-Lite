@@ -60,6 +60,7 @@ link_check:
 #   subject:       邮件主题
 #   body_template: 邮件 HTML 模板，默认使用 ./templates/rss_template.html
 #   cron:          标准 5 段 cron（分 时 日 月 周），按 Asia/Shanghai 时区解释
+#   max_articles:  单封邮件最多展示的文章数，默认 50；避免超过 Gmail 约 102KB 的截断阈值
 # 注意：GitHub Action 每 4 小时运行一次，无法精确在 cron 分钟触发。
 #       程序会在“计划时间之后的下一次运行”发送，并记录已发送的计划时间，
 #       同一计划时间不会重复发送；如果发送失败，下次运行会自动重试。
@@ -69,6 +70,7 @@ email_push:
   subject: "今天的 RSS 订阅更新"
   body_template: "./templates/rss_template.html"
   cron: "0 8 * * *"
+  max_articles: 50
 
 # 邮件 issue 订阅功能配置
 # 说明：从 GitHub issue 中提取订阅邮箱，并推送你自己站点的新文章。

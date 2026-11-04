@@ -1,135 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>最新文章通知</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="x-apple-disable-message-reformatting">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="color-scheme" content="light dark">
+    <meta name="supported-color-schemes" content="light dark">
+    <title>{{ title|striptags|e }} · {{ website_title|striptags|e }}</title>
+    <!--[if mso]>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            background-color: #ffffff;
-            margin: 50px auto;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 600px;
-        }
-        .header {
-            margin-top: 30px;
-            text-align: center;
-            padding-bottom: 20px;
-        }
-        .header h1 {
-            margin: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .content {
-            font-size: 16px;
-            line-height: 1.6;
-        }
-        .content p {
-            margin: 10px 0;
-        }
-        
-        .content .title {
-            display: inline-block;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            vertical-align: middle;
+        body, table, td, a { font-family: Georgia, 'Times New Roman', serif !important; }
+    </style>
+    <![endif]-->
+    <style>
+        html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+        body { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { mso-table-lspace: 0pt !important; mso-table-rspace: 0pt !important; border-collapse: collapse !important; }
+        img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
+        a { text-decoration: none; }
+        .email-link:hover { color: #3f4f33 !important; }
+
+        @media screen and (max-width: 620px) {
+            .email-wrap { padding: 16px 8px !important; }
+            .email-card { width: 100% !important; max-width: 600px !important; }
+            .email-hero { padding: 34px 24px 24px !important; }
+            .email-pad { padding-left: 24px !important; padding-right: 24px !important; }
+            .email-title { font-size: 27px !important; line-height: 1.4 !important; }
+            .email-footer { padding: 18px 24px 24px !important; }
         }
 
-        .content p strong {
-            display: inline-block;
-            max-width: 100px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            vertical-align: middle;
-        }
-        .content .summary {
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            word-wrap: break-word;
-            word-break: break-all;
-        }
-        .content .published {
-            display: inline-block;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            vertical-align: middle;
-        }
-        .button {
-            display: block;
-            width: 200px;
-            max-width: 100%;
-            margin: 20px auto;
-            padding: 10px 20px;
-            text-align: center;
-            background-color: #007bff;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .button:hover {
-            background-color: #0056b3;
-        }
-        @media (max-width: 300px) {
-            .button {
-                width: auto;
-            }
-        }
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 18px;
-            color: #777777;
-        }
-        .unsubscribe {
-            text-align: center;
-            margin-top: 60px;
-            font-size: 12px;
-            color: #777777;
-        }
-        .unsubscribe a {
-            color: #777777;
-            text-decoration: none;
-        }
-        .unsubscribe a:hover {
-            text-decoration: underline;
+        @media (prefers-color-scheme: dark) {
+            .email-bg { background-color: #171512 !important; }
+            .email-card { background-color: #211d19 !important; border-color: #3a332c !important; }
+            .email-text { color: #efe6d9 !important; }
+            .email-muted { color: #b9ac9b !important; }
+            .email-soft { color: #9c8f7e !important; }
+            .email-rule { background-color: #3a332c !important; }
+            .email-link { color: #c6d4b3 !important; }
+            .email-quote { background-color: #2a241f !important; border-left-color: #c89b6d !important; }
+            .email-button { background-color: #8b9d77 !important; }
+            .email-button-text { color: #171512 !important; }
+            .email-title { color: #efe6d9 !important; }
+            .email-title .email-link { color: #efe6d9 !important; }
+            .email-hairline { border-color: #3a332c !important; }
+            .email-stat { border-color: #3a332c !important; }
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>{{ website_title }}の最新文章</h1>
-        </div>
-        <div class="content">
-            <p><strong>文章标题：</strong> <span class="title">{{ title }}</span></p>
-            <p><strong>文章内容：</strong> <span class="summary">{{ summary }}</span></p>
-            <p><strong>发布时间：</strong> <span class="published">{{ published }}</span></p>
-        </div>
-        <a href="{{ link }}" class="button">阅读更多</a>
-        <div class="footer">
-            <p>感谢您的订阅！</p>
-        </div>
-        <div class="unsubscribe">
-            <p><a href="{{ github_issue_url }}">取消订阅</a></p>
-        </div>
+<body class="email-bg" bgcolor="#f4f1ea" style="margin:0;padding:0;background-color:#f4f1ea;color:#3f3a33;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',Arial,sans-serif;">
+    <div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;color:#f4f1ea;">
+        {{ title|striptags|e }} · 来自 {{ website_title|striptags|e }} 的最新文章。
     </div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f4f1ea" class="email-bg" style="background-color:#f4f1ea;">
+        <tr>
+            <td class="email-wrap" align="center" style="padding:32px 12px;">
+                <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" class="email-card" bgcolor="#fffdfa" style="width:600px;max-width:600px;background-color:#fffdfa;border:1px solid #e2d8c8;border-radius:16px;overflow:hidden;">
+                    <tr>
+                        <td height="4" bgcolor="#8b9d77" style="height:4px;background-color:#8b9d77;font-size:1px;line-height:1px;">&nbsp;</td>
+                    </tr>
+
+                    <tr>
+                        <td class="email-hero" style="padding:38px 42px 30px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td valign="middle" style="font-size:11px;line-height:1.5;color:#8a7d6e;letter-spacing:0.16em;text-transform:uppercase;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',Arial,sans-serif;" class="email-muted">
+                                        <span style="color:#5d704b;">●</span>&nbsp;{{ website_title|striptags|e }}
+                                    </td>
+                                    <td align="right" valign="middle" style="font-size:11px;line-height:1.5;color:#a09486;letter-spacing:0.05em;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',Arial,sans-serif;" class="email-soft">
+                                        New essay
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="margin:26px 0 0;font-size:11px;line-height:1.5;color:#b7a184;letter-spacing:0.18em;text-transform:uppercase;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',Arial,sans-serif;">
+                                最新文章
+                            </p>
+                            <h1 class="email-title" style="margin:12px 0 0;font-family:Georgia,'Times New Roman','Songti SC',SimSun,serif;font-size:32px;line-height:1.42;font-weight:400;letter-spacing:-0.015em;color:#3f3a33;word-break:break-word;overflow-wrap:anywhere;">
+                                <a href="{{ link|e }}" target="_blank" rel="noopener noreferrer" class="email-link" style="color:#3f3a33;text-decoration:none;">
+                                    {{ title|striptags|e }}
+                                </a>
+                            </h1>
+                            <p class="email-muted" style="margin:14px 0 0;font-size:12px;line-height:1.8;color:#8a7d6e;">
+                                {{ published|e }}
+                            </p>
+                        </td>
+                    </tr>
+
+                    {% if summary %}
+                    <tr>
+                        <td class="email-pad" style="padding:0 42px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td class="email-quote" bgcolor="#faf6f1" style="padding:20px 22px;background-color:#faf6f1;border-left:2px solid #c89b6d;border-radius:0 10px 10px 0;">
+                                        <p class="email-muted" style="margin:0;font-size:14px;line-height:1.95;color:#71665c;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',Arial,sans-serif;word-break:break-word;overflow-wrap:anywhere;">
+                                            {{ summary|striptags|e }}
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                    <tr>
+                        <td class="email-pad" style="padding:30px 42px 8px;">
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td class="email-button" align="center" bgcolor="#5d704b" style="background-color:#5d704b;border-radius:999px;mso-padding-alt:12px 26px;">
+                                        <a href="{{ link|e }}" target="_blank" rel="noopener noreferrer" class="email-button-text" style="display:inline-block;padding:12px 26px;font-size:13px;line-height:1.4;font-weight:600;letter-spacing:0.04em;color:#fffdfa;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',Arial,sans-serif;border-radius:999px;">
+                                            阅读全文&nbsp;&nbsp;→
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="email-footer email-pad" style="padding:34px 42px 30px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="email-hairline" style="border-top:1px solid #eee4d5;">
+                                <tr>
+                                    <td style="padding-top:18px;font-size:11px;line-height:1.9;color:#a09486;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',Arial,sans-serif;" class="email-soft">
+                                        你收到这封邮件，是因为在 GitHub Issue 中订阅了
+                                        <strong style="font-weight:600;color:#8a7d6e;" class="email-muted">{{ website_title|striptags|e }}</strong>
+                                        的文章更新。
+                                        <br>
+                                        如果不再需要，可以
+                                        <a href="{{ github_issue_url|e }}" target="_blank" rel="noopener noreferrer" class="email-link" style="color:#5d704b;text-decoration:underline;">取消订阅</a>。
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

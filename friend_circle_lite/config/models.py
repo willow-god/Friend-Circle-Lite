@@ -92,6 +92,8 @@ class EmailPushConfig:
     body_template: str = DEFAULT_EMAIL_PUSH_TEMPLATE
     # Standard five-field cron expression interpreted in Asia/Shanghai.
     cron: str = DEFAULT_EMAIL_PUSH_CRON
+    # Keep the HTML message below Gmail's ~102KB clipping threshold.
+    max_articles: int = 50
 
 
 @dataclass(slots=True)
@@ -205,6 +207,7 @@ class ApplicationConfig:
                     ).strip()
                     or DEFAULT_EMAIL_PUSH_CRON
                 ),
+                max_articles=max(1, int(email_push_raw.get("max_articles", 50) or 50)),
             ),
             rss_subscribe=RssSubscribeConfig(
                 enable=bool(rss_subscribe_raw.get("enable", False)),
