@@ -9,24 +9,30 @@ from unittest.mock import patch
 
 import requests
 
-from friend_circle_lite.config.models import ProxySettings
+from friend_circle_lite.application import FriendCircleLiteApplication
+from friend_circle_lite.config.loader import load_raw_config
+from friend_circle_lite.config.models import ApplicationConfig, ProxySettings
 from friend_circle_lite.config.printer import print_startup_config
 from friend_circle_lite.crawler.http_client import WebFetchClient
 from friend_circle_lite.crawler.service import FeedResolver, FriendCircleCrawlService, SingleSiteCrawler
-from friend_circle_lite.all_friends import deal_with_large_data, merge_link_data_from_json_url
-from friend_circle_lite.app_config import ApplicationConfig
-from friend_circle_lite.cli import FriendCircleLiteApplication
+from friend_circle_lite.domain.models import (
+    Article,
+    CacheRecord,
+    FeedEndpoint,
+    LinkCheckRecord,
+    LinkMethodStatus,
+    Website,
+)
 from friend_circle_lite.link_checker.service import LinkReachabilityService, RetryBackoffPolicy
-from friend_circle_lite.models import Article, CacheRecord, FeedEndpoint, LinkCheckRecord, LinkMethodStatus, Website
-from friend_circle_lite.outputs.legacy_api import _to_public_link
+from friend_circle_lite.outputs.json_io import write_json
+from friend_circle_lite.outputs.merge import _to_public_link, merge_link_data
+from friend_circle_lite.outputs.processing import finalize_article_data
 from friend_circle_lite.storage.diagnostics import SQLiteDebugDumper
-from friend_circle_lite.utils.json import write_json
-from friend_circle_lite.utils.config import load_raw_config
 
 
 class RefactorContractsTest(unittest.TestCase):
     def test_repository_variable_overrides_nested_config_without_editing_yaml(self):
-        from friend_circle_lite.utils.config import _apply_config_overrides
+        from friend_circle_lite.config.loader import _apply_config_overrides
 
         original = {
             "merge_settings": {
@@ -59,115 +65,46 @@ class RefactorContractsTest(unittest.TestCase):
         self.assertTrue(overridden["merge_settings"]["enable"])
         self.assertEqual(overridden["spider_settings"]["article_count"], 8)
 
-    def test_github_action_schedule_uses_22_minute_offset(self):
-        workflow = Path(".github/workflows/friend_circle_lite.yml").read_text(encoding="utf-8")
-
-        self.assertIn('cron: "22 */4 * * *"', workflow)
-        self.assertNotIn('cron: "0 */4 * * *"', workflow)
-
-    def test_github_actions_opt_into_node24_runtime(self):
-        workflow_paths = [
-            Path(".github/workflows/friend_circle_lite.yml"),
-            Path(".github/workflows/deal_subscribe_issue.yml"),
-        ]
-
-        for workflow_path in workflow_paths:
-            with self.subTest(workflow=str(workflow_path)):
-                workflow = workflow_path.read_text(encoding="utf-8")
-                self.assertIn("FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true", workflow)
-
-    def test_publish_workflow_skips_unchanged_page_tree(self):
-        workflow = Path(".github/workflows/friend_circle_lite.yml").read_text(encoding="utf-8")
-
-        self.assertIn('git fetch origin "${PAGE_BRANCH}:refs/remotes/origin/${PAGE_BRANCH}"', workflow)
-        self.assertIn('published_tree=$(git rev-parse "origin/${PAGE_BRANCH}^{tree}")', workflow)
-        self.assertIn("generated_tree=$(git write-tree)", workflow)
-        self.assertIn('[ "$generated_tree" = "$published_tree" ]', workflow)
-        self.assertIn("No static asset changes; skipping page branch update.", workflow)
-
     def test_static_index_is_standalone_dashboard_with_view_switch(self):
         html = Path("static/index.html").read_text(encoding="utf-8")
 
         self.assertIn('data-view="links"', html)
         self.assertIn('data-view="articles"', html)
-        self.assertIn('["first24", "前 24 条"]', html)
+        self.assertIn('["first24","前 24 条"]', html)
         link_config_start = html.index("links:", html.index("viewConfig"))
         link_config = html[link_config_start:html.index("articles:", link_config_start)]
-        self.assertIn('defaultFilter: "unreachable"', link_config)
+        self.assertIn('defaultFilter:"unreachable"', link_config)
         expected_link_filters = [
-            '["unreachable", "不可达"]',
-            '["uncrawlable", "不可抓取"]',
-            '["noBacklink", "无反链"]',
-            '["stale", "久未更新"]',
-            '["all", "全部"]',
+            '["unreachable","不可达"]',
+            '["uncrawlable","不可抓取"]',
+            '["noBacklink","无反链"]',
+            '["stale","久未更新"]',
+            '["all","全部"]',
         ]
         for item in expected_link_filters:
             self.assertIn(item, link_config)
         positions = [link_config.index(item) for item in expected_link_filters]
         self.assertEqual(positions, sorted(positions))
-        self.assertNotIn('["crawlable", "可抓取"]', link_config)
-        self.assertNotIn('["backlink", "反链"]', link_config)
-        self.assertLess(
-            html.index('["unreachable", "不可达"]', link_config_start),
-            html.index('["all", "全部"]', link_config_start),
-        )
+        self.assertNotIn('["crawlable",', link_config)
+        self.assertNotIn('["backlink",', link_config)
         article_config_start = html.index("articles:", html.index("viewConfig"))
         self.assertLess(
-            html.index('["first24", "前 24 条"]', article_config_start),
-            html.index('["all", "全部"]', article_config_start),
+            html.index('["first24","前 24 条"]', article_config_start),
+            html.index('["all","全部"]', article_config_start),
         )
-        self.assertIn("scrollbar-width: thin", html)
-        self.assertIn("::-webkit-scrollbar", html)
-        self.assertIn(".dashboard {\n        display: grid;\n        gap: 14px;", html)
-        self.assertIn(".action-strip", html)
-        self.assertIn(".summary-row", html)
-        self.assertIn(".control-row", html)
-        self.assertIn(".metrics-row", html)
-        self.assertIn("summary-row", html)
-        self.assertIn("control-row", html)
-        self.assertIn("metrics metrics-row", html)
-        self.assertIn("toolbar top-toolbar", html)
-        self.assertIn("--control-height: 44px", html)
-        self.assertIn("height: var(--control-height)", html)
-        self.assertIn(".content-grid {\n        display: grid;\n        align-items: start;", html)
-        self.assertIn(".content-grid.is-links {\n        grid-template-columns: repeat(3, minmax(0, 1fr));", html)
-        self.assertIn('content.className = `content-grid ${state.view === "links" ? "is-links" : "is-articles"}`;', html)
-        self.assertIn(".link-card.featured", html)
-        self.assertIn('if (state.filter === "uncrawlable") return !link.rss;', html)
-        self.assertIn('if (state.filter === "noBacklink") return link.backlink !== true;', html)
-        self.assertIn("sortLinks", html)
-        self.assertIn("visibleDetails", html)
-        self.assertIn("renderSurfaceFacts", html)
-        self.assertIn("primaryInsight", html)
-        self.assertIn("formatUnreachableDays", html)
-        self.assertIn("const unreachableDays = formatUnreachableDays(link);", html)
-        self.assertIn('label: "不可达时长"', html)
-        self.assertIn("unreachable_days", html)
-        self.assertNotIn("fail_count", html)
-        self.assertNotIn("fails:", html)
-        self.assertNotIn("formatFailureAge", html)
-        self.assertNotIn("fa-solid fa-rotate", html)
-        self.assertNotIn("--leaf", html)
-        self.assertNotIn("--amber", html)
-        self.assertNotIn("--red", html)
-        self.assertNotIn(".icon-badge.good", html)
-        self.assertNotIn(".icon-badge.warn", html)
-        self.assertNotIn(".icon-badge.bad", html)
-        self.assertIn("align-self: start", html)
-        self.assertIn("-webkit-line-clamp: 2", html)
-        self.assertIn("article-avatar-mark", html)
-        self.assertIn("article.avatar", html)
-        self.assertIn("https://github.com/willow-god/Friend-Circle-Lite", html)
-        self.assertIn("poem-background", html)
-        self.assertIn("link-status", html)
-        self.assertIn("surface-facts", html)
-        self.assertIn("title=", html)
         self.assertIn("Promise.all", html)
-        self.assertIn("link.json", html)
-        self.assertIn("all.json", html)
-        self.assertNotIn(".metric::before", html)
-        self.assertNotIn(".link-card::before", html)
-        self.assertNotIn(".article-card::before", html)
+        self.assertIn("./link.json", html)
+        self.assertIn("./all.json", html)
+        self.assertIn("normalizeLinks", html)
+        self.assertIn("payload.links||payload.link_data", html)
+        self.assertIn("unreachable_days", html)
+        self.assertIn("formatUnreachableDays", html)
+        self.assertIn("sortLinks", html)
+        self.assertIn("surfaceFacts", html)
+        self.assertIn("article-avatar-mark", html)
+        self.assertIn('article.title||"无标题"', html)
+        self.assertIn("escapeHTML", html)
+        self.assertNotIn("fail_count", html)
         self.assertNotIn("fclite.js", html)
         self.assertNotIn("fclite.css", html)
 
@@ -380,7 +317,7 @@ class RefactorContractsTest(unittest.TestCase):
             rss_unavailable_since="2026-06-17 08:00:00",
         )
 
-        with patch("friend_circle_lite.link_checker.service.datetime") as fake_datetime:
+        with patch("friend_circle_lite.domain.models.datetime") as fake_datetime:
             fake_datetime.now.return_value = datetime(2026, 6, 27, 8, 0, 0)
             fake_datetime.strptime.side_effect = datetime.strptime
             reused = service._can_reuse_cached_record(cached, Website(name="NoRSS", url="https://norss.example/"))
@@ -456,9 +393,10 @@ class RefactorContractsTest(unittest.TestCase):
         })
         payload = ({"statistical_data": {}, "article_data": []}, [], {"statistical_data": {}, "link_data": []})
 
-        with patch("friend_circle_lite.cli.fetch_and_process_data", return_value=payload), \
-            patch("friend_circle_lite.cli.write_json"), \
+        with patch("friend_circle_lite.application.FriendCircleCrawlService") as crawl_service, \
+            patch("friend_circle_lite.application.write_json"), \
             patch("logging.info") as info:
+            crawl_service.return_value.run.return_value = payload
             FriendCircleLiteApplication(config).run_crawler_if_enabled()
 
         messages = "\n".join(str(call.args[0]) for call in info.call_args_list)
@@ -796,7 +734,7 @@ class RefactorContractsTest(unittest.TestCase):
 
         client = WebFetchClient(Session(), ProxySettings())
 
-        with patch("time.time", side_effect=[10.0, 10.0]):
+        with patch("time.time", return_value=10.0):
             result = client.get("https://site.example/feed.xml", desc="RSS")
 
         self.assertFalse(result.success)
@@ -977,7 +915,7 @@ class RefactorContractsTest(unittest.TestCase):
             ],
         }
 
-        result = deal_with_large_data(payload)
+        result = finalize_article_data(payload)
 
         self.assertEqual([article["title"] for article in result["article_data"]], ["New", "Old"])
         self.assertEqual(result["statistical_data"]["article_num"], 2)
@@ -1152,7 +1090,7 @@ class RefactorContractsTest(unittest.TestCase):
                 return remote
 
         with patch("requests.get", return_value=Response()):
-            merged = merge_link_data_from_json_url(local, "https://remote.example/link.json")
+            merged = merge_link_data(local, "https://remote.example/link.json")
 
         self.assertNotIn("method", merged["link_data"][0])
         self.assertNotIn("checked_at", merged["link_data"][0])

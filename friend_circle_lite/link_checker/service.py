@@ -19,7 +19,8 @@ from urllib.parse import quote, urlparse, urlsplit, urlunsplit
 import requests
 
 from friend_circle_lite.config.models import LinkCheckConfig, ProxySettings
-from friend_circle_lite.crawler.feed_service import FeedDiscoveryService, FeedParserService
+from friend_circle_lite.crawler.feed_discovery import FeedDiscoveryService
+from friend_circle_lite.crawler.feed_parser import FeedParserService
 from friend_circle_lite.crawler.http_client import WebFetchClient
 from friend_circle_lite.domain.models import (
     Article,
@@ -31,7 +32,7 @@ from friend_circle_lite.domain.models import (
     calculate_elapsed_days,
     normalize_latency,
 )
-from friend_circle_lite.storage.sqlite_store import LinkCheckStore
+from friend_circle_lite.storage.link_check_store import LinkCheckStore
 
 
 LINK_CHECK_HEADERS = {
@@ -403,21 +404,6 @@ class LinkReachabilityService:
     @staticmethod
     def _is_rss_unavailable_record(record: LinkCheckRecord) -> bool:
         return record.reachable and not record.crawl_allowed
-
-    @staticmethod
-    def _build_disabled_record(website: Website, checked_at: str) -> LinkCheckRecord:
-        return LinkCheckRecord(
-            name=website.name,
-            url=website.url,
-            avatar=website.avatar,
-            linkpage=website.linkpage,
-            checked_at=checked_at,
-            reachable=True,
-            crawl_allowed=True,
-            best_method="disabled",
-            best_latency=0.01,
-            rss_crawl_reason="link_check_disabled",
-        )
 
     @staticmethod
     def _is_url(path: str) -> bool:

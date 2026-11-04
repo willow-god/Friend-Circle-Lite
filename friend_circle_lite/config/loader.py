@@ -77,21 +77,22 @@ def _flatten_override_paths(value: dict, prefix: str = ""):
         else:
             yield path
 
+
 def load_raw_config(config_file: str) -> dict:
     """Load the raw YAML config dictionary from disk."""
     try:
-        with open(config_file, 'r', encoding='utf-8') as file:
+        with open(config_file, "r", encoding="utf-8") as file:
             config = yaml.safe_load(file) or {}
             override_block = _config_overrides_from_env()
             return _apply_config_overrides(config, override_block) if override_block else config
     except FileNotFoundError:
         logging.error(f"配置文件 {config_file} 未找到")
         return {}
-    except yaml.YAMLError as e:
-        logging.error(f"YAML解析错误: {str(e)}")
+    except yaml.YAMLError as exc:
+        logging.error(f"YAML解析错误: {exc}")
         return {}
-    except Exception as e:
-        logging.error(f"加载配置文件时发生未知错误: {str(e)}")
+    except Exception as exc:
+        logging.error(f"加载配置文件时发生未知错误: {exc}")
         return {}
 
 

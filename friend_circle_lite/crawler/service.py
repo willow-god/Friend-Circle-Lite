@@ -1,25 +1,34 @@
 """High-level crawler orchestration.
 
-This module contains the system-level services that coordinate website loading,
-RSS discovery, parsing, cache updates, result aggregation, and legacy output
-formatting.
+This module coordinates website loading, feed resolution, parsing, cache
+updates, and result aggregation. Article payload post-processing lives in
+`friend_circle_lite.outputs.processing`.
 """
 
 from __future__ import annotations
 
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timedelta
-from zoneinfo import ZoneInfo
 
 import requests
 
-from friend_circle_lite import HEADERS_JSON, timeout
 from friend_circle_lite.config.models import LinkCheckConfig, ProxySettings
-from friend_circle_lite.crawler.feed_service import FeedDiscoveryService, FeedParserService
-from friend_circle_lite.domain.models import Article, CacheRecord, CacheUpdate, CrawlResult, CrawlStatistics, FeedEndpoint, LinkCheckRecord, Website
+from friend_circle_lite.crawler.feed_discovery import FeedDiscoveryService
+from friend_circle_lite.crawler.feed_parser import FeedParserService
+from friend_circle_lite.crawler.http_client import DEFAULT_TIMEOUT, HEADERS_JSON
+from friend_circle_lite.domain.models import (
+    Article,
+    CacheRecord,
+    CacheUpdate,
+    CrawlResult,
+    CrawlStatistics,
+    FeedEndpoint,
+    LinkCheckRecord,
+    Website,
+)
 from friend_circle_lite.link_checker.service import LinkReachabilityService
-from friend_circle_lite.storage.sqlite_store import FeedCacheStore, LinkCheckStore
+from friend_circle_lite.storage.feed_cache_store import FeedCacheStore
+from friend_circle_lite.storage.link_check_store import LinkCheckStore
 
 
 class FeedResolver:
@@ -135,6 +144,7 @@ class FriendCircleCrawlService:
         link_check_records = self._check_links(websites, merged_records, manual_names)
         link_check_map = {record.url: record for record in link_check_records}
 
+        # Link checking may repair or invalidate cached feeds, so reload before crawling.
         cache_records = self.cache_store.load_records()
         merged_records = self._merge_feed_records(cache_records, manual_records)
         feed_names = {record.name for record in merged_records}
@@ -250,41 +260,9 @@ class FriendCircleCrawlService:
             "link_data": [record.to_link_dict() for record in records],
         }
 
-    @staticmethod
-    def _build_friend_data(
-        websites: list[Website],
-        crawl_results: list[CrawlResult],
-        link_check_map: dict[str, LinkCheckRecord],
-    ) -> list[dict[str, object]]:
-        crawl_result_map = {result.website.url: result for result in crawl_results}
-        friend_data: list[dict[str, object]] = []
-        for website in websites:
-            link_record = link_check_map.get(website.url) or LinkCheckRecord.unchecked(website)
-            crawl_result = crawl_result_map.get(website.url)
-            friend_data.append({
-                "name": website.name,
-                "url": website.url,
-                "avatar": website.avatar,
-                "linkpage": website.linkpage,
-                "reachable": link_record.reachable,
-                "crawl_allowed": link_record.crawl_allowed,
-                "best_method": link_record.best_method,
-                "best_latency": link_record.best_latency,
-                "unreachable_since": link_record.unreachable_since,
-                "unreachable_days": link_record.unreachable_days,
-                "backlink_checked": link_record.backlink_checked,
-                "has_author_link": link_record.has_author_link,
-                "rss_crawl_reason": link_record.rss_crawl_reason,
-                "feed_status": crawl_result.status if crawl_result else "skipped",
-                "feed_url": crawl_result.feed_url if crawl_result else None,
-                "feed_type": crawl_result.feed_type if crawl_result else "none",
-                "article_count": len(crawl_result.articles) if crawl_result else 0,
-            })
-        return friend_data
-
     def _load_websites(self, session: requests.Session) -> list[Website] | None:
         try:
-            response = session.get(self.json_url, headers=HEADERS_JSON, timeout=timeout)
+            response = session.get(self.json_url, headers=HEADERS_JSON, timeout=DEFAULT_TIMEOUT)
             response.raise_for_status()
             friends_data = response.json()
         except Exception as exc:
@@ -341,59 +319,3 @@ class FriendCircleCrawlService:
                 logging.info(f"🗑️ 缓存删除：{name} (RSS 源失效)")
 
         self.cache_store.save_records(list(cache_map.values()))
-
-
-def sort_articles_by_time(data: dict, future_tolerance_days: int = 2) -> dict:
-    """Sort article payloads by time and remove far-future timestamps."""
-    for article in data.get("article_data", []):
-        if not article.get("created"):
-            article["created"] = "2024-01-01 00:00"
-            logging.warning(f"[数据处理] 文章 {article['title']} 未包含时间信息，已设置为默认时间 2024-01-01 00:00")
-
-    now = datetime.now(ZoneInfo("Asia/Shanghai")).replace(tzinfo=None)
-    max_allowed_time = now + timedelta(days=future_tolerance_days)
-    filtered_articles = []
-    removed_count = 0
-
-    for article in data.get("article_data", []):
-        article_time = datetime.strptime(article["created"], "%Y-%m-%d %H:%M")
-        if article_time > max_allowed_time:
-            removed_count += 1
-            logging.warning(
-                f"[数据处理] 文章 {article['title']} 的时间 {article['created']} 超出当前时间 {future_tolerance_days} 天以上，已跳过显示"
-            )
-            continue
-        filtered_articles.append(article)
-
-    filtered_articles.sort(key=lambda item: datetime.strptime(item["created"], "%Y-%m-%d %H:%M"), reverse=True)
-    data["article_data"] = filtered_articles
-    if removed_count:
-        logging.info(f"[数据处理] 已过滤 {removed_count} 篇未来时间异常的文章")
-    return data
-
-
-def limit_large_dataset(result: dict, future_tolerance_days: int = 2) -> dict:
-    """Keep the existing data trimming strategy for very large datasets."""
-    result = sort_articles_by_time(result, future_tolerance_days=future_tolerance_days)
-    article_data = result.get("article_data", [])
-    result["statistical_data"]["article_num"] = len(article_data)
-
-    max_articles = 150
-    if len(article_data) > max_articles:
-        logging.info(f"[数据处理] 数据量较大，开始裁剪，当前 {len(article_data)} 篇，基础保留 {max_articles} 篇")
-        top_authors = {article["author"] for article in article_data[:max_articles]}
-        filtered_articles = article_data[:max_articles] + [
-            article for article in article_data[max_articles:]
-            if article["author"] in top_authors
-        ]
-        result["article_data"] = filtered_articles
-        result["statistical_data"]["article_num"] = len(filtered_articles)
-        logging.info(f"[数据处理] 数据裁剪完成，保留 {len(filtered_articles)} 篇文章")
-
-    return result
-
-
-# Backward-compatible class names kept for legacy imports.
-WebsiteFeedResolver = FeedResolver
-WebsiteCrawler = SingleSiteCrawler
-FriendCircleCrawler = FriendCircleCrawlService

@@ -1,7 +1,8 @@
 import logging
 import requests
 import re
-from friend_circle_lite import HEADERS_JSON
+
+from friend_circle_lite.crawler.http_client import HEADERS_JSON
 
 def extract_emails_from_issues(api_url):
     """
