@@ -398,6 +398,8 @@ link_check.enable_backlink_check=false
 
   `your_blog_url`：用来定时检测是否有最新文章，请确保你的网站可以被 FCLite 抓取到。
 
+  > **升级不会重发历史文章**：文章追踪快照保存在 `article_tracking` 表，表结构和去重字段（`link` / `title` / `published`）保持不变。升级后首次运行会继续读取已有快照，只发送真正的新文章；如果缓存文件丢失，则按首次运行处理并跳过本次推送，不会补发历史文章。
+
 - **SMTP 配置**
 
   使用配置中的相关信息实现邮件发送功能。SMTP 密码不写入配置文件，Action 部署请使用 `SMTP_PWD` Secret。
