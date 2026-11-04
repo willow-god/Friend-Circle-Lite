@@ -434,7 +434,7 @@ class RefactorContractsTest(unittest.TestCase):
             config=ApplicationConfig.from_dict({
                 "link_check": {
                     "enable_backlink_check": True,
-                    "author_url": "blog.liushen.fun",
+                    "author_url": "author.example",
                 }
             }).link_check,
             proxy_settings=ProxySettings(),
@@ -484,7 +484,7 @@ class RefactorContractsTest(unittest.TestCase):
 
         class Response:
             status_code = 200
-            text = '<a href="https://blog.liushen.fun/">清羽飞扬</a>'
+            text = '<a href="https://author.example/">Author</a>'
 
         class Fetcher:
             calls = []
@@ -500,7 +500,7 @@ class RefactorContractsTest(unittest.TestCase):
             config=ApplicationConfig.from_dict({
                 "link_check": {
                     "enable_backlink_check": True,
-                    "author_url": "blog.liushen.fun",
+                    "author_url": "author.example",
                 }
             }).link_check,
             proxy_settings=ProxySettings(),

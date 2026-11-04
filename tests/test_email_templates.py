@@ -58,7 +58,7 @@ class EmailTemplateTest(unittest.TestCase):
 
     def test_article_template_renders_single_article(self):
         html = self.env.get_template("article_notify.html").render({
-            "website_title": "清羽飞扬",
+            "website_title": "示例博客",
             "title": "秋日书简 <script>alert(1)</script>",
             "summary": "这是一段 <b>摘要</b> 内容。",
             "published": "2026-11-04 07:00",
@@ -66,7 +66,7 @@ class EmailTemplateTest(unittest.TestCase):
             "github_issue_url": "https://github.com/example/repo/issues?q=is%3Aissue",
         })
 
-        self.assertIn("清羽飞扬", html)
+        self.assertIn("示例博客", html)
         self.assertIn("秋日书简", html)
         self.assertNotIn("<script", html.lower())
         self.assertNotIn("<img", html.lower())
