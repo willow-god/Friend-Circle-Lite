@@ -117,8 +117,8 @@ function initialize_fc_lite() {
 
             const title = document.createElement('div');
             title.className = 'card-title';
-            title.innerText = article.title;
-            title.title = article.title; // 添加完整标题的提示
+            title.innerText = article.title || '无标题';
+            title.title = article.title || '无标题'; // 添加完整标题的提示
             card.appendChild(title);
             title.onclick = () => window.open(article.link, '_blank');
 
@@ -192,7 +192,7 @@ function initialize_fc_lite() {
             <div class="random-content">
                 <div class="random-container">
                     <div class="random-container-title">🎲 随便转转</div>
-                    <div class="random-title" title="${randomArticle.title}">${randomArticle.title}</div>
+                    <div class="random-title" title="${randomArticle.title || '无标题'}">${randomArticle.title || '无标题'}</div>
                     <div class="random-meta">
                         <span class="random-author">✍️ ${randomArticle.author}</span>
                         <span class="random-date">📅 ${randomArticle.created.substring(0, 10)}</span>
@@ -256,7 +256,7 @@ function initialize_fc_lite() {
 
             const title = document.createElement('a');
             title.className = 'modal-article-title';
-            title.innerText = article.title;
+            title.innerText = article.title || '无标题';
             title.href = article.link;
             title.target = '_blank';
             articleDiv.appendChild(title);

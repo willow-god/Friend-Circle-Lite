@@ -24,7 +24,11 @@ class FeedParserService:
         self.last_latency = 0.01
 
     def parse(self, feed_url: str, count: int = 5, blog_url: str = "") -> list[Article]:
-        """Parse a feed URL and return the newest `count` articles."""
+        """Parse a feed URL and return the newest `count` displayable articles.
+
+        Articles without a usable title are discarded here, so they never reach
+        the public JSON outputs or the frontend.
+        """
         try:
             result = self.fetcher.get(feed_url, headers=HEADERS_XML, timeout=DEFAULT_TIMEOUT, desc="RSS 抓取")
             self.last_latency = normalize_latency(result.latency)
@@ -42,10 +46,15 @@ class FeedParserService:
         articles: list[Article] = []
 
         for entry in feed.entries:
+            title = str(entry.get("title") or "").strip()
+            if not title:
+                logging.warning(f"[RSS 抓取] 跳过无标题文章：{entry.get('link') or feed_url}")
+                continue
+
             published = self._extract_published_time(entry)
             article_link = replace_non_domain(entry.link, blog_url) if "link" in entry else ""
             article = Article(
-                title=entry.title if "title" in entry else "",
+                title=title,
                 author=default_author,
                 link=article_link,
                 published=published,
