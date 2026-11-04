@@ -5,18 +5,31 @@ from __future__ import annotations
 import logging
 import os
 import sys
+from datetime import datetime
+from pathlib import Path
 
-from friend_circle_lite.config.models import ApplicationConfig, MailRuntime
+from friend_circle_lite.config.models import (
+    DEFAULT_EMAIL_PUSH_TEMPLATE,
+    DEFAULT_RSS_SUBSCRIBE_TEMPLATE,
+    ApplicationConfig,
+    MailRuntime,
+)
 from friend_circle_lite.config.printer import print_startup_config
 from friend_circle_lite.crawler.latest_articles import get_latest_articles_from_link
 from friend_circle_lite.crawler.service import FriendCircleCrawlService
+from friend_circle_lite.domain.models import SHANGHAI_TZ
 from friend_circle_lite.notifications.github import extract_emails_from_issues
 from friend_circle_lite.notifications.mail import send_emails
 from friend_circle_lite.outputs.json_io import write_json
 from friend_circle_lite.outputs.merge import merge_article_data, merge_error_data, merge_link_data
 from friend_circle_lite.outputs.processing import finalize_article_data
 from friend_circle_lite.storage.diagnostics import SQLiteDebugDumper
+from friend_circle_lite.storage.state_store import StateStore
+from friend_circle_lite.utils.cron import CronExpression, CronSyntaxError
 
+
+EMAIL_PUSH_INITIALIZED_KEY = "email_push_initialized_at"
+EMAIL_PUSH_LAST_SENT_KEY = "email_push_last_sent_at"
 
 
 class FriendCircleLiteApplication:
@@ -24,6 +37,9 @@ class FriendCircleLiteApplication:
 
     def __init__(self, config: ApplicationConfig):
         self.config = config
+        self.state_store = StateStore(config.runtime_paths.cache_file)
+        self.latest_articles: list[dict] = []
+        self.latest_statistics: dict = {}
 
     def run(self) -> None:
         """Execute the enabled application features in a stable order."""
@@ -79,6 +95,8 @@ class FriendCircleLiteApplication:
             result,
             future_tolerance_days=self.config.future_article_tolerance_days,
         )
+        self.latest_articles = list(result.get("article_data", []))
+        self.latest_statistics = dict(result.get("statistical_data", {}))
         write_json(self.config.runtime_paths.all_json_file, result)
         write_json(self.config.runtime_paths.errors_json_file, lost_friends)
         write_json(self.config.runtime_paths.link_json_file, link_payload)
@@ -106,10 +124,135 @@ class FriendCircleLiteApplication:
         return mail_runtime
 
     def run_email_push_if_enabled(self, mail_runtime: MailRuntime) -> None:
-        """Keep the reserved email push entrypoint behavior unchanged."""
-        if self.config.email_push.enable and mail_runtime.is_ready:
-            logging.info("📧 邮件推送已启用")
-            logging.info("⚠️ 抱歉，目前尚未实现邮件推送功能")
+        """Send the fetched friend-circle articles to the configured mailbox.
+
+        The push is driven by a five-field cron expression rather than the
+        workflow's own schedule: the first run at or after a planned minute
+        sends the digest, and the sent minute is persisted so later runs do not
+        repeat it.
+        """
+        email_push = self.config.email_push
+        if not email_push.enable:
+            return
+        if not mail_runtime.is_ready:
+            logging.info("⏭️ 邮件推送未执行，因为 SMTP 尚未就绪")
+            return
+
+        to_email = email_push.to_email.strip()
+        if not to_email or "@" not in to_email:
+            logging.error("❌ 邮件推送已启用，但 to_email 未配置或格式不正确")
+            return
+
+        due_at = self._email_push_due()
+        if due_at is None:
+            return
+        if not self.latest_articles:
+            logging.info("📭 本轮没有抓取到文章，跳过邮件推送")
+            return
+
+        subject = email_push.subject
+        template_path = self._resolve_template_path(email_push.body_template, DEFAULT_EMAIL_PUSH_TEMPLATE)
+        if not template_path.is_file():
+            logging.warning(f"⚠️ 邮件模板不存在，将仅发送纯文本：{template_path}")
+
+        logging.info(f"📧 正在推送邮件到 {to_email}，计划时间 {due_at:%Y-%m-%d %H:%M}")
+        summary = send_emails(
+            emails=[to_email],
+            sender_email=mail_runtime.sender_email,
+            smtp_server=mail_runtime.smtp_server,
+            port=mail_runtime.port,
+            password=mail_runtime.password,
+            subject=subject,
+            body=self._build_email_push_text_body(subject, due_at),
+            template_path=str(template_path),
+            template_data=self._build_email_push_template_data(subject, due_at),
+            use_tls=mail_runtime.use_tls,
+        )
+        if summary and summary.get("sent_success"):
+            self.state_store.set(EMAIL_PUSH_LAST_SENT_KEY, due_at.isoformat())
+            logging.info(f"✅ 邮件推送完成：{len(self.latest_articles)} 篇文章已发送到 {to_email}")
+        else:
+            logging.error("❌ 邮件推送失败，将在下次运行重试")
+
+    def _email_push_due(self, now: datetime | None = None) -> datetime | None:
+        """Return the planned minute that should trigger this run, if any."""
+        try:
+            cron = CronExpression.parse(self.config.email_push.cron)
+        except CronSyntaxError as exc:
+            logging.error(f"❌ 邮件推送 cron 配置无效：{exc}")
+            return None
+
+        now = now or datetime.now(SHANGHAI_TZ)
+        initialized_at = self._parse_state_datetime(self.state_store.get(EMAIL_PUSH_INITIALIZED_KEY))
+        if initialized_at is None:
+            self.state_store.set(EMAIL_PUSH_INITIALIZED_KEY, now.isoformat())
+            logging.info("📧 首次观察邮件推送，已建立时间基线；将在下一个计划时间后的首次运行推送")
+            return None
+
+        last_sent_at = self._parse_state_datetime(self.state_store.get(EMAIL_PUSH_LAST_SENT_KEY))
+        baseline = last_sent_at or initialized_at
+        due_at = cron.latest_occurrence(now)
+        if due_at is None:
+            logging.info("📧 未找到有效的计划时间，跳过本次邮件推送")
+            return None
+        if due_at <= baseline:
+            logging.info(
+                f"📧 未到计划时间（最近计划 {due_at:%Y-%m-%d %H:%M}，"
+                f"上次推送/基线 {baseline:%Y-%m-%d %H:%M}），跳过"
+            )
+            return None
+        return due_at
+
+    def _build_email_push_template_data(self, subject: str, due_at: datetime) -> dict:
+        """Assemble the variables exposed to the email template."""
+        return {
+            "subject": subject,
+            "generated_at": datetime.now(SHANGHAI_TZ).strftime("%Y-%m-%d %H:%M"),
+            "due_at": due_at.strftime("%Y-%m-%d %H:%M"),
+            "total": len(self.latest_articles),
+            "articles": self.latest_articles,
+            "statistical_data": self.latest_statistics,
+        }
+
+    def _build_email_push_text_body(self, subject: str, due_at: datetime) -> str:
+        """Build the plain-text fallback for the digest email."""
+        lines = [
+            subject,
+            f"计划时间：{due_at:%Y-%m-%d %H:%M}",
+            f"文章数量：{len(self.latest_articles)}",
+            "",
+        ]
+        for article in self.latest_articles:
+            lines.append(
+                f"- {article.get('title') or '无标题'}"
+                f"（{article.get('author') or '未知作者'} · {article.get('created') or '未知时间'}）"
+            )
+            if article.get("link"):
+                lines.append(f"  {article['link']}")
+        return "\n".join(lines)
+
+    @staticmethod
+    def _resolve_template_path(configured: str, default: str) -> Path:
+        """Resolve a template path, also accepting a bare or stale filename."""
+        candidate = Path(configured or default)
+        if candidate.is_file():
+            return candidate
+        fallback = Path("./templates") / candidate.name
+        if fallback.is_file():
+            return fallback
+        return candidate
+
+    @staticmethod
+    def _parse_state_datetime(value: str | None) -> datetime | None:
+        if not value:
+            return None
+        try:
+            parsed = datetime.fromisoformat(value)
+        except ValueError:
+            return None
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=SHANGHAI_TZ)
+        return parsed
 
     def run_rss_subscription_if_enabled(self, mail_runtime: MailRuntime) -> None:
         """Send subscription emails for newly discovered posts when enabled."""
@@ -140,6 +283,12 @@ class FriendCircleLiteApplication:
             sys.exit(0)
 
         logging.info(f"📬 获取到邮箱列表：{email_list}")
+        template_path = self._resolve_template_path(
+            self.config.rss_subscribe.email_template,
+            DEFAULT_RSS_SUBSCRIBE_TEMPLATE,
+        )
+        if not template_path.is_file():
+            logging.warning(f"⚠️ 订阅邮件模板不存在，将仅发送纯文本：{template_path}")
         for article in latest_articles:
             template_data = self._build_email_template_data(article, github_username, github_repo)
             send_emails(
@@ -150,7 +299,7 @@ class FriendCircleLiteApplication:
                 password=mail_runtime.password,
                 subject=f"{self.config.rss_subscribe.website_info.title} の最新文章：{article['title']}",
                 body=self._build_plaintext_mail_body(article),
-                template_path=self.config.rss_subscribe.email_template,
+                template_path=str(template_path),
                 template_data=template_data,
                 use_tls=mail_runtime.use_tls,
             )

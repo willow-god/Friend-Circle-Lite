@@ -18,6 +18,9 @@ DEFAULT_CACHE_FILE = "./temp/cache.sqlite3"
 DEFAULT_ALL_JSON = "./all.json"
 DEFAULT_ERRORS_JSON = "./errors.json"
 DEFAULT_LINK_JSON = "./link.json"
+DEFAULT_EMAIL_PUSH_TEMPLATE = "./templates/rss_template.html"
+DEFAULT_EMAIL_PUSH_CRON = "0 8 * * *"
+DEFAULT_RSS_SUBSCRIBE_TEMPLATE = "./templates/article_notify.html"
 
 
 def _as_bool(value: object, default: bool = False) -> bool:
@@ -81,12 +84,14 @@ class LinkCheckConfig:
 
 @dataclass(slots=True)
 class EmailPushConfig:
-    """Reserved configuration for the not-yet-implemented email push feature."""
+    """Configuration for the scheduled friend-circle email digest."""
 
     enable: bool = False
     to_email: str = ""
-    subject: str = ""
-    body_template: str = ""
+    subject: str = "Friend-Circle-Lite 文章更新"
+    body_template: str = DEFAULT_EMAIL_PUSH_TEMPLATE
+    # Standard five-field cron expression interpreted in Asia/Shanghai.
+    cron: str = DEFAULT_EMAIL_PUSH_CRON
 
 
 @dataclass(slots=True)
@@ -184,17 +189,32 @@ class ApplicationConfig:
                 author_url=str(link_check_raw.get("author_url", "")).strip(),
             ),
             email_push=EmailPushConfig(
-                enable=bool(email_push_raw.get("enable", False)),
+                enable=_as_bool(email_push_raw.get("enable"), False),
                 to_email=str(email_push_raw.get("to_email", "")).strip(),
-                subject=str(email_push_raw.get("subject", "")).strip(),
-                body_template=str(email_push_raw.get("body_template", "")).strip(),
+                subject=str(email_push_raw.get("subject", "")).strip() or "Friend-Circle-Lite 文章更新",
+                body_template=(
+                    str(email_push_raw.get("body_template", "")).strip()
+                    or DEFAULT_EMAIL_PUSH_TEMPLATE
+                ),
+                cron=(
+                    str(
+                        email_push_raw.get("cron")
+                        or email_push_raw.get("crontab")
+                        or email_push_raw.get("schedule")
+                        or DEFAULT_EMAIL_PUSH_CRON
+                    ).strip()
+                    or DEFAULT_EMAIL_PUSH_CRON
+                ),
             ),
             rss_subscribe=RssSubscribeConfig(
                 enable=bool(rss_subscribe_raw.get("enable", False)),
                 github_username=str(rss_subscribe_raw.get("github_username", "")).strip(),
                 github_repo=str(rss_subscribe_raw.get("github_repo", "")).strip(),
                 your_blog_url=str(rss_subscribe_raw.get("your_blog_url", "")).strip(),
-                email_template=str(rss_subscribe_raw.get("email_template", "")).strip(),
+                email_template=(
+                    str(rss_subscribe_raw.get("email_template", "")).strip()
+                    or DEFAULT_RSS_SUBSCRIBE_TEMPLATE
+                ),
                 website_info=WebsiteInfo(
                     title=str(website_info_raw.get("title", "")).strip(),
                 ),

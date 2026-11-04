@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ subject|e }}</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f1ea;color:#3f3a33;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',Arial,sans-serif;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f4f1ea;padding:28px 12px;">
+        <tr>
+            <td align="center">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;background:#fffdfa;border:1px solid #e2d8c8;border-radius:14px;overflow:hidden;">
+                    <tr>
+                        <td style="padding:30px 32px 18px;border-bottom:1px solid #eee4d5;">
+                            <h1 style="margin:0 0 10px;font-size:24px;line-height:1.35;color:#3f3a33;">{{ subject|e }}</h1>
+                            <p style="margin:0;font-size:13px;line-height:1.7;color:#86796b;">
+                                计划时间：{{ due_at|e }}　·　生成时间：{{ generated_at|e }}
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:16px 32px;background:#f8f4ec;border-bottom:1px solid #eee4d5;">
+                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td style="font-size:12px;color:#86796b;">友链总数<br><strong style="font-size:18px;color:#3f3a33;">{{ statistical_data.friends_num }}</strong></td>
+                                    <td style="font-size:12px;color:#86796b;">活跃站点<br><strong style="font-size:18px;color:#3f3a33;">{{ statistical_data.active_num }}</strong></td>
+                                    <td style="font-size:12px;color:#86796b;">文章数量<br><strong style="font-size:18px;color:#3f3a33;">{{ total }}</strong></td>
+                                    <td style="font-size:12px;color:#86796b;">异常站点<br><strong style="font-size:18px;color:#3f3a33;">{{ statistical_data.error_num }}</strong></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:10px 32px 26px;">
+                            {% if articles %}
+                            {% for article in articles %}
+                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-top:16px;border-bottom:1px dashed #e6dccd;">
+                                <tr>
+                                    <td style="padding-bottom:14px;">
+                                        <a href="{{ article.link|e }}" target="_blank" rel="noopener noreferrer"
+                                           style="display:block;font-size:16px;line-height:1.6;color:#5d704b;text-decoration:none;font-weight:600;">
+                                            {{ article.title|e }}
+                                        </a>
+                                        <p style="margin:6px 0 0;font-size:12px;line-height:1.6;color:#86796b;">
+                                            {{ article.author|e }}　·　{{ article.created|e }}
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                            {% endfor %}
+                            {% else %}
+                            <p style="margin:24px 0;font-size:14px;line-height:1.8;color:#86796b;">本次没有抓取到可推送的文章。</p>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:18px 32px 26px;border-top:1px solid #eee4d5;font-size:12px;line-height:1.8;color:#a09486;text-align:center;">
+                            Powered by
+                            <a href="https://github.com/willow-god/Friend-Circle-Lite" target="_blank" rel="noopener noreferrer" style="color:#5d704b;text-decoration:none;">Friend-Circle-Lite</a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

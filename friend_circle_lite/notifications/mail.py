@@ -11,6 +11,19 @@ from jinja2 import Environment, FileSystemLoader
 # 内部工具
 # ============================================================
 
+def _render_html_template(template_path, template_data):
+    """Render an HTML email template, falling back to plain text on failure."""
+    if not template_path or template_data is None:
+        return None
+    try:
+        env = Environment(loader=FileSystemLoader(os.path.dirname(template_path) or "."))
+        template = env.get_template(os.path.basename(template_path))
+        return template.render(template_data)
+    except Exception as exc:
+        logging.error(f"渲染邮件模板失败: {template_path}，错误: {exc}")
+        return None
+
+
 def _render_message(
     target_email,
     sender_email,
@@ -34,10 +47,8 @@ def _render_message(
     msg.attach(MIMEText(body or "", "plain", "utf-8"))
 
     # HTML 模板内容
-    if template_path and template_data:
-        env = Environment(loader=FileSystemLoader(os.path.dirname(template_path)))
-        template = env.get_template(os.path.basename(template_path))
-        html_content = template.render(template_data)
+    html_content = _render_html_template(template_path, template_data)
+    if html_content:
         msg.attach(MIMEText(html_content, "html", "utf-8"))
 
     return msg
@@ -173,12 +184,8 @@ def send_emails(
             "failed": [],
         }
 
-    # 预渲染 HTML 模板
-    html_cache = None
-    if template_path and template_data:
-        env = Environment(loader=FileSystemLoader(os.path.dirname(template_path)))
-        template = env.get_template(os.path.basename(template_path))
-        html_cache = template.render(template_data)
+    # 预渲染 HTML 模板（模板缺失或渲染失败时仅发送纯文本）
+    html_cache = _render_html_template(template_path, template_data)
 
     def build_msg_for(to_addr):
         msg = MIMEMultipart("alternative")

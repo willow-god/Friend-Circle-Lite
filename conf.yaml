@@ -53,13 +53,22 @@ link_check:
   enable_backlink_check: true
   author_url: "blog.liushen.fun"
 
-# 邮件推送功能配置，暂未实现，等待后续开发
-# 说明：每次运行后向指定邮箱推送所有友链文章更新。
+# 邮件推送功能配置
+# 说明：按计划时间把本轮抓取到的全部友圈文章整理成一封邮件，发送给指定邮箱。
+#   enable:        是否启用
+#   to_email:      收件邮箱，通常填写作者本人
+#   subject:       邮件主题
+#   body_template: 邮件 HTML 模板，默认使用 ./templates/rss_template.html
+#   cron:          标准 5 段 cron（分 时 日 月 周），按 Asia/Shanghai 时区解释
+# 注意：GitHub Action 每 4 小时运行一次，无法精确在 cron 分钟触发。
+#       程序会在“计划时间之后的下一次运行”发送，并记录已发送的计划时间，
+#       同一计划时间不会重复发送；如果发送失败，下次运行会自动重试。
 email_push:
   enable: false
   to_email: recipient@example.com
   subject: "今天的 RSS 订阅更新"
-  body_template: "rss_template.html"
+  body_template: "./templates/rss_template.html"
+  cron: "0 8 * * *"
 
 # 邮件 issue 订阅功能配置
 # 说明：从 GitHub issue 中提取订阅邮箱，并推送你自己站点的新文章。
@@ -68,7 +77,7 @@ rss_subscribe:
   github_username: willow-god
   github_repo: Friend-Circle-Lite
   your_blog_url: https://blog.liushen.fun/
-  email_template: "./push_templates/default.html"
+  email_template: "./templates/article_notify.html"
   website_info:
     title: "清羽飞扬"
 
