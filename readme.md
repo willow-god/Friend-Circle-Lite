@@ -350,6 +350,7 @@ link_check.enable_backlink_check=false
     subject: "今天的 RSS 订阅更新"
     body_template: "./templates/rss_template.html"
     cron: "0 8 * * *"
+    max_articles: 50
   ```
 
   `enable`：是否启用。
@@ -362,9 +363,19 @@ link_check.enable_backlink_check=false
 
   `cron`：标准 5 段 cron 表达式（分 时 日 月 周），按 `Asia/Shanghai` 时区解释。例如 `0 8 * * *` 表示每天 08:00。
 
+  `max_articles`：单封邮件最多展示的文章数，默认 50。超出部分会在邮件中提示，避免超过 Gmail 约 102KB 的邮件截断阈值。
+
   > **关于执行时间**：GitHub Action 默认每 4 小时运行一次，无法精确在 cron 分钟触发。程序会在“计划时间之后的下一次运行”发送邮件，并把已发送的计划时间记录到 SQLite。同一个计划时间不会重复发送；如果发送失败，下次运行会自动重试。首次启用时只建立时间基线，不会立刻补发历史摘要。
 
   邮件发送依赖下方 SMTP 配置，密码请通过 `SMTP_PWD` Secret 或环境变量提供。模板渲染失败或模板缺失时会自动退化为纯文本邮件。
+
+  两套邮件模板都使用表格布局、内联样式、系统字体与 `bgcolor` 兜底，不依赖外部图片、脚本或 Web 字体，并针对移动端与深色模式做了适配。可以在本地生成示例预览：
+
+  ```bash
+  python scripts/render_email_preview.py
+  ```
+
+  然后打开 `docs/email-preview/index.html` 查看渲染效果。
 
 - **邮箱 issue 订阅功能配置**
 
