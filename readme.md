@@ -11,6 +11,15 @@
 
 ## 开发进度
 
+### 2026-11-04 - 邮件推送、CI/CD 与结构整理
+
+- **目录分层**：配置加载、RSS 探测/解析/追踪、输出处理/合并、SQLite 存储按职责拆分到独立模块，移除根目录下仅用于转发导入的兼容文件；邮件模板统一放入 `templates/`。
+- **入口整理**：`run.py` 只负责调用 `friend_circle_lite.cli.main`，应用编排集中在 `friend_circle_lite/application.py`。
+- **友圈邮件推送**：实现 `email_push`，按 `cron` 计划把本轮全部友圈文章整理成 HTML/纯文本邮件发送给指定邮箱，并用 SQLite 记录已发送的计划时间，避免重复推送。
+- **CI/CD**：新增 `ci.yml`，在 push / PR 以及定时任务前执行 `ruff` 与 `pytest`；定时抓取任务通过 `needs: quality-checks` 由测试结果把关，并增加并发控制与超时。
+- **数据库整理**：集中维护 SQLite schema，新增通用 `app_state` 状态表，移除长期未使用的 `fail_count` 列，避免运行时与诊断逻辑的 schema 漂移。
+- **空标题过滤**：RSS 解析阶段直接丢弃无标题文章；写入 `all.json` 前会再次兜底过滤合并数据中的无标题文章，并同步修正文章统计数。
+
 ### 2026-06-27 - 检测缓存与重试节奏整理
 
 本次主要整理了友链检测缓存和重试节奏，目标是减少长期异常站点带来的重复请求，尤其是 RSS 探测请求。
@@ -330,17 +339,32 @@ link_check.enable_backlink_check=false
   ["站点名称", "站点地址", "友链页地址", "头像地址"]
   ```
 
-- **邮箱推送功能配置**
+- **友圈邮件推送配置**
 
-  暂未实现，预留用于将每天的友链文章更新推送给指定邮箱。
+  按计划时间把本轮抓取到的全部友圈文章整理成一封邮件，发送给指定邮箱，适合作者本人订阅自己的友圈摘要。
 
   ```yaml
   email_push:
     enable: false
     to_email: recipient@example.com
     subject: "今天的 RSS 订阅更新"
-    body_template: "rss_template.html"
+    body_template: "./templates/rss_template.html"
+    cron: "0 8 * * *"
   ```
+
+  `enable`：是否启用。
+
+  `to_email`：收件邮箱，通常填写作者本人。
+
+  `subject`：邮件主题。
+
+  `body_template`：HTML 模板路径，默认 `./templates/rss_template.html`；也可以只写文件名，程序会自动到 `templates/` 下查找。
+
+  `cron`：标准 5 段 cron 表达式（分 时 日 月 周），按 `Asia/Shanghai` 时区解释。例如 `0 8 * * *` 表示每天 08:00。
+
+  > **关于执行时间**：GitHub Action 默认每 4 小时运行一次，无法精确在 cron 分钟触发。程序会在“计划时间之后的下一次运行”发送邮件，并把已发送的计划时间记录到 SQLite。同一个计划时间不会重复发送；如果发送失败，下次运行会自动重试。首次启用时只建立时间基线，不会立刻补发历史摘要。
+
+  邮件发送依赖下方 SMTP 配置，密码请通过 `SMTP_PWD` Secret 或环境变量提供。模板渲染失败或模板缺失时会自动退化为纯文本邮件。
 
 - **邮箱 issue 订阅功能配置**
 
@@ -352,7 +376,7 @@ link_check.enable_backlink_check=false
     github_username: willow-god
     github_repo: Friend-Circle-Lite
     your_blog_url: https://blog.liushen.fun/
-    email_template: "./push_templates/default.html"
+    email_template: "./templates/article_notify.html"
     website_info:
       title: "清羽飞扬"
   ```

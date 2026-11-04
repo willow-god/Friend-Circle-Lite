@@ -2,8 +2,21 @@
 .idea/
 .vscode/
 
-# 忽略 __pycache__ 文件夹
+# 忽略 Python 缓存与本地环境
 **/__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+uv.lock
+*.egg-info/
+.coverage
+htmlcov/
+
+# 忽略本地生成的部署目录
+pages/
 
 # 忽略 Jupyter Notebook 文件
 *.ipynb
