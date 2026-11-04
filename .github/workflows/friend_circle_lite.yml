@@ -10,9 +10,18 @@ env:
   PAGE_BRANCH: page
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+concurrency:
+  group: friend-circle-lite-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
+  quality-checks:
+    uses: ./.github/workflows/ci.yml
+
   friend-circle-lite:
+    needs: quality-checks
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: write
       actions: write
