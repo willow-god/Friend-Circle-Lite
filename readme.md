@@ -394,9 +394,7 @@ link_check.enable_backlink_check=false
 
   `enable`：开启或关闭，如果没有配置请关闭。
 
-  `github_username`：GitHub 用户名，用来拼接 GitHub API 地址。
-
-  `github_repo`：仓库名称，作用同上。
+  `github_username` / `github_repo`：仅在无法从环境变量解析仓库时作为兜底。GitHub Actions 会自动提供 `GITHUB_REPOSITORY`（`owner/repo`），程序会优先使用它；本地或其他 CI 可以用 `FCL_REPO` 显式覆盖。因此 fork 后通常不需要修改这两项。
 
   `your_blog_url`：用来定时检测是否有最新文章，请确保你的网站可以被 FCLite 抓取到。
 

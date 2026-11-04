@@ -1,3 +1,4 @@
+import os
 import tempfile
 import unittest
 from datetime import datetime
@@ -45,6 +46,15 @@ class EmailPushTest(unittest.TestCase):
         self.assertEqual(config.email_push.body_template, "./templates/rss_template.html")
         self.assertEqual(config.email_push.max_articles, 50)
         self.assertEqual(config.rss_subscribe.email_template, "./templates/article_notify.html")
+
+    def test_github_repository_env_overrides_config_for_issue_urls(self):
+        config = ApplicationConfig.from_dict({
+            "rss_subscribe": {"github_username": "fallback", "github_repo": "fallback-repo"},
+        })
+        app = FriendCircleLiteApplication(config)
+
+        with patch.dict(os.environ, {"GITHUB_REPOSITORY": "alice/blog", "FCL_REPO": ""}):
+            self.assertEqual(app._resolve_github_repo(), ("alice", "blog"))
 
     def test_email_push_due_waits_for_next_planned_minute_after_baseline(self):
         with tempfile.TemporaryDirectory() as temp_dir:

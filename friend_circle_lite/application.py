@@ -335,11 +335,27 @@ class FriendCircleLiteApplication:
         return result, lost_friends, link_payload
 
     def _resolve_github_repo(self) -> tuple[str, str]:
-        """Resolve repository coordinates from env override or config."""
-        fcl_repo = os.getenv("FCL_REPO")
-        if fcl_repo:
-            return tuple(fcl_repo.split("/", 1))
-        return self.config.rss_subscribe.github_username, self.config.rss_subscribe.github_repo
+        """Resolve repository coordinates from the Actions environment or config.
+
+        GitHub Actions always exposes ``GITHUB_REPOSITORY`` as ``owner/repo``.
+        ``FCL_REPO`` remains available as an explicit override for local runs or
+        other CI systems. The config values are only a final fallback.
+        """
+        repository = os.getenv("FCL_REPO") or os.getenv("GITHUB_REPOSITORY") or ""
+        if "/" in repository:
+            owner, repo = repository.split("/", 1)
+            if owner and repo:
+                return owner, repo
+
+        fallback = (
+            self.config.rss_subscribe.github_username,
+            self.config.rss_subscribe.github_repo,
+        )
+        logging.warning(
+            "未能从 FCL_REPO/GITHUB_REPOSITORY 获取仓库信息，"
+            f"回退到配置值：{fallback[0]}/{fallback[1]}"
+        )
+        return fallback
 
     @staticmethod
     def _load_subscriber_emails(github_username: str, github_repo: str) -> dict | None:

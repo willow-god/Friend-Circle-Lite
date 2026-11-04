@@ -74,6 +74,8 @@ email_push:
 
 # 邮件 issue 订阅功能配置
 # 说明：从 GitHub issue 中提取订阅邮箱，并推送你自己站点的新文章。
+#   github_username/github_repo 仅在无法从 GITHUB_REPOSITORY / FCL_REPO 解析仓库时兜底；
+#   GitHub Actions 会自动提供 GITHUB_REPOSITORY，fork 后通常无需修改这两项。
 rss_subscribe:
   enable: true
   github_username: willow-god
